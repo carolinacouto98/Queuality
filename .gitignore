@@ -1,4 +1,5 @@
 **/node_modules/
 code/js/api/package-lock.json
+**/.DS_Store
 .vscode
 .idea

@@ -1,0 +1,7 @@
+{
+  "name": "Queuality",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
