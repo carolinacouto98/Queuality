@@ -1,4 +1,4 @@
-code/js/api/node_modules/
+**/node_modules/
 code/js/api/package-lock.json
 .vscode
 .idea
