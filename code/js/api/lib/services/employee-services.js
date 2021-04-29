@@ -1,7 +1,12 @@
 'use strict'
 const bcrypt = require('bcrypt')
 
-const repo = require('employee-repo.js')
+const repo = require('../repo/employee-repo.js')
+
+
+function getEmployees() {
+    return repo.getEmployees()
+}
 
 function getEmployee(id) {
     return repo.getEmployee(id)
@@ -10,36 +15,20 @@ function getEmployee(id) {
             throw err
         })
 }
-function getEmployees() {
-    return repo.getEmployees()
-}
-function addEmployee(id, name, password, roles) {
+
+function addEmployee(name, password, roles) {
     return encryptPassword(password)
         .then(pass => repo.insertEmployee(
             {
-                id: id,
                 name: name,
                 password: pass,
                 roles: roles
             }
         ))
 }
-function removeEmployee(id) {
-    return repo.deleteEmployee(id)
-        .catch(err => {
-            if (err.message === 'The given employee does not exist') err.status = 404
-            throw err
-        })
-}
-function changeEmployeeRoles(id, roles) {
-    return repo.updateRole(id, roles)
-        .catch(err => {
-            if (err.message === 'The given employee does not exist') err.status = 404
-            throw err
-        })
-}
+
 function changeEmployeePassword(id, oldPassword, newPassword) {
-    confirmPassword(id, oldPassword)
+    return confirmPassword(id, oldPassword)
         .then(isValid => {
             if(isValid)
                 return repo.updatePassword(id, newPassword)
@@ -53,11 +42,36 @@ function changeEmployeePassword(id, oldPassword, newPassword) {
         })
 }
 
+function changeEmployeeRoles(id, roles) {
+    return repo.updateRole(id, roles)
+        .catch(err => {
+            if (err.message === 'The given employee does not exist') err.status = 404
+            throw err
+        })
+}
+
+function removeEmployee(id) {
+    return repo.deleteEmployee(id)
+        .catch(err => {
+            if (err.message === 'The given employee does not exist') err.status = 404
+            throw err
+        })
+}
+
 function encryptPassword(password) {
     return bcrypt.hash(password,10)
 }
 
 function confirmPassword(id, password) {
-    getEmployee(id)
+    return getEmployee(id)
         .then(employee => bcrypt.compare(password, employee.password))
+}
+
+module.exports = {
+    getEmployees,
+    getEmployee,
+    addEmployee,
+    changeEmployeePassword,
+    changeEmployeeRoles,
+    removeEmployee
 }

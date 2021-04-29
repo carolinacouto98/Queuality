@@ -1,6 +1,6 @@
 'use strict'
 
-const service = require('../repo/services.js')
+const service = require('../services/ticket-services.js')
 
 const Router = require('express').Router
 const router = Router()
@@ -16,36 +16,36 @@ router.get('/api/tickets', (req, res, next) => {
     else {
         const ticket = req.query.ticketId
         service.getWaitingTickets(ticket)
-            .then((tickets)=> res.json({"message" : `There are ${tickets} people waiting`}))
+            .then((tickets)=> res.json({message : `There are ${tickets} people waiting`}))
             .catch(next)
     }
         
 })
 
-router.get('/api/tickets/:queueid', (req, res, next) => {
-    const id = req.params.queueid
+router.get('/api/tickets/:queueId', (req, res, next) => {
+    const id = req.params.queueId
     service.getTicket(id)
-        .then( ticket => res.json(ticket))
+        .then( ticket => res.json({message : `The ticket is ${ticket}`}))
         .catch(next)
 })
 
-router.post('/api/tickets/:queueid', (req, res, next) => {
-    const queueid = req.params.queueid
-    service.addWaitingTicket(queueid)
-        .then(res.json({"message": "Ticket added"}))
+router.post('/api/tickets/:queueId', (req, res, next) => {
+    const queueId = req.params.queueId
+    service.addWaitingTicket(queueId)
+        .then(res.json({message: 'Ticket added'}))
         .catch(next)
 })
 
-router.put('/api/tickets/:queueid', (req, res, next) => {
-    const queueid = req.params.queueid
-    service.removeWaitingTicket(queueid)
-        .then(res.json({"message": "Ticket added"}))
+router.put('/api/tickets/:queueId', (req, res, next) => {
+    const queueId = req.params.queueId
+    service.removeWaitingTicket(queueId)
+        .then(res.json({message: 'Ticket added'}))
         .catch(next)
 })
 
 router.delete('/api/tickets/:queueid', (req, res, next) => {
-    const queueid = req.params.queueid
-    service.removeTicket(queueid)
-        .then(res.json({"message" : "Ticket removed"}))
+    const queueId = req.params.queueId
+    service.removeTicket(queueId)
+        .then(res.json({message : 'Ticket removed'}))
         .catch(next)
 })

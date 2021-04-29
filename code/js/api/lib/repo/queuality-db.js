@@ -1,20 +1,40 @@
 'use strict'
 
-let db
+
 let col
+let db
 
-const getAll = () => col.find({})
+const MongoClient = require('mongodb').MongoClient
+const ObjectId = require('mongodb').ObjectId
 
-const get = (_field, id, projection) => col.findOne({_field : id}, projection)
+const getAll = () => db.collection(col).find().toArray()
 
-const insert = (document) => col.findOneAndUpdate(document, {upsert : true, returnNewDocument : true})
+const get = (id, projection) => db.collection(col).findOne({_id : ObjectId(id)}, projection)
 
-const update = (idObj, object) => col.findOneAndUpdate(idObj, object)
+const insert = (document) => db.collection(col).findOneAndUpdate(document, { $set : document }, { upsert : true, returnNewDocument : true })
 
-const del = (id) => col.deleteOne(id)
+const update = (id, object) => db.collection(col).findOneAndUpdate({_id : ObjectId(id)}, { $set : object })
 
-module.exports = function(database, collection) {
-    db = database
-    col = db.collection(collection)
-    return {getAll, get, insert, update, del}
-} 
+const del = (id) => db.collection(col).deleteOne(ObjectId(id))
+
+module.exports = {
+    connection: async (url, dbName, callback) => {
+        if(!url) return callback(Error('You should pass an url.'))
+        const client = new MongoClient(url, { useUnifiedTopology: true })
+        try {
+            await client.connect()   
+            console.log('Connected successfully to database.')
+            db = client.db(dbName)
+        }
+        catch(e) {
+            callback(e)
+        }
+        finally {
+            //await client.close()
+        }
+    }, 
+    collection: collection => {
+        col = collection
+        return {getAll, get, insert, update, del}
+    } 
+}

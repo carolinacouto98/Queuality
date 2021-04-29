@@ -1,6 +1,6 @@
 'use strict'
 
-const service = require('../repo/services.js')
+const service = require('../services/employee-services.js')
 
 const Router = require('express').Router
 const router = Router()
@@ -25,21 +25,21 @@ router.put('/api/employees', (req, res, next) => {
     const password = req.body.password
     const roles = req.body.roles
     service.addEmployee(name, password, roles)
-        .then(res.json({"message" : "User added"}))
+        .then(res.json({message : 'User added'}))
         .catch(next)
 })
 
 router.put('/api/employees/:id', (req, res, next) => {
     const id = req.params.id
-    const roles =req.body.roles
+    const roles = req.body.roles
     service.changeEmployeeRoles(id, roles)
-        .then(res.json({"message" : `User with the Id ${id} updated`}))
+        .then(res.json({message : `User with the Id ${id} updated`}))
         .catch(next)
 })
 
 router.delete('/api/employees/:id', (req, res, next) => {
     const id = req.params.id
     service.removeEmployee(id)
-        .then(res.json({"message" : `User with the Id ${id} updated`}))
+        .then(res.json({message : `User with the Id ${id} deleted`}))
         .catch(next)
 })
