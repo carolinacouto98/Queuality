@@ -31,7 +31,8 @@ function changeEmployeePassword(id, oldPassword, newPassword) {
     return confirmPassword(id, oldPassword)
         .then(isValid => {
             if(isValid)
-                return repo.updatePassword(id, newPassword)
+                return encryptPassword(newPassword)
+                    .then(pass => repo.updatePassword(id, pass))
             const err = new Error(`The given password is not valid to the user ${id}`)
             err.status = 401
             throw err

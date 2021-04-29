@@ -29,7 +29,7 @@ router.get('/api/queues/:queueId', (req, res, next) => {
         .catch(next)
 })
 
-router.put('/api/queues/:queueId', (req, res, next) => {
+router.patch('/api/queues/:queueId', (req, res, next) => {
     const id = req.params.queueId
     const type = req.body.type
     const description = req.body.description
@@ -40,7 +40,7 @@ router.put('/api/queues/:queueId', (req, res, next) => {
 
 router.delete('/api/queues/:queueId', (req, res, next) => {
     const id = req.params.queueId
-    service.deleteQueue(id)
+    service.removeQueue(id)
         .then(res.json({message : `Queue with the Id ${id} deleted`}))
         .catch(next)
 })

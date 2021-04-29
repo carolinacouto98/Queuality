@@ -7,15 +7,15 @@ let db
 const MongoClient = require('mongodb').MongoClient
 const ObjectId = require('mongodb').ObjectId
 
-const getAll = () => db.collection(col).find().toArray()
+const getAll = (col) => db.collection(col).find().toArray()
 
-const get = (id, projection) => db.collection(col).findOne({_id : ObjectId(id)}, projection)
+const get = (col, id, projection) => db.collection(col).findOne({_id : ObjectId(id)}, projection)
 
-const insert = (document) => db.collection(col).findOneAndUpdate(document, { $set : document }, { upsert : true, returnNewDocument : true })
+const insert = (col, document) => db.collection(col).findOneAndUpdate(document, { $set : document }, { upsert : true, returnNewDocument : true })
 
-const update = (id, object) => db.collection(col).findOneAndUpdate({_id : ObjectId(id)}, { $set : object })
+const update = (col, id, object) => db.collection(col).findOneAndUpdate({_id : ObjectId(id)}, { $set : object })
 
-const del = (id) => db.collection(col).deleteOne(ObjectId(id))
+const del = (col, id) => db.collection(col).deleteOne({_id : ObjectId(id)})
 
 module.exports = {
     connection: async (url, dbName, callback) => {
@@ -33,8 +33,5 @@ module.exports = {
             //await client.close()
         }
     }, 
-    collection: collection => {
-        col = collection
-        return {getAll, get, insert, update, del}
-    } 
+    methods: {getAll, get, insert, update, del}
 }

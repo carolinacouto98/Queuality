@@ -1,28 +1,29 @@
 'use strict'
 
-const db = require('./queuality-db.js').collection('employee')
+const db = require('./queuality-db.js').methods
+const collection = 'employee'
 
-const getEmployees = () => db.getAll()
+const getEmployees = () => db.getAll(collection)
 
-const getEmployee = (id) => db.get(id, { projection : { name : 1, roles : 1 } })
+const getEmployee = (id) => db.get(collection, id, { projection : { name : 1, roles : 1, password: 1 } })
     .then(result => {
         if(!result) throw Error('The given employee does not exist')
         return result
     })
         
-const insertEmployee = (employee) => db.insert(employee)
+const insertEmployee = (employee) => db.insert(collection, employee)
 
-const updatePassword = (id, password) => db.update(id, {password : password})
+const updatePassword = (id, password) => db.update(collection, id, {password : password})
     .then(result => {
         if(!result) throw Error('The given employee does not exist')
     })
 
-const updateRole = (id, roles) => db.update(id, {roles : roles})
+const updateRole = (id, roles) => db.update(collection, id, {roles : roles})
     .then(result => {
         if(!result) throw Error('The given employee does not exist')
     })
 
-const deleteEmployee = (id) => db.del(id)
+const deleteEmployee = (id) => db.del(collection, id)
     .then(result => {
         if(!result) throw Error('The given employee does not exist')
     })

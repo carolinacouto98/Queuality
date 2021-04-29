@@ -29,14 +29,20 @@ router.put('/api/employees', (req, res, next) => {
         .catch(next)
 })
 
-router.put('/api/employees/:id', (req, res, next) => {
+router.patch('/api/employees/:id', (req, res, next) => {
     const id = req.params.id
     const roles = req.body.roles
+    const newPassword = req.body.newPassword
+    const oldPassword = req.body.oldPassword
+    if(newPassword && oldPassword)
+        return service.changeEmployeePassword(id, oldPassword, newPassword)
+            .then(res.json({message : `Password for user with the Id ${id} updated`}))
+            .catch(next)
     service.changeEmployeeRoles(id, roles)
-        .then(res.json({message : `User with the Id ${id} updated`}))
+        .then(res.json({message : `Roles for user with the Id ${id} updated`}))
         .catch(next)
 })
-
+    
 router.delete('/api/employees/:id', (req, res, next) => {
     const id = req.params.id
     service.removeEmployee(id)

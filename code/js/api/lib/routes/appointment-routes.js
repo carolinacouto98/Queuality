@@ -25,7 +25,7 @@ router.patch('/api/appointments/:id', (req, res, next) => {
     const id = req.params.id
     const description = req.body.description
     service.updateAppointment(id, time, description)
-        .then(res.json({message : 'Appointment added'}))
+        .then(res.json({message : 'Appointment updated'}))
         .catch(next)
 })
 
