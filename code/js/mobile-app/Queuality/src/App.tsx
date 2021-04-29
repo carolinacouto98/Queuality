@@ -29,19 +29,22 @@ const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
-        <Route exact path="queuality/home">
+        <Route exact path="/queuality/home">
           <Home />
         </Route>
-        <Route exact path="queuality">
-          <Redirect to="queuality/home" />
+        <Route exact path="/queuality">
+          <Redirect to="/queuality/home" />
         </Route>
-        <Route exact path="queuality/queues">
+        <Route exact path="/">
+          <Redirect to="/queuality/home" />
+        </Route>
+        <Route exact path="/queuality/queues">
           <Queues />
         </Route>
-        <Route exact path="queuality/appointments">
+        <Route exact path="/queuality/appointments">
           <Appoitments/>
         </Route>
-        <Route exact path="queuality/tickets">
+        <Route exact path="/queuality/tickets">
           <Tickets />
         </Route>
       </IonRouterOutlet>
