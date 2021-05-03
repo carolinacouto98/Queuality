@@ -1,0 +1,19 @@
+{
+  "appId": "com.isel.queuality",
+  "appName": "Queuality",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "public",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {},
+  "server": {
+    "url": "http://localhost:8100",
+    "hostname": "localhost",
+    "iosScheme": "ionic",
+    "androidScheme": "https"
+  }
+}

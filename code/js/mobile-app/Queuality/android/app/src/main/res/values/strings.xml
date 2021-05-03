@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Queuality</string>
+    <string name="title_activity_main">Queuality</string>
+    <string name="package_name">com.isel.queuality</string>
+    <string name="custom_url_scheme">com.isel.queuality</string>
+</resources>

@@ -11,9 +11,8 @@
   },
   "cordova": {},
   "server": {
-    "url" : "http://localhost:8100",
+    "url": "http://localhost:8100",
     "hostname": "localhost",
-    
     "iosScheme": "ionic",
     "androidScheme": "http"
   }
