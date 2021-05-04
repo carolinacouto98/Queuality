@@ -1,7 +1,5 @@
 'use strict'
 
-
-let col
 let db
 
 const MongoClient = require('mongodb').MongoClient

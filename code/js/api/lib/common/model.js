@@ -58,9 +58,22 @@ const Queue = Joi.object({
 const QueueInputModel = Joi.object({
     name: Joi.string().required(),
     priority: Joi.boolean().default(false),
-    subject: Joi.string().required(),
-    tickets: Joi.number().default(0),
-    waitingTickets: Joi.number().default(0)
+    subject: Joi.string().required()
+})
+
+/**
+ * @typedef {Object} QueueUpdateInputModel
+ * @property {String} _id
+ * @property {String} name
+ * @property {Boolean} priority
+ * @property {String} subject
+ */
+
+const QueueUpdateInputModel = Joi.object({
+    _id: Joi.string().required(),
+    name: Joi.string(),
+    priority: Joi.boolean(),
+    subject: Joi.string()
 })
 
 /**
@@ -69,7 +82,7 @@ const QueueInputModel = Joi.object({
  * @property {Date} date
  */
 /**
- * @typedef {Object} Desk
+ * @typedef {Object} Subject
  * @property {String} _id
  * @property {String} desk
  * @property {String} subject
@@ -77,7 +90,7 @@ const QueueInputModel = Joi.object({
  * @property {Array<Appointment>} appointments
  */
 
-const Desk = Joi.object({
+const Subject = Joi.object({
     _id: Joi.string().required(),
     desk: Joi.string().required(),
     subject: Joi.string().required(),
@@ -98,13 +111,13 @@ const AppointmentInputModel = Joi.object({
 })
 
 /**
- * @typedef {Object} DeskInputModel
+ * @typedef {Object} SubjectInputModel
  * @property {String} desk
  * @property {String} subject
  * @property {String} duration in form of hh:mm:ss
  */
 
-const DeskInputModel = Joi.object({
+const SubjectInputModel = Joi.object({
     desk: Joi.string().required(),
     subject: Joi.string().required(),
     duration: Joi.string().required()
@@ -116,9 +129,10 @@ module.exports = {
     Employee, 
     EmployeeInputModel, 
     Queue, 
-    QueueInputModel, 
-    Desk,
-    DeskInputModel,
+    QueueInputModel,
+    QueueUpdateInputModel, 
+    Subject,
+    SubjectInputModel,
     AppointmentInputModel,
     id 
 }

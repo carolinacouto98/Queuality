@@ -31,7 +31,7 @@ app.use((err, req, res, next) => {
 
 const server = app.listen(3000, () => {
     console.log('Server listen on port 3000')
-    database.connection('mongodb://localhost:27017', 'queuality', (err) => {
+    database.connection('mongodb://localhost:27017', 'queualitymock', (err) => {
         if(err) return console.error(err)
     })
 })

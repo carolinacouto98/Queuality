@@ -22,28 +22,28 @@ router.get('/api/tickets', (req, res, next) => {
         
 })
 
-router.get('/api/tickets/:queueId', (req, res, next) => {
+router.get('/api/queues/:queueId/tickets', (req, res, next) => {
     const id = req.params.queueId
     service.getTicket(id)
         .then( ticket => res.json({message : `The ticket is ${ticket}`}))
         .catch(next)
 })
 
-router.post('/api/tickets/:queueId', (req, res, next) => {
+router.post('/api/queues/:queueId/ticket', (req, res, next) => {
     const queueId = req.params.queueId
     service.addWaitingTicket(queueId)
         .then(res.json({message: 'Ticket added'}))
         .catch(next)
 })
 
-router.put('/api/tickets/:queueId', (req, res, next) => {
+router.put('/api/queues/:queueId/queue', (req, res, next) => {
     const queueId = req.params.queueId
     service.removeWaitingTicket(queueId)
-        .then(res.json({message: 'Ticket added'}))
+        .then(res.json({message: 'Ticket removed'}))
         .catch(next)
 })
 
-router.delete('/api/tickets/:queueid', (req, res, next) => {
+router.put('/api/queues/:queueid/ticket', (req, res, next) => {
     const queueId = req.params.queueId
     service.removeTicket(queueId)
         .then(res.json({message : 'Ticket removed'}))

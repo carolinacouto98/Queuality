@@ -1,5 +1,6 @@
 'use strict'
 const repo = require('../repo/queue-repo.js')
+const error = require('../common/error.js')
 // eslint-disable-next-line no-unused-vars
 const model = require('../common/model.js')
 
@@ -18,12 +19,29 @@ const getQueue = (id) => repo.getQueue(id)
  * @param {model.QueueInputModel} queue
  * @returns {Promise<Void>}
  */
-const addQueue = (queue) => repo.insertQueue(queue)
-
-const updateQueue = (id, name, description) => repo.updateQueue(id, name, description)
+const addQueue = (queue) => {
+    getQueues().then(queues => {
+        if (queues.find(q => q.priority)) throw error.CustomException('Cannot have more than one priority queue', error.ALREADY_EXISTS)
+        repo.insertQueue(queue)
+    })
+    
+}
 
 /**
- * @param {string} id 
+ * Updates the queue with the given id. Only changes the given properties.
+ * @param {model.QueueUpdateInputModel} queue 
+ * @returns {Promise<Void>}
+ */
+const updateQueue = (queue) => 
+    getQueue(queue._id).then(q => {
+        if (!queue.name) queue.name = q.name
+        if (!queue.priority) queue.priority = q.priority
+        if (!queue.subject) queue.subject = q.subject
+        repo.updateQueue(queue._id, queue.name, queue.priority, queue.subject)
+    })
+
+/**
+ * @param {String} id 
  * @returns {Promise<Void>}
  */
 const removeQueue = (id) => repo.deleteQueue(id)

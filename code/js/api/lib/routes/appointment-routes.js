@@ -1,47 +1,90 @@
 'use strict'
 
 const service = require('../services/appointment-services.js')
+const model = require('../common/model.js')
 
 const Router = require('express').Router
 const router = Router()
 
 module.exports = router
 
-router.get('/api/appointments', (req, res, next) => {
-    service.getAppointments()
-        .then(appointments => res.json(appointments))
+router.get('/api/subject-info', (req, res, next) =>
+    service.getSubjectsInfo()
+        .then(res.json)
+        .catch(next)
+)
+
+router.get('/api/subject-info/subjects', (req, res, next) => 
+    service.getSubjects()
+        .then(res.json)
+        .catch(next)
+)
+
+router.get('/api/subject-info/:subject/desks', (req, res, next) => {
+    const _id = req.params.subject
+    model.id.validateAsync(_id)
+        .then(id => service.getDesk(id).then(res.json))
         .catch(next)
 })
 
-router.get('/api/appointments/:id', (req, res, next) => {
+router.get('/api/subject-info/:subject/appointments', (req, res, next) => {
+    const _id = req.params.subject
+    model.id.validateAsync(_id)
+        .then(id => service.getAppointments(id).then(res.json))
+        .catch(next)
+})
+
+router.get('/api/subject-info/:subject/appointments/:id', (req, res, next) => {
     const id = req.params.id
-    service.getAppointment(id)
-        .then(appointment => res.json(appointment))
+    const subject = req.params.subject
+    model.id.validateAsync(subject)
+        .then(_id => model.id.validateAsync(id).then(id => service.getAppointment(_id, id).then(res.json)))
         .catch(next)
 })
 
-router.patch('/api/appointments/:id', (req, res, next) => {
-    const time = req.body.time
+router.patch('/api/subject-info/:subject/appointments/:id', (req, res, next) => {
     const id = req.params.id
-    const description = req.body.description
-    service.updateAppointment(id, time, description)
-        .then(res.json({message : 'Appointment updated'}))
+    const subject = req.params.subject
+    const appointment = req.body
+    model.id.validateAsync(subject)
+        .then(_id => { return { _id: _id, id: model.id.validateAsync(id) } })
+        .then(({_id, id}) => { return {
+            _id: _id,
+            id: id,
+            appointment: model.AppointmentInputModel.validateAppointmentInputModel.validateAsync(appointment)
+        }})
+        .then(({_id, id, appointment}) => service.updateAppointment(_id, id, appointment.date))
+        .then(() => res.json({message: 'Appointment updated successfully'}))
         .catch(next)
 })
 
-router.post('/api/appointments', (req, res, next) => {
-    const queueId = req.body.queueId
-    const time = req.body.time
-    const subject = req.body.subject
-    const description = req.body.description
-    service.addAppointment(queueId, time, subject, description)
-        .then(res.json({message : 'Appointment added'}))
+router.post('/api/subject-info/:subject/appointments', (req, res, next) => {
+    const subject = req.params.subject
+    const appointment = req.body
+    model.id.validateAsync(subject)
+        .then(_id => { return {
+            _id: _id,
+            appointment: model.AppointmentInputModel.validateAppointmentInputModel.validateAsync(appointment)
+        }})
+        .then(({_id, appointment}) => service.addAppointment(_id, appointment.date))
+        .then(() => res.json({message: 'Appointment added successfully'}))
         .catch(next)
 })
 
-router.delete('/api/appointments/:id', (req, res, next) => {
+router.delete('/api/subject-info/:subject/appointments/:id', (req, res, next) => {
     const id = req.params.id
-    service.removeAppointment(id)
-        .then(res.json({message : 'Appointment removed'}))
+    const subject = req.params.subject
+    model.id.validateAsync(subject)
+        .then(_id => { return { _id: _id, id: model.id.validateAsync(id) } })
+        .then(({_id, id}) => service.removeAppointment(_id, id))
+        .then(() => res.json({message: 'Appointment deleted successfully'}))
+        .catch(next)
+})
+
+router.delete('/api/subject-info/:subject', (req, res, next) => {
+    const subject = req.params.subject
+    model.id.validateAsync(subject)
+        .then(_id => service.removeSubject(_id))
+        .then(() => res.json({message: 'Subject deleted successfully'}))
         .catch(next)
 })
