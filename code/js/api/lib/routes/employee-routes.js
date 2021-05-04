@@ -1,6 +1,7 @@
 'use strict'
 
 const service = require('../services/employee-services.js')
+const model = require('../common/model.js')
 
 const Router = require('express').Router
 const router = Router()
@@ -24,8 +25,9 @@ router.put('/api/employees', (req, res, next) => {
     const name = req.body.name
     const password = req.body.password
     const roles = req.body.roles
-    service.addEmployee(name, password, roles)
-        .then(res.json({message : 'User added'}))
+    model.EmployeeInputModel.validateAsync({name, password, roles})
+        .then(employee => service.addEmployee(employee)
+            .then(res.json({message : 'User added'})))
         .catch(next)
 })
 
@@ -45,7 +47,10 @@ router.patch('/api/employees/:id', (req, res, next) => {
     
 router.delete('/api/employees/:id', (req, res, next) => {
     const id = req.params.id
-    service.removeEmployee(id)
-        .then(res.json({message : `User with the Id ${id} deleted`}))
+    model.id.validateAsync(id)
+        .then(id => {
+            service.removeEmployee(id)
+                .then(res.json({ message : `User with the Id ${id} deleted` }))
+        })
         .catch(next)
 })

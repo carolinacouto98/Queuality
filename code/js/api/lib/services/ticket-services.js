@@ -3,31 +3,28 @@ const repo = require('../repo/ticket-repo.js')
 const queueRepo = require('../repo/queue-repo.js')
 
 
-function getTicket(queueId) {
-    return queueRepo.getTotalNumberOfTickets(queueId)
-}
-function getTickets(queueId) {
-    if (queueId) return repo.getTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'j'))
+const getTicket = (queueId) => queueRepo.getTotalNumberOfTickets(queueId)
+
+const getTickets = (queueId) => {
+    if (queueId) return repo.getTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
     return queueRepo.getTotalNumberOfTickets(queueId)
 }
 
-function getWaitingTickets() {
-    return repo.getTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'j'))
-        .then(res =>
-            repo
-                .getNumberOfTicketsAnswered(new Date().toDateString().replace(/\s/g,'').padEnd(12,'j'))
-                .then(result => res - result)
-        )
-}
+const getWaitingTickets = () => repo
+    .getTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
+    .then(res => repo
+        .getNumberOfTicketsAnswered(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
+        .then(result => res - result)
+    )
 
-function addWaitingTicket(queueId) {
-    return repo.updateTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'j'))
-        .then(() => queueRepo.updateTotalNumberOfTickets(queueId))
-}
-function removeTicket(queueId) {
-    return repo.decrementTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'j'))
-        .then(() => queueRepo.decrementTotalNumberOfTickets(queueId))
-}
+const addWaitingTicket = (queueId) => repo
+    .updateTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
+    .then(() => queueRepo.updateTotalNumberOfTickets(queueId))
+
+const removeTicket = (queueId) => repo
+    .decrementTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
+    .then(() => queueRepo.decrementTotalNumberOfTickets(queueId))
+
 
 module.exports = {
     getTicket,

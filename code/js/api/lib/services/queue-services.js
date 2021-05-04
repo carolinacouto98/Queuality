@@ -1,40 +1,32 @@
 'use strict'
 const repo = require('../repo/queue-repo.js')
+// eslint-disable-next-line no-unused-vars
+const model = require('../common/model.js')
 
-function getQueues() {
-    return repo.getQueues()
-}
+/**
+ * @returns {Promise<Array<model.Queue>>}
+ */
+const getQueues = () => repo.getQueues()
 
-function getQueue(id) {
-    return repo.getQueue(id)
-        .catch(err => {
-            if (err.message === 'The given queue does not exist') err.status = 404
-            throw err
-        })
-}
+/**
+ * @param {string} id
+ * @returns {Promise<model.Queue>}
+ */
+const getQueue = (id) => repo.getQueue(id)
 
-function addQueue(name, type, description) {
-    return repo.insertQueue({ 
-        name: name,
-        description: description
-    })
-}
+/**
+ * @param {model.QueueInputModel} queue
+ * @returns {Promise<Void>}
+ */
+const addQueue = (queue) => repo.insertQueue(queue)
 
-function updateQueue(id, name, description) {
-    return repo.updateQueue(id, name, description)
-        .catch(err => {
-            if (err.message === 'The given queue does not exist') err.status = 404
-            throw err
-        })
-}
+const updateQueue = (id, name, description) => repo.updateQueue(id, name, description)
 
-function removeQueue(id) {
-    return repo.deleteQueue(id)
-        .catch(err => {
-            if (err.message === 'The given queue does not exist') err.status = 404
-            throw err
-        })
-}
+/**
+ * @param {string} id 
+ * @returns {Promise<Void>}
+ */
+const removeQueue = (id) => repo.deleteQueue(id)
 
 module.exports = {
     getQueues,

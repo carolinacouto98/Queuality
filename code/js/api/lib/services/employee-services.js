@@ -2,71 +2,53 @@
 const bcrypt = require('bcrypt')
 
 const repo = require('../repo/employee-repo.js')
+const error = require('../common/error.js')
+// eslint-disable-next-line no-unused-vars
+const model = require('../common/model.js')
 
+/**
+ * @returns {Promise<Array<model.Employee>>}
+ */
+const getEmployees = () => repo.getEmployees()
 
-function getEmployees() {
-    return repo.getEmployees()
-}
+/**
+ * 
+ * @param {String} id 
+ * @returns {Promise<model.Employee>}
+ */
+const getEmployee = (id) => repo.getEmployee(id)
 
-function getEmployee(id) {
-    return repo.getEmployee(id)
-        .catch(err => {
-            if (err.message === 'The given employee does not exist') err.status = 404
-            throw err
-        })
-}
+/**
+ * 
+ * @param {model.EmployeeInputModel} employee 
+ * @returns {Promise<Void>}
+ */
+const addEmployee = (employee) => encryptPassword(employee.password)
+    .then(pass => {
+        employee.password = pass
+        repo.insertEmployee(employee)
+    })
 
-function addEmployee(name, password, roles) {
-    return encryptPassword(password)
-        .then(pass => repo.insertEmployee(
-            {
-                name: name,
-                password: pass,
-                roles: roles
-            }
-        ))
-}
+const changeEmployeePassword = (id, oldPassword, newPassword) => confirmPassword(id, oldPassword)
+    .then(isValid => {
+        if(!isValid) throw error.CustomException('Old password is wrong', error.UNAUTHORIZED)
+        return encryptPassword(newPassword)
+            .then(pass => repo.updatePassword(id, pass))
+    })
 
-function changeEmployeePassword(id, oldPassword, newPassword) {
-    return confirmPassword(id, oldPassword)
-        .then(isValid => {
-            if(isValid)
-                return encryptPassword(newPassword)
-                    .then(pass => repo.updatePassword(id, pass))
-            const err = new Error(`The given password is not valid to the user ${id}`)
-            err.status = 401
-            throw err
-        })
-        .catch(err => {
-            if (err.message === 'The given employee does not exist') err.status = 404
-            throw err
-        })
-}
+const changeEmployeeRoles = (id, roles) => repo.updateRole(id, roles)
 
-function changeEmployeeRoles(id, roles) {
-    return repo.updateRole(id, roles)
-        .catch(err => {
-            if (err.message === 'The given employee does not exist') err.status = 404
-            throw err
-        })
-}
+/**
+ * 
+ * @param {String} id 
+ * @returns {Promise<Void>}
+ */
+const removeEmployee = (id) => repo.deleteEmployee(id)
 
-function removeEmployee(id) {
-    return repo.deleteEmployee(id)
-        .catch(err => {
-            if (err.message === 'The given employee does not exist') err.status = 404
-            throw err
-        })
-}
+const encryptPassword = (password) =>  bcrypt.hash(password,10)
 
-function encryptPassword(password) {
-    return bcrypt.hash(password,10)
-}
-
-function confirmPassword(id, password) {
-    return getEmployee(id)
-        .then(employee => bcrypt.compare(password, employee.password))
-}
+const confirmPassword = (id, password) => getEmployee(id)
+    .then(employee => bcrypt.compare(password, employee.password))
 
 module.exports = {
     getEmployees,
