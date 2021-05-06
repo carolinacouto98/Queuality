@@ -21,8 +21,8 @@ module.exports = {
         const client = new MongoClient(url, { useUnifiedTopology: true })
         try {
             await client.connect()   
-            console.log('Connected successfully to database.')
             db = client.db(dbName)
+            console.log('Connected successfully to database.')
         }
         catch(e) {
             callback(e)

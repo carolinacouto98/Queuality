@@ -21,13 +21,13 @@ router.get('/api/employees/:id', (req, res, next) => {
         .catch(next)
 })
 
-router.put('/api/employees', (req, res, next) => {
+router.post('/api/employees', (req, res, next) => {
     const name = req.body.name
     const password = req.body.password
     const roles = req.body.roles
     model.EmployeeInputModel.validateAsync({name, password, roles})
         .then(employee => service.addEmployee(employee)
-            .then(res.json({message : 'User added'})))
+            .then(res.status(201).json({message : 'User added'})))
         .catch(next)
 })
 

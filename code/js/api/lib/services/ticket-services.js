@@ -14,7 +14,7 @@ const getWaitingTickets = () => repo
     .getTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
     .then(res => repo
         .getNumberOfTicketsAnswered(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
-        .then(result => res - result)
+        .then(result => res - result - 1)
     )
 
 const addWaitingTicket = (queueId) => repo

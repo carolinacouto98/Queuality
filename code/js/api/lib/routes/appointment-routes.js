@@ -8,33 +8,33 @@ const router = Router()
 
 module.exports = router
 
-router.get('/api/subject-info', (req, res, next) =>
+router.get('/api/subject-manager', (req, res, next) =>
     service.getSubjectsInfo()
         .then(res.json)
         .catch(next)
 )
 
-router.get('/api/subject-info/subjects', (req, res, next) => 
+router.get('/api/subject-manager/subjects', (req, res, next) => 
     service.getSubjects()
         .then(res.json)
         .catch(next)
 )
 
-router.get('/api/subject-info/:subject/desks', (req, res, next) => {
+router.get('/api/subject-manager/:subject/desks', (req, res, next) => {
     const _id = req.params.subject
     model.id.validateAsync(_id)
         .then(id => service.getDesk(id).then(res.json))
         .catch(next)
 })
 
-router.get('/api/subject-info/:subject/appointments', (req, res, next) => {
+router.get('/api/subject-manager/:subject/appointments', (req, res, next) => {
     const _id = req.params.subject
     model.id.validateAsync(_id)
         .then(id => service.getAppointments(id).then(res.json))
         .catch(next)
 })
 
-router.get('/api/subject-info/:subject/appointments/:id', (req, res, next) => {
+router.get('/api/subject-manager/:subject/appointments/:id', (req, res, next) => {
     const id = req.params.id
     const subject = req.params.subject
     model.id.validateAsync(subject)
@@ -42,7 +42,7 @@ router.get('/api/subject-info/:subject/appointments/:id', (req, res, next) => {
         .catch(next)
 })
 
-router.patch('/api/subject-info/:subject/appointments/:id', (req, res, next) => {
+router.patch('/api/subject-manager/:subject/appointments/:id', (req, res, next) => {
     const id = req.params.id
     const subject = req.params.subject
     const appointment = req.body
@@ -58,7 +58,7 @@ router.patch('/api/subject-info/:subject/appointments/:id', (req, res, next) => 
         .catch(next)
 })
 
-router.post('/api/subject-info/:subject/appointments', (req, res, next) => {
+router.post('/api/subject-manager/:subject/appointments', (req, res, next) => {
     const subject = req.params.subject
     const appointment = req.body
     model.id.validateAsync(subject)
@@ -67,11 +67,11 @@ router.post('/api/subject-info/:subject/appointments', (req, res, next) => {
             appointment: model.AppointmentInputModel.validateAppointmentInputModel.validateAsync(appointment)
         }})
         .then(({_id, appointment}) => service.addAppointment(_id, appointment.date))
-        .then(() => res.json({message: 'Appointment added successfully'}))
+        .then(() => res.status(201).json({message: 'Appointment added successfully'}))
         .catch(next)
 })
 
-router.delete('/api/subject-info/:subject/appointments/:id', (req, res, next) => {
+router.delete('/api/subject-manager/:subject/appointments/:id', (req, res, next) => {
     const id = req.params.id
     const subject = req.params.subject
     model.id.validateAsync(subject)
@@ -81,7 +81,7 @@ router.delete('/api/subject-info/:subject/appointments/:id', (req, res, next) =>
         .catch(next)
 })
 
-router.delete('/api/subject-info/:subject', (req, res, next) => {
+router.delete('/api/subject-manager/:subject', (req, res, next) => {
     const subject = req.params.subject
     model.id.validateAsync(subject)
         .then(_id => service.removeSubject(_id))
