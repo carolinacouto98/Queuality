@@ -19,13 +19,13 @@ const getQueue = (id) => repo.getQueue(id)
  * @param {model.QueueInputModel} queue
  * @returns {Promise<Void>}
  */
-const addQueue = (queue) => {
+const addQueue = (queue) => 
     getQueues().then(queues => {
         if (queues.find(q => q.priority)) throw error.CustomException('Cannot have more than one priority queue', error.ALREADY_EXISTS)
-        repo.insertQueue(queue)
+        return repo.insertQueue(queue)
     })
     
-}
+
 
 /**
  * Updates the queue with the given id. Only changes the given properties.
@@ -37,7 +37,7 @@ const updateQueue = (queue) =>
         if (!queue.name) queue.name = q.name
         if (!queue.priority) queue.priority = q.priority
         if (!queue.subject) queue.subject = q.subject
-        repo.updateQueue(queue._id, queue.name, queue.priority, queue.subject)
+        return repo.updateQueue(queue._id, queue.name, queue.priority, queue.subject)
     })
 
 /**

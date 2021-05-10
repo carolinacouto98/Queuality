@@ -3,7 +3,7 @@
   "appName": "Queuality",
   "bundledWebRuntime": false,
   "npmClient": "npm",
-  "webDir": "public",
+  "webDir": "build",
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 0
@@ -11,9 +11,13 @@
   },
   "cordova": {},
   "server": {
-    "url": "http://localhost:8100",
-    "hostname": "localhost",
+    "hostname": "localhost:8100",
     "iosScheme": "ionic",
-    "androidScheme": "http"
+    "androidScheme": "http",
+    "cleartext": true,
+    "allowNavigation":[]
+  },
+  "android": {
+    "allowMixedContent": true
   }
 }

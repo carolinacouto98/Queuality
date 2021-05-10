@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "frisby": "^2.1.3"
+  }
+}

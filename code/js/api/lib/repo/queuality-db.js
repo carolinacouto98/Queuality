@@ -9,7 +9,11 @@ const getAll = (col) => db.collection(col).find().toArray()
 
 const get = (col, id, projection) => db.collection(col).findOne({_id : ObjectId(id)}, projection)
 
-const insert = (col, document) => db.collection(col).findOneAndUpdate(document, { $set : document }, { upsert : true, returnNewDocument : true })
+const insert = (col, document) => {
+    return db.collection(col).findOneAndUpdate(document, { $set : document }, { upsert : true, returnNewDocument : true })
+        .then(result => 
+            result.lastErrorObject.upserted)
+        }
 
 const update = (col, id, object) => db.collection(col).findOneAndUpdate({_id : ObjectId(id)}, { $set : object })
 

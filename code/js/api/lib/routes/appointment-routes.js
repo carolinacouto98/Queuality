@@ -2,6 +2,8 @@
 
 const service = require('../services/appointment-services.js')
 const model = require('../common/model.js')
+const siren = require('../common/siren.js')
+const appointmentSiren = require('./siren/appointment-siren.js')
 
 const Router = require('express').Router
 const router = Router()
@@ -10,7 +12,12 @@ module.exports = router
 
 router.get('/api/subject-manager', (req, res, next) =>
     service.getSubjectsInfo()
-        .then(res.json)
+        .then(() => res.send(
+            siren.toSirenObject(
+                'SubjectsInfo',
+            )
+            
+            ))
         .catch(next)
 )
 

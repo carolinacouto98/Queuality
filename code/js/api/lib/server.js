@@ -5,9 +5,46 @@ const error = require('./common/error.js')
 const database = require('./repo/queuality-db.js')
 
 const app = express()
+const cors = require('cors')
+
+
 
 
 function run(port, url, dbName) {
+    
+   const allowedOrigins = [
+        'capacitor://localhost',
+        'ionic://localhost',
+        'http://localhost',
+        'http://localhost:3000',
+        'http://localhost:8100'
+      ];
+    
+    app.use((req, res, next) => {
+        res.append('Access-Control-Allow-Origin', ['*'])
+        res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE')
+        res.append('Access-Control-Allow-Headers', 'Content-Type')
+        next()
+    })
+    
+    const corsOptions = {
+        origin: (origin, callback) => {
+          if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+          } else {
+            callback(new Error('Origin not allowed by CORS'));
+          }
+        }
+      }
+      app.use(cors())
+      
+      // Enable preflight requests for all routes
+      app.options('*', cors(corsOptions));
+      
+      app.get('/', cors(corsOptions), (req, res, next) => {
+        res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
+      })
+      
     app.use(express.json())
     app.use(express.urlencoded({extended: false}))
 

@@ -1,7 +1,6 @@
 import { Redirect, Route } from 'react-router-dom'
-import { IonApp, IonRouterOutlet } from '@ionic/react'
+import { IonApp, IonRouterOutlet, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
-import Home from './pages/Home'
 import Queues from './pages/Queues'
 import Appoitments from './pages/Appointments'
 import Tickets from './pages/Tickets'
@@ -24,19 +23,19 @@ import '@ionic/react/css/display.css'
 
 /* Theme variables */
 import './theme/variables.css'
+import { peopleOutline, ticketOutline, calendarOutline } from 'ionicons/icons'
+import React from 'react'
 
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
+      <IonTabs>
       <IonRouterOutlet>
-        <Route exact path="/queuality/home">
-          <Home />
-        </Route>
         <Route exact path="/queuality">
-          <Redirect to="/queuality/home" />
+          <Redirect to="/queuality/queues" />
         </Route>
         <Route exact path="/">
-          <Redirect to="/queuality/home" />
+          <Redirect to="/queuality/queues" />
         </Route>
         <Route exact path="/queuality/queues">
           <Queues />
@@ -48,6 +47,23 @@ const App: React.FC = () => (
           <Tickets />
         </Route>
       </IonRouterOutlet>
+      <IonTabBar slot="top">
+      <IonTabButton tab="queues" href = '/queuality/queues'>
+        <IonIcon icon={peopleOutline} />
+        <IonLabel>Queues</IonLabel>
+      </IonTabButton>
+
+      <IonTabButton tab="tickets" href = '/queuality/tickets'>
+        <IonIcon icon={ticketOutline} />
+        <IonLabel>Tickets</IonLabel>
+      </IonTabButton>
+
+      <IonTabButton tab="appointments" href = 'queuality/appointments'>
+        <IonIcon icon={calendarOutline} />
+        <IonLabel>Appoiintments</IonLabel>
+      </IonTabButton>
+    </IonTabBar>
+      </IonTabs>
     </IonReactRouter>
   </IonApp>
 )

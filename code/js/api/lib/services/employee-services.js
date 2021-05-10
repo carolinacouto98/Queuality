@@ -21,12 +21,12 @@ const getEmployee = (id) => repo.getEmployee(id)
 /**
  * 
  * @param {model.EmployeeInputModel} employee 
- * @returns {Promise<Void>}
+ * @returns {Promise<String>}
  */
 const addEmployee = (employee) => encryptPassword(employee.password)
     .then(pass => {
         employee.password = pass
-        repo.insertEmployee(employee)
+        return repo.insertEmployee(employee)
     })
 
 const changeEmployeePassword = (id, oldPassword, newPassword) => confirmPassword(id, oldPassword)
