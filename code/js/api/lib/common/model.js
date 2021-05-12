@@ -35,7 +35,7 @@ const EmployeeInputModel = Joi.object({
 const Ticket = Joi.object(
     {
         nrTotalTickets: Joi.number().default(0),
-        nrTicketsAnswered: Joi.number.default(0),
+        nrTicketsAnswered: Joi.number().default(0),
         date: Joi.date().required()
     }
 )
@@ -54,7 +54,7 @@ const Queue = Joi.object({
     name: Joi.string().required(),
     priority: Joi.boolean().default(false),
     subject: Joi.string().required(),
-    queueTicket: Joi.object(Ticket).required()
+    queueTicket: Ticket.required()
 })
 
 /**

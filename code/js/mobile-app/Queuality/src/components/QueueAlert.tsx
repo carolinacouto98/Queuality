@@ -16,7 +16,7 @@ const [ticket, setTicket] = useState<Ticket>()
 function getTicket(queueName: string){
     const { Http } = Plugins
     useEffect( () => {
-        async function loadTicket(queueName: string) {
+        async function loadTicket() {
             const path = 'http://localhost:3000/api/tickets'
             await Http.request (
                 {
@@ -35,7 +35,7 @@ function getTicket(queueName: string){
                 .then(data => setTicket(data.properties))
                 .catch(e => console.log(e))
         }
-        loadTicket(queueName)
+        loadTicket()
         })
 
 }

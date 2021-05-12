@@ -9,7 +9,7 @@ const getAppointmentLinks = (subject, id) => [siren.selfLink(`/api/subject-manag
 const updateAppointmentLinks = (subject, id) => [siren.selfLink(`/api/subject-manager/subjects/${subject}/appointments/${id}`), siren.SirenLink(['/rel/appointments'],`api/subject-manager/subjects/${subject}/appointments`)]
 const addAppointmentLinks = (subject, id) => [siren.selfLink(`/api/subject-manager/subjects/${subject}/appointments`), siren.SirenLink('rel/appointment',`/api/subject-manager/subjects/${subject}/appointments/${id}`)]
 const addSubjectLinks = [siren.selfLink('/api/subject-manager'), siren.SirenLink('rel/subject')]
-const deleteAppointmentLinks = [siren.SirenLink('rel/appointments', `/api/subject-manager/subjects/${subject}/appointments`)]
+const deleteAppointmentLinks = (subject) => [siren.SirenLink('rel/appointments', `/api/subject-manager/subjects/${subject}/appointments`)]
 const deleteSubjectLinks = [siren.SirenLink('rel/subjects','/api/subject-manager/subjects')]
 
 function addAppointmentAction(subject){

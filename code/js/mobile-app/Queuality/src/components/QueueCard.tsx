@@ -1,6 +1,7 @@
-import {IonBadge, IonCard, IonCardContent, IonCardHeader, IonCardTitle } from "@ionic/react"
+import {IonCard, IonCardContent, IonCardHeader, IonCardTitle } from "@ionic/react"
 import React, { useState } from "react"
 import {QueueAlert} from "./QueueAlert"
+import QueueBadge from "./QueueBadge"
 
 
 interface QueueCardProps{
@@ -23,7 +24,7 @@ const QueueCard: React.FC<QueueCardProps> = props => {
             </IonCardHeader>
             <IonCardContent>
                 {props.subject}
-                <IonBadge></IonBadge>
+                <QueueBadge queueId={props.id}/>
             </IonCardContent> 
             <QueueAlert alert={alert} queueName={props.name} />
             </IonCard>

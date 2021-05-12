@@ -162,7 +162,7 @@ router.delete('/api/subject-manager/subjects/:subject/appointments/:id', (req, r
                 'Appointment',
                 '{}',
                 '[]',
-                JSON.stringify(appointmentSiren.deleteAppointmentLinks),
+                JSON.stringify(appointmentSiren.deleteAppointmentLinks(subject)),
                 '[]'
             )
         ))

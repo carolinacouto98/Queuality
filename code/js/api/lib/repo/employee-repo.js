@@ -29,7 +29,6 @@ module.exports = {
     getEmployees, 
     getEmployee, 
     insertEmployee, 
-    updatePassword, 
     updateRole, 
     deleteEmployee
 }
