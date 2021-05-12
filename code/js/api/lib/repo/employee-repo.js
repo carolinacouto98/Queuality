@@ -7,18 +7,13 @@ const collection = 'employee'
 
 const getEmployees = () => db.getAll(collection)
 
-const getEmployee = (id) => db.get(collection, id, { projection : { name : 1, roles : 1, password: 1 } })
+const getEmployee = (id) => db.get(collection, id, { projection : { name : 1, roles : 1 } })
     .then(result => {
         if(!result) throw error.CustomException('The given employee does not exist', error.NOT_FOUND)
         return result
     })
         
 const insertEmployee = (employee) => db.insert(collection, employee)
-
-const updatePassword = (id, password) => db.update(collection, id, {password : password})
-    .then(result => {
-        if(!result) throw error.CustomException('The given employee does not exist', error.NOT_FOUND)
-    })
 
 const updateRole = (id, roles) => db.update(collection, id, {roles : roles})
     .then(result => {

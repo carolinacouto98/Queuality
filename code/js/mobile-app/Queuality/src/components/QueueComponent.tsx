@@ -1,79 +1,49 @@
-import { IonBadge, IonAlert, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonRow } from '@ionic/react';
+import { IonCol, IonGrid, IonRow } from '@ionic/react'
 import React, { useState, useEffect} from 'react'
+import '@capacitor-community/http'
+import { Plugins } from '@capacitor/core'
+import QueueCard from './QueueCard';
 
-import '@capacitor-community/http';
-
-import { Plugins } from '@capacitor/core';
+interface Queue {
+    _id: string,
+    name: string,
+    subject: string,
+    priority: boolean
+}
 const QueueComponent: React.FC = () => {
-    const [queues, setQueues] = useState([])
-    const [alert, setAlert] = useState<string>()
-  
+    const { Http } = Plugins
+    const [queues, setQueues] = useState<Queue[]>()
+
     useEffect( () => {
-        const { Http } = Plugins
+        async function loadQueues() {
             const path = 'http://localhost:3000/api/queues/'
-            Http.request(
+            await Http.request (
                 {
                     method: 'GET',
                     url: path,
-                    headers:{
+                    headers: {
                         'accept' : 'application/json',
                         'content-type': 'application/json',
                     }
-            })
+                }
+            )
                 .then(res => res.data)
                 .then(data => setQueues(data.properties))
                 .catch(e => console.log(e))
-        })
-
-        /*const getTicket = (queueId: string) => useEffect(() => {
-            const path = `http://localhost:3000/api/tickets/${queueId}`
-            fetch(path,
-                {'method' :'POST',
-                    'headers': {
-                        'accept' : 'application/json',
-                        'content-type': 'application/json',
-                    }
-            })
-                .then(res => res.json())
-               
-                .catch(e => console.log(e))
-        })*/
+        }
+        if(!queues) loadQueues()
+        },[queues])
 
     return (  
      <IonGrid>
          <IonRow>
-        {queues!.map((queue: {_id: string, name: string, subject: string, priority: boolean, current: number}) => (
+        {queues!.map((queue: Queue) => (
             <IonCol key={queue._id}>
-                <IonCard id ={queue._id} button onClick={() => {
-                    setAlert(`Are you sure you want to get a ticket from ${queue.name}?`)}}>
-                    <IonCardHeader>
-                        <IonCardTitle>
-                             {queue.name}
-                        </IonCardTitle>
-                    </IonCardHeader>
-                    <IonCardContent>
-                        {queue.subject}
-                        <IonBadge>{queue.current}</IonBadge>
-                    </IonCardContent> 
-                    <IonAlert
-                        isOpen={!!alert}
-                        message={alert}
-                        buttons={[
-                            {
-                              text: 'Cancel',
-                              role: 'cancel',
-                              cssClass: 'secondary',
-                              handler: ()=> {}
-                            },
-                            {
-                              text: 'Okay',
-                              handler: () => {
-                                //getTicket(queue.id)
-                              }
-                            }
-                          ]}
-                    />    
-                </IonCard>
+                <QueueCard 
+                    id ={queue._id} 
+                    name ={queue.name}
+                    subject = {queue.subject}
+                    priority = {queue.priority}/>
             </IonCol>
           ))}
           </IonRow>

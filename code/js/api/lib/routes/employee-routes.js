@@ -38,9 +38,8 @@ router.get('/api/employees/:id', (req, res, next) => {
 
 router.post('/api/employees', (req, res, next) => {
     const name = req.body.name
-    const password = req.body.password
     const roles = req.body.roles
-    model.EmployeeInputModel.validateAsync({name, password, roles})
+    model.EmployeeInputModel.validateAsync({name, roles})
         .then(employee => service.addEmployee(employee)
             .then(id => res.status(201).send(
                 siren.toSirenObject(
@@ -57,12 +56,6 @@ router.post('/api/employees', (req, res, next) => {
 router.patch('/api/employees/:id', (req, res, next) => {
     const id = req.params.id
     const roles = req.body.roles
-    const newPassword = req.body.newPassword
-    const oldPassword = req.body.oldPassword
-    if(newPassword && oldPassword)
-        return service.changeEmployeePassword(id, oldPassword, newPassword)
-            .then(res.json({message : `Password for user with the Id ${id} updated`}))
-            .catch(next)
     service.changeEmployeeRoles(id, roles)
         .then(res.send(
             siren.toSirenObject(

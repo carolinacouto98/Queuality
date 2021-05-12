@@ -1,6 +1,8 @@
 'use strict'
 
 const service = require('../services/ticket-services.js')
+const siren = require('../common/siren.js')
+const ticketSiren = require('./siren/ticket-siren.js')
 
 const Router = require('express').Router
 const router = Router()
@@ -8,44 +10,78 @@ const router = Router()
 module.exports = router
 
 router.get('/api/tickets', (req, res, next) => {
-    const waiting = req.query.waiting
-    if(waiting == undefined || waiting == false)
-        service.getTickets()
-            .then(tickets => res.json(tickets))
-            .catch(next)
-    else {
-        const ticket = req.query.ticketId
-        service.getWaitingTickets(ticket)
-            .then((tickets)=> res.json({message : `There are ${tickets} people waiting`}))
-            .catch(next)
-    }
-        
+    service.getWaitingTickets()
+        .then((tickets)=> res.send(
+            siren.toSirenObject(
+                'Tickets',
+                JSON.stringify(tickets),
+                '[]',
+                JSON.stringify(ticketSiren.getWaitingTicketsLinks),
+                JSON.stringify([ticketSiren.addTicketAction(), ticketSiren.deleteTicketAction()])
+            )
+        ))
+        .catch(next)
 })
 
-router.get('/api/queues/:queueId/tickets', (req, res, next) => {
+router.get('/api/queues/:queueId/current-ticket', (req, res, next) => {
     const id = req.params.queueId
-    service.getTicket(id)
-        .then( ticket => res.json({message : `The ticket is ${ticket}`}))
+    service.getCurrentQueueTicket(id)
+        .then(ticket => res.send(
+            siren.toSirenObject(
+                'Current Ticket',
+                JSON.stringify(ticket),
+                '[]',
+                JSON.stringify(ticketSiren.getCurrentQueueTicketLinks(id)),
+                JSON.stringify([ticketSiren.updateAnsweredTicketsAction(id)])
+            )
+        ))
         .catch(next)
 })
 
-router.post('/api/queues/:queueId/ticket', (req, res, next) => {
-    const queueId = req.params.queueId
-    service.addWaitingTicket(queueId)
-        .then(res.json({message: 'Ticket added'}))
+//mobile-app
+router.post('/api/tickets', (req, res, next) => {
+    const queueName = req.body.queueName
+    service.addWaitingTicket()
+        .then(service.getCurrentTicket(queueName)
+            .then(ticket => res.send(
+                siren.toSirenObject(
+                    'Tickets',
+                    JSON.stringify(ticket),
+                    '[]',
+                    JSON.stringify(ticketSiren.addTicketLinks),
+                    '[]'
+                )
+            ))
+        )
         .catch(next)
 })
 
-router.put('/api/queues/:queueId/queue', (req, res, next) => {
-    const queueId = req.params.queueId
-    service.removeWaitingTicket(queueId)
-        .then(res.json({message: 'Ticket removed'}))
+//mobile-app
+router.put('/api/tickets', (req, res, next) => {
+    service.removeTicket()
+        .then(() => res.send(
+            siren.toSirenObject(
+                'Tickets',
+                '{}',
+                '[]',
+                JSON.stringify(ticketSiren.deleteTicketLinks),
+                '[]'
+            )
+        ))
         .catch(next)
 })
 
-router.put('/api/queues/:queueid/ticket', (req, res, next) => {
+router.put('/api/queues/:queueId/current-ticket', (req, res, next) => {
     const queueId = req.params.queueId
-    service.removeTicket(queueId)
-        .then(res.json({message : 'Ticket removed'}))
+    service.updateNumberOfTicketsAnswered(queueId)
+        .then(() => res.send(
+            siren.toSirenObject(
+                'Current Ticket',
+                '{}',
+                '[]',
+                JSON.stringify(ticketSiren.updateAnsweredTicketsLinks(queueId)),
+                '[]'
+            )
+        ))
         .catch(next)
 })

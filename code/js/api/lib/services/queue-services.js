@@ -13,7 +13,7 @@ const getQueues = () => repo.getQueues()
  * @param {string} id
  * @returns {Promise<model.Queue>}
  */
-const getQueue = (id) => repo.getQueue(id)
+//const getQueue = (id) => repo.getQueue(id)
 
 /**
  * @param {model.QueueInputModel} queue
@@ -48,7 +48,6 @@ const removeQueue = (id) => repo.deleteQueue(id)
 
 module.exports = {
     getQueues,
-    getQueue,
     addQueue,
     updateQueue,
     removeQueue

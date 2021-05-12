@@ -13,10 +13,18 @@ const updateNumberOfTicketsAnswered = (id) => db.update(collection, id, { $inc :
 
 const decrementTotalNumberOfTickets = (id) => db.update(collection, id, { $inc : { 'nrTotalTickets' : -1 } })
 
+const deleteTicketInfo = (id) => db.del(collection, id)
+
+const resetTickets = (id) => db.update(collection, id,{nrTicketsAnswered: 0, nrTotalTickets: 0})
+
+const getDate = () => db.getAll()[0]._id
 module.exports = {
+    getDate,
     getTotalNumberOfTickets,
     getNumberOfTicketsAnswered,
     updateTotalNumberOfTickets, 
     updateNumberOfTicketsAnswered,
-    decrementTotalNumberOfTickets
+    decrementTotalNumberOfTickets,
+    deleteTicketInfo,
+    resetTickets
 }

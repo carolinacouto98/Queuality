@@ -50,7 +50,7 @@ function setSubEntities(queues){
                 'Queue',
                 '/rel/queue',
                 JSON.stringify(element),  
-                JSON.stringify([siren.selfLink(`/api/queues/${element._id}`)]),
+                JSON.stringify([siren.selfLink(`/api/queues/${element._id}`), siren.SirenLink('/rel/current-ticket', `/api/queues/${element._id}/current-ticket`)]),
                 JSON.stringify([updateQueueAction(element._id), deleteQueueAction(element._id)]),
                 'Get Queue'
             )        

@@ -5,38 +5,48 @@ const Joi = require('joi')
  * @typedef {Object} Employee
  * @property {String} _id
  * @property {String} name
- * @property {String} password
  * @property {Array<String>} roles
  */
 
 const Employee = Joi.object({
     _id : Joi.string().required(),
     name : Joi.string().required(),
-    password : Joi.string().required(),
     roles : Joi.array().items(Joi.string()).default([])
 })
 
 /**
  * @typedef {Object} EmployeeInputModel
  * @property {String} name
- * @property {String} password
  * @property {Array<String>} roles
  */
 
 const EmployeeInputModel = Joi.object({
     name : Joi.string().required(),
-    password : Joi.string().required(),
     roles : Joi.array().items(Joi.string()).default([])
 })
 
+/**
+ * @typedef {Object} Ticket
+ * @property {Number} nrTotalTickets
+ * @property {Number} nrTicketsAnswered
+ * @property {Date} date
+ */
+
+const Ticket = Joi.object(
+    {
+        nrTotalTickets: Joi.number().default(0),
+        nrTicketsAnswered: Joi.number.default(0),
+        date: Joi.date().required()
+    }
+)
 /**
  * @typedef {Object} Queue
  * @property {String} _id
  * @property {String} name
  * @property {Boolean} priority
  * @property {String} subject
- * @property {Number} tickets
- * @property {Number} waitingTickets
+ * @property {Ticket} queueTicket
+ * 
  */
 
 const Queue = Joi.object({
@@ -44,8 +54,7 @@ const Queue = Joi.object({
     name: Joi.string().required(),
     priority: Joi.boolean().default(false),
     subject: Joi.string().required(),
-    tickets: Joi.number().default(0),
-    waitingTickets: Joi.number().default(0)
+    queueTicket: Joi.object(Ticket).required()
 })
 
 /**

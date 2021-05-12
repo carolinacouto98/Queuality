@@ -6,13 +6,9 @@ const error = require('../common/error.js')
 const collection = 'queue'
 
 const getQueues = () => db.getAll(collection)
-
-const getQueue = (id) => db.get(collection, id, { projection: { name: 1, description: 1 } })
-    .then(result => {
-        if(!result) throw error.CustomException('The given queue does not exist', error.NOT_FOUND)
-        return result
-    })
         
+const getNumberOfTicketsAnswered = (id) => db.get(collection, id,  { projection: { 'nrTicketsAnswered' : 1 } })
+
 const getTotalNumberOfTickets = (id) => db.get(collection, '_id', id, { projection: { nrTotalTickets : 1 } })
 
 const insertQueue = (queue) => db.insert(collection, queue)
@@ -23,22 +19,22 @@ const updateQueue = (id, name, priority, subject) =>
             if(!result) throw error.CustomException('The given queue does not exist', error.NOT_FOUND)
         })
 
-const updateTotalNumberOfTickets = (id) => db.update(collection, id, { $inc : { 'nrTotalTickets' : 1 } })
-
-const decrementTotalNumberOfTickets = (id) => db.update(collection, id, { $inc : { 'nrTotalTickets' : -1 } })
+const updateNumberOfTicketsAnswered = (id) => db.update(collection, id, { $inc : { 'nrTicketsAnswered' : 1 } })
 
 const deleteQueue = (id) => db.del(collection, id)
     .then(result => {
         if(!result) throw error.CustomException('The given queue does not exist', error.NOT_FOUND)
     })
 
+const resetQueueTicket = (id, date) => db.update(collection, id,{nrTicketsAnswered: 0, nrTotalTickets: 0, date: date})
+
 module.exports = {
     getQueues, 
-    getQueue, 
+    getNumberOfTicketsAnswered,
     getTotalNumberOfTickets, 
     insertQueue, 
     updateQueue, 
-    updateTotalNumberOfTickets,
-    decrementTotalNumberOfTickets,
-    deleteQueue
+    updateNumberOfTicketsAnswered,
+    deleteQueue,
+    resetQueueTicket
 }

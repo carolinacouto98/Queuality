@@ -1,5 +1,4 @@
 'use strict'
-const bcrypt = require('bcrypt')
 
 const repo = require('../repo/employee-repo.js')
 const error = require('../common/error.js')
@@ -23,18 +22,9 @@ const getEmployee = (id) => repo.getEmployee(id)
  * @param {model.EmployeeInputModel} employee 
  * @returns {Promise<String>}
  */
-const addEmployee = (employee) => encryptPassword(employee.password)
-    .then(pass => {
-        employee.password = pass
-        return repo.insertEmployee(employee)
-    })
-
-const changeEmployeePassword = (id, oldPassword, newPassword) => confirmPassword(id, oldPassword)
-    .then(isValid => {
-        if(!isValid) throw error.CustomException('Old password is wrong', error.UNAUTHORIZED)
-        return encryptPassword(newPassword)
-            .then(pass => repo.updatePassword(id, pass))
-    })
+const addEmployee = (employee) => 
+         repo.insertEmployee(employee)
+    
 
 const changeEmployeeRoles = (id, roles) => repo.updateRole(id, roles)
 
@@ -45,16 +35,10 @@ const changeEmployeeRoles = (id, roles) => repo.updateRole(id, roles)
  */
 const removeEmployee = (id) => repo.deleteEmployee(id)
 
-const encryptPassword = (password) =>  bcrypt.hash(password,10)
-
-const confirmPassword = (id, password) => getEmployee(id)
-    .then(employee => bcrypt.compare(password, employee.password))
-
 module.exports = {
     getEmployees,
     getEmployee,
     addEmployee,
-    changeEmployeePassword,
     changeEmployeeRoles,
     removeEmployee
 }
