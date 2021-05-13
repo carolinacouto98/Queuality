@@ -17,6 +17,8 @@ const insert = (col, document) => {
 
 const update = (col, id, object) => db.collection(col).findOneAndUpdate({_id : ObjectId(id)}, { $set : object })
 
+const updateInc = (col, id, object) => db.collection(col).findOneAndUpdate({_id : ObjectId(id)}, object)
+
 const del = (col, id) => db.collection(col).deleteOne({_id : ObjectId(id)})
 
 module.exports = {
@@ -31,9 +33,6 @@ module.exports = {
         catch(e) {
             callback(e)
         }
-        finally {
-            //await client.close()
-        }
     }, 
-    methods: {getAll, get, insert, update, del}
+    methods: {getAll, get, insert, update, updateInc, del}
 }

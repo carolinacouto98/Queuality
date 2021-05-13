@@ -41,8 +41,9 @@ router.get('/api/queues/:queueId/current-ticket', (req, res, next) => {
 //mobile-app
 router.post('/api/tickets', (req, res, next) => {
     const queueName = req.body.queueName
-    service.addWaitingTicket()
-        .then(service.getCurrentTicket(queueName)
+    const queueId = req.body.queueId
+    service.addWaitingTicket(queueId)
+        .then(() => service.getCurrentTicket(queueName, queueId)
             .then(ticket => res.send(
                 siren.toSirenObject(
                     'Tickets',

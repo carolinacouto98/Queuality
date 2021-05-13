@@ -62,25 +62,29 @@ const Queue = Joi.object({
  * @property {String} name
  * @property {Boolean} priority
  * @property {String} subject
+ * @property {Ticket} queueTicket
  */
 
 const QueueInputModel = Joi.object({
     name: Joi.string().required(),
     priority: Joi.boolean().default(false),
-    subject: Joi.string().required()
+    subject: Joi.string().required(),
+    queueTicket: Ticket.default({
+        nrTotalTickets: 0,
+        nrTicketsAnswered: 0,
+        date: new Date().toDateString().replace(/\s/g,'').padEnd(12,'-')
+    })
 })
 
 /**
  * @typedef {Object} QueueUpdateInputModel
  * @property {String} _id
- * @property {String} name
  * @property {Boolean} priority
  * @property {String} subject
  */
 
 const QueueUpdateInputModel = Joi.object({
     _id: Joi.string().required(),
-    name: Joi.string(),
     priority: Joi.boolean(),
     subject: Joi.string()
 })

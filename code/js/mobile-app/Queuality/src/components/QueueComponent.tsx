@@ -12,7 +12,7 @@ interface Queue {
 }
 const QueueComponent: React.FC = () => {
     const { Http } = Plugins
-    const [queues, setQueues] = useState<Queue[]>()
+    const [queues, setQueues] = useState<Queue[]>([])
 
     useEffect( () => {
         async function loadQueues() {
@@ -31,13 +31,13 @@ const QueueComponent: React.FC = () => {
                 .then(data => setQueues(data.properties))
                 .catch(e => console.log(e))
         }
-        if(!queues) loadQueues()
+        if(!queues.length) loadQueues()
         },[queues])
 
     return (  
      <IonGrid>
          <IonRow>
-        {queues!.map((queue: Queue) => (
+        {queues.map((queue: Queue) => (
             <IonCol key={queue._id}>
                 <QueueCard 
                     id ={queue._id} 

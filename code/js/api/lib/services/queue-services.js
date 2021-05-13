@@ -13,7 +13,7 @@ const getQueues = () => repo.getQueues()
  * @param {string} id
  * @returns {Promise<model.Queue>}
  */
-//const getQueue = (id) => repo.getQueue(id)
+const getQueue = (id) => repo.getQueue(id)
 
 /**
  * @param {model.QueueInputModel} queue
@@ -21,7 +21,7 @@ const getQueues = () => repo.getQueues()
  */
 const addQueue = (queue) => 
     getQueues().then(queues => {
-        if (queues.find(q => q.priority)) throw error.CustomException('Cannot have more than one priority queue', error.ALREADY_EXISTS)
+        if (queue.priority && queues.find(q => q.priority)) throw error.CustomException('Cannot have more than one priority queue', error.ALREADY_EXISTS)
         return repo.insertQueue(queue)
     })
     
@@ -34,10 +34,10 @@ const addQueue = (queue) =>
  */
 const updateQueue = (queue) => 
     getQueue(queue._id).then(q => {
-        if (!queue.name) queue.name = q.name
-        if (!queue.priority) queue.priority = q.priority
+        if (queue.priority === undefined) queue.priority = q.priority
         if (!queue.subject) queue.subject = q.subject
-        return repo.updateQueue(queue._id, queue.name, queue.priority, queue.subject)
+        if (queue.priority && queues.find(q => q.priority)) throw error.CustomException('Cannot have more than one priority queue', error.ALREADY_EXISTS)
+        return repo.updateQueue(queue._id, queue.priority, queue.subject)
     })
 
 /**

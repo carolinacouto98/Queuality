@@ -59,10 +59,12 @@ router.post('/api/queues', (req, res, next) => {
 })*/
 
 router.patch('/api/queues/:queueId', (req, res, next) => {
-    const id = req.params.queueId
+    const _id = req.params.queueId
     const priority = req.body.priority
     const subject = req.body.subject
-    service.updateQueue(id, priority, subject)
+    model.QueueUpdateInputModel.validateAsync({_id, priority, subject})
+    .then(queue => 
+    service.updateQueue(queue)
         .then(() => res.send(
             siren.toSirenObject(
                 'Queue', 
@@ -73,7 +75,7 @@ router.patch('/api/queues/:queueId', (req, res, next) => {
                 )
         ))
         .catch(next)
-})
+)})
 
 router.delete('/api/queues/:queueId', (req, res, next) => {
     const id = req.params.queueId

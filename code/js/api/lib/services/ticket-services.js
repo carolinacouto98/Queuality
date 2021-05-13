@@ -9,10 +9,12 @@ const getCurrentQueueTicket = (queueId) => queueRepo.getNumberOfTicketsAnswered(
 
 /**
  * @param {String} queueName
+ * @param {String} queueId
  * @returns {Promise<String>}
  */
-const getCurrentTicket = (queueName) => 
-    queueName+queueRepo.getTotalNumberOfTickets(queueId)
+const getCurrentTicket = (queueName, queueId) => 
+    queueRepo.getTotalNumberOfTickets(queueId)
+        .then(nr => queueName+nr)
 
 /**
  * @returns {Promise<Number>}
@@ -27,27 +29,32 @@ const getWaitingTickets = () => repo
 /**
  * @returns {Promise<Void>}
 */
-const addWaitingTicket = () => {
-    const date = repo.getDate()
-    checkDayChanged(date)
-    repo.updateTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
-}
+const addWaitingTicket = (queueId) => 
+repo.getDate()
+.then(date => {
+    if(date)
+        checkDayChanged(date)
+    return repo.updateTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
+    .then(() => queueRepo.updateTotalNumberOfTickets(queueId))
+})
 /**
  * @returns {Promise<Void>}
  */
 const removeTicket = () => repo
     .decrementTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
-    
 /**
  * @param {String} queueId
  * @returns {Promise<Void>}
  */
-const updateNumberOfTicketsAnswered = (queueId) => {
-    const date = repo.getDate()
-    checkDayChanged(date)
-    repo.updateNumberOfTicketsAnswered(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
-    .then(() => queueRepo.updateNumberOfTicketsAnswered(queueId))
-}
+const updateNumberOfTicketsAnswered = (queueId) => 
+    repo.getDate()
+        .then(date => {
+            if(date)
+                checkDayChanged(date)
+            return repo.updateNumberOfTicketsAnswered(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
+                .then(() => queueRepo.updateNumberOfTicketsAnswered(queueId))
+        })
+    
 function checkDayChanged(date){
     const currentDate = new Date().toDateString().replace(/\s/g,'').padEnd(12,'-')
     if(currentDate!==date) {
