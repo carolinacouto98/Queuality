@@ -41,18 +41,18 @@ router.get('/api/subject-manager/subjects', (req, res, next) =>
 )
 //mobile-app
 router.get('/api/subject-manager/subjects/:subject/desks', (req, res, next) => {
-    const _id = req.params.subject
-    model.id.validateAsync(_id)
-        .then(id => service.getDesk(id)
-        .then(desks => res.send(
-            siren.toSirenObject(
-                'Desks',
-                JSON.stringify(desks),
-                '[]',
-                JSON.stringify(appointmentSiren.getDeskLinks),
-                '[]'
-            )
-        )))
+    const subject = req.params.subject
+    model.id.validateAsync(subject)
+        .then(subject => service.getDesks(subject)
+            .then(desks => res.send(
+                siren.toSirenObject(
+                    'Desks',
+                    JSON.stringify(desks),
+                    '[]',
+                    JSON.stringify(appointmentSiren.getDeskLinks(subject)),
+                    '[]'
+                )
+            )))
         .catch(next)
 })
 
@@ -77,16 +77,17 @@ router.get('/api/subject-manager/subjects/:subject/appointments/:id', (req, res,
     const id = req.params.id
     const subject = req.params.subject
     model.id.validateAsync(subject)
-        .then(_id => model.id.validateAsync(id).then(id => service.getAppointment(_id, id)
-        .then(appointment => res.send(
-            siren.toSirenObject(
-                'Appointment',
-                JSON.stringify(appointment),
-                '[]',
-                JSON.stringify(appointmentSiren.getAppointmentLinks(subject, id)),
-                JSON.stringify([appointmentSiren.deleteAppointmentAction(subject,id), appointmentSiren.updateAppointmentAction(subject,id)])
-            )
-        ))))
+        .then(_id => model.id.validateAsync(id)
+            .then(id => service.getAppointment(_id, id)
+                .then(appointment => res.send(
+                    siren.toSirenObject(
+                        'Appointment',
+                        JSON.stringify(appointment),
+                        '[]',
+                        JSON.stringify(appointmentSiren.getAppointmentLinks(subject, id)),
+                        JSON.stringify([appointmentSiren.deleteAppointmentAction(subject,id), appointmentSiren.updateAppointmentAction(subject,id)])
+                    )
+                ))))
         .catch(next)
 })
 //mobile-app
@@ -95,11 +96,11 @@ router.patch('/api/subject-manager/subjects/:subject/appointments/:id', (req, re
     const subject = req.params.subject
     const appointment = req.body
     model.id.validateAsync(subject)
-        .then(_id => { return { _id: _id, id: model.id.validateAsync(id) } })
-        .then(({_id, id}) => { return {
+        .then(async _id => { return { _id: _id, id: await model.id.validateAsync(id) } })
+        .then(async ({_id, id}) => { return {
             _id: _id,
             id: id,
-            appointment: model.AppointmentInputModel.validateAsync(appointment)
+            appointment: await model.AppointmentInputModel.validateAsync(appointment)
         }})
         .then(({_id, id, appointment}) => service.updateAppointment(_id, id, appointment.date))
         .then(() => res.send(
@@ -155,7 +156,7 @@ router.delete('/api/subject-manager/subjects/:subject/appointments/:id', (req, r
     const id = req.params.id
     const subject = req.params.subject
     model.id.validateAsync(subject)
-        .then(_id => { return { _id: _id, id: model.id.validateAsync(id) } })
+        .then(async _id => { return { _id: _id, id: await model.id.validateAsync(id) } })
         .then(({_id, id}) => service.removeAppointment(_id, id))
         .then(() => res.send(
             siren.toSirenObject(

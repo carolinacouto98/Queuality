@@ -11,8 +11,8 @@ const getQueue = (id) => db.get(collection, id, { projection: { name: 1, subject
     .then( result => {
         if(!result) throw error.CustomException('The given queue does not exist', error.NOT_FOUND)
         return result
-    })    
-      
+    })
+
 const getNumberOfTicketsAnswered = (id) => db.get(collection, id,  { projection: { 'queueTicket' : 1 } })
     .then(res => res.queueTicket.nrTicketsAnswered)
 

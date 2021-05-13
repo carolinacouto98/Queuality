@@ -15,10 +15,10 @@ const getSubjectsInfo = () => repo.getSubjectsInfo()
 const getSubjects = () => repo.getSubjects()
 
 /**
- * @param {String} id SubjectInfo id
+ * @param {String} subject SubjectInfo name
  * @returns {Promise<String>}
  */
-const getDesk = id => repo.getDesk(id)
+const getDesks = subject => repo.getDesks(subject)
 
 
 /**
@@ -34,7 +34,7 @@ const getAppointments = (id) => repo.getAppointments(id)
  * @param {String} id Appointment id
  * @returns {Promise<model.Appointment>}
  */
-const getAppointment = (_id, id) => repo.getAppointment(id)
+const getAppointment = (_id, id) => repo.getAppointment(_id, id)
 
 /**
  * 
@@ -62,7 +62,7 @@ const addAppointment = (_id, date) => repo.insertAppointment(_id, date)
  * @param {Date} date 
  * @returns {Promise<Void>}
  */
-const updateAppointment = (_id, id, date) => repo.updateAppointment(id, date, date)
+const updateAppointment = (_id, id, date) => repo.updateAppointment(_id, id, date)
 
 
 /**
@@ -81,7 +81,7 @@ const removeSubject = _id => repo.deleteSubject(_id)
 module.exports = {
     getSubjectsInfo,
     getSubjects,
-    getDesk,
+    getDesks,
     getAppointments,
     getAppointment,
     addAppointment,

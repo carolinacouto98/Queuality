@@ -30,13 +30,13 @@ const getWaitingTickets = () => repo
  * @returns {Promise<Void>}
 */
 const addWaitingTicket = (queueId) => 
-repo.getDate()
-.then(date => {
-    if(date)
-        checkDayChanged(date)
-    return repo.updateTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
-    .then(() => queueRepo.updateTotalNumberOfTickets(queueId))
-})
+    repo.getDate()
+        .then(date => {
+            if(date)
+                checkDayChanged(date)
+            return repo.updateTotalNumberOfTickets(new Date().toDateString().replace(/\s/g,'').padEnd(12,'-'))
+                .then(() => queueRepo.updateTotalNumberOfTickets(queueId))
+        })
 /**
  * @returns {Promise<Void>}
  */

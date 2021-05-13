@@ -12,13 +12,13 @@ const cors = require('cors')
 
 function run(port, url, dbName) {
     
-   const allowedOrigins = [
+    const allowedOrigins = [
         'capacitor://localhost',
         'ionic://localhost',
         'http://localhost',
         'http://localhost:3000',
         'http://localhost:8100'
-      ];
+    ]
     
     app.use((req, res, next) => {
         res.append('Access-Control-Allow-Origin', ['*'])
@@ -29,22 +29,22 @@ function run(port, url, dbName) {
     
     const corsOptions = {
         origin: (origin, callback) => {
-          if (allowedOrigins.includes(origin) || !origin) {
-            callback(null, true);
-          } else {
-            callback(new Error('Origin not allowed by CORS'));
-          }
+            if (allowedOrigins.includes(origin) || !origin) {
+                callback(null, true)
+            } else {
+                callback(new Error('Origin not allowed by CORS'))
+            }
         }
-      }
-      app.use(cors())
-      
-      // Enable preflight requests for all routes
-      app.options('*', cors(corsOptions));
-      
-      app.get('/', cors(corsOptions), (req, res, next) => {
+    }
+    app.use(cors())
+
+    // Enable preflight requests for all routes
+    app.options('*', cors(corsOptions));
+
+    app.get('/', cors(corsOptions), (req, res, next) => {
         res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
-      })
-      
+    })
+
     app.use(express.json())
     app.use(express.urlencoded({extended: false}))
 
@@ -68,16 +68,23 @@ function run(port, url, dbName) {
             })
     })
 
-    return app.listen(port, () => {
-        console.log(`Server listen on port ${port}`)
-        database.connection(url, dbName, (err) => {
-            if(err) return console.error(err)
+    return database.connection(url, dbName)
+        .then(client => {
+            const server = app.listen(port, () => { console.log(`Server listen on port ${port}`) })
+            return [server, client]
         })
-    })
+        .catch(console.error)
 }
 
-function shutdown(server) {
-    server.close()
+/**
+ * 
+ * @param {import('http').Server} server 
+ */
+function shutdown(server, client) {
+    server.close((err) => {
+        if (err) return console.error(err)
+        client.close()
+    })
 }
 
 module.exports = { run, shutdown }

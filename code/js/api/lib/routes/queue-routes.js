@@ -14,7 +14,7 @@ module.exports = router
 router.get('/api/queues', (req, res, next) => {
     service.getQueues()
         .then(queues => 
-             res.send(
+            res.send(
                 siren.toSirenObject(
                     'Queues', 
                     JSON.stringify(queues), 
@@ -42,13 +42,12 @@ router.post('/api/queues', (req, res, next) => {
                         JSON.stringify(queueSiren.addQueueLinks),
                         ''
                     )
-                )
-            )  
+                ))  
         })
         .catch(next)
 })
 
-/*router.get('/api/queues/:queueId', (req, res, next) => {
+router.get('/api/queues/:queueId', (req, res, next) => {
     const id = req.params.queueId
     model.id.validateAsync(id)
         .then(id =>
@@ -56,26 +55,26 @@ router.post('/api/queues', (req, res, next) => {
                 .then(queue => res.json(queue))
         )
         .catch(next)
-})*/
+})
 
 router.patch('/api/queues/:queueId', (req, res, next) => {
     const _id = req.params.queueId
     const priority = req.body.priority
     const subject = req.body.subject
     model.QueueUpdateInputModel.validateAsync({_id, priority, subject})
-    .then(queue => 
-    service.updateQueue(queue)
-        .then(() => res.send(
-            siren.toSirenObject(
-                'Queue', 
-                '{}', 
-                '[]',
-                JSON.stringify(queueSiren.updateQueueLinks),
-                '[]'
-                )
-        ))
-        .catch(next)
-)})
+        .then(queue => 
+            service.updateQueue(queue)
+                .then(() => res.send(
+                    siren.toSirenObject(
+                        'Queue', 
+                        '{}', 
+                        '[]',
+                        JSON.stringify(queueSiren.updateQueueLinks),
+                        '[]'
+                    )
+                ))
+                .catch(next)
+        )})
 
 router.delete('/api/queues/:queueId', (req, res, next) => {
     const id = req.params.queueId
@@ -87,7 +86,7 @@ router.delete('/api/queues/:queueId', (req, res, next) => {
                 '[]',
                 JSON.stringify(queueSiren.deleteQueueLinks),
                 '[]'
-                )
+            )
         ))
         .catch(next)
 })

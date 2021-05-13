@@ -33,12 +33,15 @@ const addQueue = (queue) =>
  * @returns {Promise<Void>}
  */
 const updateQueue = (queue) => 
-    getQueue(queue._id).then(q => {
-        if (queue.priority === undefined) queue.priority = q.priority
-        if (!queue.subject) queue.subject = q.subject
-        if (queue.priority && queues.find(q => q.priority)) throw error.CustomException('Cannot have more than one priority queue', error.ALREADY_EXISTS)
-        return repo.updateQueue(queue._id, queue.priority, queue.subject)
-    })
+    getQueues().then(queues => 
+        getQueue(queue._id).then(q => {
+            if (queue.priority === undefined) queue.priority = q.priority
+            if (!queue.subject) queue.subject = q.subject
+            if (queue.priority && !q.priority && queues.find(qs =>qs.priority)) 
+                throw error.CustomException('Cannot have more than one priority queue', error.ALREADY_EXISTS)
+            return repo.updateQueue(queue._id, queue.priority, queue.subject)
+        })
+    )
 
 /**
  * @param {String} id 
@@ -48,6 +51,7 @@ const removeQueue = (id) => repo.deleteQueue(id)
 
 module.exports = {
     getQueues,
+    getQueue,
     addQueue,
     updateQueue,
     removeQueue
