@@ -23,7 +23,7 @@ router.get('/api/tickets', (req, res, next) => {
         .catch(next)
 })
 
-router.get('/api/queues/:queueId/current-ticket', (req, res, next) => {
+/*router.get('/api/queues/:queueId/current-ticket', (req, res, next) => {
     const id = req.params.queueId
     service.getCurrentQueueTicket(id)
         .then(ticket => res.send(
@@ -36,7 +36,7 @@ router.get('/api/queues/:queueId/current-ticket', (req, res, next) => {
             )
         ))
         .catch(next)
-})
+})*/
 
 //mobile-app
 router.post('/api/tickets', (req, res, next) => {
@@ -66,21 +66,6 @@ router.put('/api/tickets', (req, res, next) => {
                 '{}',
                 '[]',
                 JSON.stringify(ticketSiren.deleteTicketLinks),
-                '[]'
-            )
-        ))
-        .catch(next)
-})
-
-router.put('/api/queues/:queueId/current-ticket', (req, res, next) => {
-    const queueId = req.params.queueId
-    service.updateNumberOfTicketsAnswered(queueId)
-        .then(() => res.send(
-            siren.toSirenObject(
-                'Current Ticket',
-                '{}',
-                '[]',
-                JSON.stringify(ticketSiren.updateAnsweredTicketsLinks(queueId)),
                 '[]'
             )
         ))
