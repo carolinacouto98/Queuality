@@ -3,6 +3,8 @@
 const express = require('express')
 const error = require('./common/error.js')
 const database = require('./repo/queuality-db.js')
+const { auth } = require('express-openid-connect')
+require('dotenv').config()
 
 const app = express()
 const cors = require('cors')
@@ -20,6 +22,22 @@ function run(port, url, dbName) {
         'http://localhost:8100'
     ]
     
+
+    app.use(
+        auth({
+            issuerBaseURL: process.env.ISSUER_BASE_URL, // eslint-disable-line no-undef
+            baseURL: process.env.BASE_URL,              // eslint-disable-line no-undef
+            clientID: process.env.CLIENT_ID,            // eslint-disable-line no-undef
+            clientSecret: process.env.CLIENT_SECRET,                 // eslint-disable-line no-undef
+            secret: process.env.SECRET,                 // eslint-disable-line no-undef
+            // idpLogout: true, // logout from issuer provider too
+            authorizationParams: {
+                response_type: 'code',
+                scope: 'openid',
+            }
+        })
+    )
+
     app.use((req, res, next) => {
         res.append('Access-Control-Allow-Origin', ['*'])
         res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE')
