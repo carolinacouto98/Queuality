@@ -59,7 +59,8 @@ router.post('/api/tickets', (req, res, next) => {
 
 //mobile-app
 router.put('/api/tickets', (req, res, next) => {
-    service.removeTicket()
+    const ticket = req.body.ticket
+    service.removeTicket(ticket)
         .then(() => res.send(
             siren.toSirenObject(
                 'Tickets',

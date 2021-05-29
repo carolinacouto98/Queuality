@@ -1,7 +1,6 @@
 'use strict'
 
 const repo = require('../repo/employee-repo.js')
-const error = require('../common/error.js')
 // eslint-disable-next-line no-unused-vars
 const model = require('../common/model.js')
 
@@ -20,10 +19,10 @@ const getEmployee = (id) => repo.getEmployee(id)
 /**
  * 
  * @param {model.EmployeeInputModel} employee 
- * @returns {Promise<String>}
+ * @returns {Promise<Object>}
  */
 const addEmployee = (employee) => 
-         repo.insertEmployee(employee)
+    repo.insertEmployee(employee)
     
 
 const changeEmployeeRoles = (id, roles) => repo.updateRole(id, roles)

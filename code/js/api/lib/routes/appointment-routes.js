@@ -6,7 +6,6 @@ const siren = require('../common/siren.js')
 const appointmentSiren = require('./siren/appointment-siren.js')
 
 const Router = require('express').Router
-const Joi = require('joi')
 const router = Router()
 
 module.exports = router
@@ -22,7 +21,7 @@ router.get('/api/subject-manager', (req, res, next) =>
                 '[]'
             )
             
-            ))
+        ))
         .catch(next)
 )
 //mobile-app
@@ -60,16 +59,16 @@ router.get('/api/subject-manager/subjects/:subject/appointments', (req, res, nex
     const _id = req.params.subject
     model.id.validateAsync(_id)
         .then(id => service.getAppointments(id)
-        .then(appointments => res.send(
-            siren.toSirenObject(
-                'Appointments',
-                JSON.stringify(appointments),
-                JSON.stringify(appointmentSiren.setAppointmentsSubEntities(_id,appointments)),
-                JSON.stringify(appointmentSiren.getAppointmentsLinks(_id)),
-                JSON.stringify([appointmentSiren.addAppointmentAction(_id)])
-            )
+            .then(appointments => res.send(
+                siren.toSirenObject(
+                    'Appointments',
+                    JSON.stringify(appointments),
+                    JSON.stringify(appointmentSiren.setAppointmentsSubEntities(_id,appointments)),
+                    JSON.stringify(appointmentSiren.getAppointmentsLinks(_id)),
+                    JSON.stringify([appointmentSiren.addAppointmentAction(_id)])
+                )
 
-        )))
+            )))
         .catch(next)
 })
 //mobile-app
@@ -107,9 +106,9 @@ router.patch('/api/subject-manager/subjects/:subject/appointments/:id', (req, re
             siren.toSirenObject(
                 'Appointment',
                 '{}',
-                '[]',
+                '',
                 JSON.stringify(appointmentSiren.updateAppointmentLinks(subject, id)),
-                '[]'
+                ''
             )
         ))
         .catch(next)
@@ -124,13 +123,13 @@ router.post('/api/subject-manager/subjects/:subject/appointments', (req, res, ne
             appointment: model.AppointmentInputModel.validateAsync(appointment)
         }})
         .then(({_id, appointment}) => service.addAppointment(_id, appointment.date))
-        .then(id => res.status(201).send(
+        .then(appointment => res.status(201).send(
             siren.toSirenObject(
                 'Appointments',
-                '{}',
-                '[]',
-                JSON.stringify(appointmentSiren.addAppointmentLinks(subject, id)),
-                '[]'
+                JSON.stringify(appointment),
+                '',
+                JSON.stringify(appointmentSiren.addAppointmentLinks(subject, appointment._id)),
+                ''
             )
         ))
         .catch(next)
@@ -138,7 +137,7 @@ router.post('/api/subject-manager/subjects/:subject/appointments', (req, res, ne
 
 router.post('/api/subject-manager', (req, res, next) => {
     const subject = req.body
-     model.SubjectInputModel.validateAsync(subject)
+    model.SubjectInputModel.validateAsync(subject)
         .then(subject => service.addSubject(subject))
         .then(() => res.status(201).send(
             siren.toSirenObject(

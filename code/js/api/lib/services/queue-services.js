@@ -1,13 +1,20 @@
 'use strict'
 const repo = require('../repo/queue-repo.js')
+const ticketRepo = require('../repo/ticket-repo.js')
 const error = require('../common/error.js')
+const common = require('./common')
 // eslint-disable-next-line no-unused-vars
 const model = require('../common/model.js')
+
 
 /**
  * @returns {Promise<Array<model.Queue>>}
  */
 const getQueues = () => repo.getQueues()
+    .then(async queues => {
+        await common.resetTicketsInfo(queues[0]?.queueTicket.date)
+        return queues
+    })
 
 /**
  * @param {string} id
@@ -42,17 +49,27 @@ const updateQueue = (queue) =>
             return repo.updateQueue(queue._id, queue.priority, queue.subject)
         })
     )
-
 /**
  * @param {String} id 
  * @returns {Promise<Void>}
  */
 const removeQueue = (id) => repo.deleteQueue(id)
 
+/**
+ * @param {String} queueId
+ * @returns {Promise<Void>}
+ */
+const updateNumberOfTicketsAnswered = queueId => 
+    getQueue(queueId)
+        .then(queue => ticketRepo.updateNumberOfTicketsAnswered(queue.queueTicket.date))
+        .then(() => repo.updateNumberOfTicketsAnswered(queueId))
+    
+
 module.exports = {
     getQueues,
     getQueue,
     addQueue,
     updateQueue,
-    removeQueue
+    removeQueue,
+    updateNumberOfTicketsAnswered
 }

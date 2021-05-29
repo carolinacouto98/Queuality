@@ -41,13 +41,13 @@ router.post('/api/employees', (req, res, next) => {
     const roles = req.body.roles
     model.EmployeeInputModel.validateAsync({name, roles})
         .then(employee => service.addEmployee(employee)
-            .then(id => res.status(201).send(
+            .then(employee => res.status(201).send(
                 siren.toSirenObject(
-                        'Employee', 
-                        '{}', 
-                        '',
-                        JSON.stringify(employeeSiren.addEmployeeLinks(id)),
-                        ''
+                    'Employee', 
+                    JSON.stringify(employee), 
+                    '',
+                    JSON.stringify(employeeSiren.addEmployeeLinks(employee._id)),
+                    ''
                 )
             )))
         .catch(next)
@@ -64,7 +64,7 @@ router.patch('/api/employees/:id', (req, res, next) => {
                 '[]',
                 JSON.stringify(employeeSiren.updateEmployeeLinks(id)),
                 '[]'
-                )
+            )
         ))
         .catch(next)
 })
