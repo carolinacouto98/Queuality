@@ -5,6 +5,7 @@ const model = require('../common/model.js')
 const siren = require('../common/siren.js')
 const queueSiren = require('./siren/queue-siren.js')
 const ticketSiren = require('./siren/ticket-siren.js')
+const tickets = require('../services/common.js').ticketsList
 
 
 const Router = require('express').Router
@@ -100,7 +101,7 @@ router.put('/api/queues/:queueId/current-ticket', (req, res, next) => {
         .then(() => res.send(
             siren.toSirenObject(
                 'Current Ticket',
-                '{}',
+                JSON.stringify(tickets.shift()),
                 '[]',
                 JSON.stringify(ticketSiren.updateAnsweredTicketsLinks(queueId)),
                 '[]'

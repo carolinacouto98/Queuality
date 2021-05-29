@@ -7,7 +7,7 @@ const collection = 'queue'
 
 const getQueues = () => db.getAll(collection)
 
-const getQueue = (id) => db.get(collection, id, { projection: { name: 1, subject: 1, priority: 1}})
+const getQueue = (id) => db.get(collection, id, { projection: { name: 1, subject: 1, priority: 1, queueTicket: 1}})
     .then( result => {
         if(!result) throw error.CustomException('The given queue does not exist', error.NOT_FOUND)
         return result
@@ -27,7 +27,8 @@ const updateQueue = (id, priority, subject) =>
             if(!result) throw error.CustomException('The given queue does not exist', error.NOT_FOUND)
         })
 
-const updateNumberOfTicketsAnswered = (id) => db.updateInc(collection, id, { $inc : { 'nrTicketsAnswered' : 1 } })
+const updateNumberOfTicketsAnswered = (id) => db.updateInc(collection, id, { $inc : { 'queueTicket.nrTicketsAnswered' : 1 } })
+    .then(queue => queue.name + queue.queueTicket.nrTicketsAnswered)
 
 const deleteQueue = (id) => db.del(collection, id)
     .then(result => {
@@ -36,7 +37,13 @@ const deleteQueue = (id) => db.del(collection, id)
 
 const resetQueueTicket = (id, date) => db.update(collection, id,{queueTicket: {nrTicketsAnswered: 0, nrTotalTickets: 0, date: date}})
 
-const updateTotalNumberOfTickets = (id) => db.updateInc(collection, id, { $inc :{'queueTicket.nrTotalTickets': 1} })
+const updateTotalNumberOfTickets =(id) => db.updateInc(collection, id, { $inc :{'queueTicket.nrTotalTickets': 1} })
+    .then(queue => {
+        return {
+            ticket: queue.name + queue.queueTicket.nrTotalTickets,
+            priority: queue.priority
+        }
+    })
 
 module.exports = {
     getQueues,
