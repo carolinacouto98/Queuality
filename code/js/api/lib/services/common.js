@@ -5,7 +5,7 @@ const queueRepo = require('../repo/queue-repo.js')
 const ticketsList = [] 
 
 async function resetTicketsInfo(date){
-    const currentDate = new Date().toDateString().replace(/\s/g,'').padEnd(12,'-')
+    const currentDate = new Date().toDateString()
     if(date && currentDate !== date) {
         await repo.deleteTicketInfo(date)
         await repo.resetTickets(date)

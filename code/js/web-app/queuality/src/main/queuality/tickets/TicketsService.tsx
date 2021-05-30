@@ -1,21 +1,17 @@
 import { QueueTicket } from "./ticketsModel"
 
 export interface TicketsService {
-    getQueueTickets: () => Promise<QueueTicket[]>
+    getTickets: () => Promise<QueueTicket[]>
     setNextTicket: (queueId: string) => Promise<QueueTicket>
 }
 
 export function getTicketsService(): TicketsService {
     return {
-        getQueueTickets: async (): Promise<QueueTicket[]> => {
-            const fetchRes = await fetch('http://localhost:5000/api/queues')
-            const res = await fetchRes.json()
-            return res.properties.map((item: {
-                nrTicketsAnswered: number; queueTicket?: { nrTicketsAnswered: number} ; priority?: boolean
-            }) => {
-                item.nrTicketsAnswered = item.queueTicket!!.nrTicketsAnswered
-                return item
-            })
+        getTickets: async (): Promise<QueueTicket[]> => {
+            return fetch('http://localhost:5000/api/tickets')
+                .then(res => res.json())
+                .then(tickets => tickets.properties.slice(0, 5))
+                .catch(err => console.log(err))
         },
 
         setNextTicket: async (queueId: string): Promise<QueueTicket> => {

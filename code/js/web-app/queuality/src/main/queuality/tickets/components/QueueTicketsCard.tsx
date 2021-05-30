@@ -6,6 +6,7 @@ export interface QueueTicketCardProps {
     ticket: QueueTicket
     addTicket?: (queueId: string) => void
 }
+
 export function QueueTicketCard(props: QueueTicketCardProps) {
 
     const handleTicketIncrement = (queueId: string) => {
@@ -16,13 +17,13 @@ export function QueueTicketCard(props: QueueTicketCardProps) {
     return(        
         <Card>
             <Card.Content>
-                <Card.Header>{props.ticket.name}{props.ticket.nrTicketsAnswered}</Card.Header>
+                {/* <Card.Header>{props.ticket.name}{props.ticket.nrTicketsAnswered}</Card.Header> */}
                 <Card.Meta>{props.ticket.subject}</Card.Meta>
             </Card.Content>
             <Card.Content extra>
-                <Button style={{color: 'white', backgroundColor: '#85C1E9'}} onClick={() => handleTicketIncrement(props.ticket._id)}>
+                {/* <Button style={{color: 'white', backgroundColor: '#85C1E9'}} onClick={() => handleTicketIncrement(props.ticket._id)}> */}
                     Next
-                </Button>
+                {/* </Button> */}
             </Card.Content>
         </Card>
     )       

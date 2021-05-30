@@ -5,6 +5,7 @@ import { TicketsService } from './TicketsService'
 import { QueueTicketCard } from './components/QueueTicketsCard';
 import { NewQueueTicketsCard } from './components/NewQueueTicketsCard';
 import { Link } from 'react-router-dom';
+import { CurrentTicketCard } from './components/CurrentTicketCard';
 
 export namespace TicketsControl {
 
@@ -16,26 +17,26 @@ export namespace TicketsControl {
 
     export function Page(props: PageProps) {
 
-        const [queueTickets, setQueueTickets] = useState<QueueTicket[]>([])
+        const [tickets, setTickets] = useState<QueueTicket[]>([])
 
         
             useEffect(() => {
                 const ac = new AbortController();
-                props.ticketsService.getQueueTickets()
+                props.ticketsService.getTickets()
                     .then(items => {
-                            setQueueTickets(items)
+                        setTickets(items)
                     })
                 return () => ac.abort()
-            }, [props.ticketsService, queueTickets])
+            }, [props.ticketsService, tickets])
         
 
         async function handleTicketNumberChange(queueId: string) : Promise<void> {
-            if(queueTickets) {
+            if(tickets) {
                 await props.ticketsService.setNextTicket(queueId)
                     .then(res => {
-                        const newQueueTicketArr = queueTickets
+                        const newQueueTicketArr = tickets
                         newQueueTicketArr.push(res)
-                        setQueueTickets(newQueueTicketArr)
+                        setTickets(newQueueTicketArr)
                     })
             }
         }
@@ -44,7 +45,7 @@ export namespace TicketsControl {
             <>
                 <PageHeader />
                 <PageBody 
-                    tickets = {queueTickets} 
+                    tickets = {tickets} 
                     addTicket = {handleTicketNumberChange} 
                 />
             </>
@@ -62,9 +63,9 @@ export namespace TicketsControl {
                     </Breadcrumb>
                 </div>
                 <div>
-                    <Header as='h2' icon textAlign='center' style={{marginTop: '2%', color: '#85C1E9'}}>
-                    <Icon name='ticket' circular />
-                    <Header.Content>Tickets</Header.Content>
+                    <Header as='h2' icon textAlign='center' style={{ color: '#AFE5D1'}}>
+                        <Icon style={{ backgroundColor: '#808283'}} name='ticket' circular />
+                    <Header.Content style={{ color: '#808283'}} >Tickets</Header.Content>
                     </Header>
                 </div>
             </>
@@ -72,14 +73,18 @@ export namespace TicketsControl {
     }
 
     type TicketProps = {
-        tickets?: QueueTicket[]
+        tickets: QueueTicket[]
         addTicket?: (queueId: string) => void
     }
 
     function PageBody(props: TicketProps) {
         return (
-            <Card.Group style={{marginLeft: '5%'}}>
-                {props.tickets ?
+            props.tickets && props.tickets.length ?
+                <Card.Group>
+                    <CurrentTicketCard ticket = {props.tickets[0]}/>
+                </Card.Group>
+            : null
+                /* {props.tickets ?
                     <>
                         {props.tickets.map( (item, index) => 
                             <QueueTicketCard key={index} ticket={item} addTicket={props.addTicket}/>
@@ -87,9 +92,7 @@ export namespace TicketsControl {
                         <NewQueueTicketsCard />
                     </>
                     : null
-                }
-               
-            </Card.Group>
+                } */
         )
     }
 }

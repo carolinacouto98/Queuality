@@ -14,10 +14,12 @@ const get = (col, id, projection) => db.collection(col).findOne({_id: id}, proje
 
 const insert = (col, document) =>
     db.collection(col).findOneAndUpdate(document, { $set : document }, { returnOriginal: false, upsert: true })
+        .then(res => res.value)
 
-const update = (col, id, object) => db.collection(col).findOneAndUpdate({_id : id}, { $set : object })
+const update = (col, id, object) => db.collection(col).findOneAndUpdate({_id : id}, { $set : object }, {returnOriginal: false })
+    .then(res => res.value)
 
-const updateInc = (col, id, object) => db.collection(col).findOneAndUpdate({_id : id}, object,  { returnOriginal : false })
+const updateInc = (col, id, object) => db.collection(col).findOneAndUpdate({_id : id}, object,  { returnOriginal: false, upsert: true })
     .then(res => res.value)
 
 const del = (col, id) => db.collection(col).deleteOne({_id : id})

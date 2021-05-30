@@ -6,6 +6,7 @@ const getWaitingTicketsLinks = [siren.selfLink('/api/tickets')]
 const addTicketLinks = [siren.selfLink('/api/tickets')]
 const deleteTicketLinks = [siren.selfLink('/api/tickets')]
 const updateAnsweredTicketsLinks = (queueId) => [siren.selfLink(`/api/queues/${queueId}/current-ticket`)]
+const getTicketsLinks = [siren.selfLink('/api/tickets'), siren.SirenLink('ticket-queues', '/api/queues')]
 
 function addTicketAction(){
     return siren.SirenAction(
@@ -40,10 +41,11 @@ function updateAnsweredTicketsAction(queueId){
 module.exports = {
     getCurrentQueueTicketLinks,
     getWaitingTicketsLinks,
-    addTicketLinks,
+    addTicketLinks,    
+    updateAnsweredTicketsLinks,    
+    deleteTicketLinks,
+    getTicketsLinks,
     addTicketAction,
     updateAnsweredTicketsAction,
-    updateAnsweredTicketsLinks,
-    deleteTicketLinks,
     deleteTicketAction
 }
