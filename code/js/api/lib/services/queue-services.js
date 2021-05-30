@@ -1,4 +1,5 @@
 'use strict'
+
 const repo = require('../repo/queue-repo.js')
 const ticketRepo = require('../repo/ticket-repo.js')
 const error = require('../common/error.js')
@@ -30,9 +31,7 @@ const addQueue = (queue) =>
     getQueues().then(queues => {
         if (queue.priority && queues.find(q => q.priority)) throw error.CustomException('Cannot have more than one priority queue', error.ALREADY_EXISTS)
         return repo.insertQueue(queue)
-    })
-    
-
+    })  
 
 /**
  * Updates the queue with the given id. Only changes the given properties.

@@ -29,7 +29,7 @@ router.get('/api/employees/:id', (req, res, next) => {
         .then(employee => res.send(siren.toSirenObject(
             'Employee',
             JSON.stringify(employee),
-            '[]',
+            '',
             JSON.stringify(employeeSiren.getEmployeeLinks(id)),
             JSON.stringify([employeeSiren.updateEmployeeAction(id), employeeSiren.deleteEmployeeAction()])
         )))
@@ -61,9 +61,9 @@ router.patch('/api/employees/:id', (req, res, next) => {
             siren.toSirenObject(
                 'Employee', 
                 '{}', 
-                '[]',
+                '',
                 JSON.stringify(employeeSiren.updateEmployeeLinks(id)),
-                '[]'
+                ''
             )
         ))
         .catch(next)
@@ -78,9 +78,9 @@ router.delete('/api/employees/:id', (req, res, next) => {
                     siren.toSirenObject(
                         'Employee', 
                         '{}', 
-                        '[]',
+                        '',
                         JSON.stringify(employeeSiren.deleteEmployeeLinks),
-                        '[]'
+                        ''
                     )
                 ))
         })

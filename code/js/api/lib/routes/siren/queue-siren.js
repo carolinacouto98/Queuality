@@ -7,7 +7,7 @@ const updateQueueLinks = [siren.selfLink('/api/queues')]
 const deleteQueueLinks = [siren.selfLink('/api/queues')]
 
 function addQueueAction () {
-   return siren.SirenAction(
+    return siren.SirenAction(
         'add-queue',
         'Add a Queue',
         'POST',
@@ -23,8 +23,8 @@ function addQueueAction () {
 function updateQueueAction (queueId) {
     return siren.SirenAction(
         'update-queue',
-         'Update a Queue',
-         'PATCH',
+        'Update a Queue',
+        'PATCH',
         `/api/queues/${queueId}`,
         JSON.stringify([
             siren.addField('priority', 'boolean'),
@@ -34,7 +34,7 @@ function updateQueueAction (queueId) {
 } 
 
 function deleteQueueAction (queueId) {
-   return siren.SirenAction(
+    return siren.SirenAction(
         'delete-queue',
         'Delete a Queue',
         'DELETE',

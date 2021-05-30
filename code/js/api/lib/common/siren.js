@@ -16,7 +16,7 @@ const SirenAction = (name, title, method, href, fields) =>{
         "method" : "${method}",
         "href": "${href}",
         "type": "${SirenMediaType}"
-        ${fields? `,"fields": ${fields}` : ""}
+        ${fields? `,"fields": ${fields}` : ''}
     }`
     return JSON.parse(json)
 }
@@ -44,9 +44,9 @@ function toSirenObject (classes, properties, entities, links, actions) {
  * @param {String} uri
  * @returns {SirenLink}
  */
- const selfLink = (uri) => SirenLink('self', uri)
+const selfLink = (uri) => SirenLink('self', uri)
 
- function addField(name, type){
+function addField(name, type){
     return JSON.parse(`{
         "name": "${name}",
         "type": "${type}"
@@ -55,7 +55,7 @@ function toSirenObject (classes, properties, entities, links, actions) {
 } 
 
 function addSubEntity(classes, rel, properties, links, actions, title){
-   const json = `{
+    const json = `{
         "rel": ["${rel}"],
         "properties": ${properties},
         "class": ["${classes}"],
