@@ -9,23 +9,21 @@ const getNumberOfTicketsAnswered = (id) => db.get(collection, id,  { projection:
 
 const updateTotalNumberOfTickets = (id) => db.updateInc(collection, id, { $inc : { 'nrTotalTickets' : 1 } })
 
-const updateNumberOfTicketsAnswered = (id) => db.updateInc(collection, id, { $inc : { 'nrTicketsAnswered' : 1 } })
+const updateNumberOfTicketsAnswered = (id) => db.updateInc(collection, id, { $inc : { 'nrTicketsAnswered' : 1 }})
 
 const decrementTotalNumberOfTickets = (id) => db.updateInc(collection, id, { $inc : { 'nrTotalTickets' : -1 } })
 
 const deleteTicketInfo = (id) => db.del(collection, id)
 
-const resetTickets = (id) => db.update(collection, id,{nrTicketsAnswered: 0, nrTotalTickets: 0})
+const resetTickets = (id) => db.update(collection, id,{ 'nrTicketsAnswered': 0, 'nrTotalTickets': 0 })
 
 const getDate = () => db.getAll(collection)
     .then(tickets => {
-        if(tickets)
-            return tickets[0]
+        if(tickets.length)
+            return tickets[0]._id
+        return null
     })
-    .then(ticket => {
-        if(ticket)
-            return ticket._id
-    })
+
 module.exports = {
     getDate,
     getTotalNumberOfTickets,

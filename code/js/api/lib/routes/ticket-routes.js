@@ -9,15 +9,29 @@ const router = Router()
 
 module.exports = router
 
-router.get('/api/tickets', (req, res, next) => {
+router.get('/api/tickets/waiting-tickets', (req, res, next) => {
     service.getWaitingTickets()
         .then((tickets)=> res.send(
             siren.toSirenObject(
                 'Tickets',
                 JSON.stringify(tickets),
-                '[]',
+                '',
                 JSON.stringify(ticketSiren.getWaitingTicketsLinks),
                 JSON.stringify([ticketSiren.addTicketAction(), ticketSiren.deleteTicketAction()])
+            )
+        ))
+        .catch(next)
+})
+
+router.get('/api/tickets', (req, res, next) => {
+    service.getTicketsList()
+        .then(tickets => res.send(
+            siren.toSirenObject(
+                'Tickets',
+                JSON.stringify(tickets),
+                '',
+                JSON.stringify(ticketSiren.getTicketsLinks),
+                JSON.stringify(ticketSiren.updateAnsweredTicketsAction())
             )
         ))
         .catch(next)
@@ -40,33 +54,31 @@ router.get('/api/tickets', (req, res, next) => {
 
 //mobile-app
 router.post('/api/tickets', (req, res, next) => {
-    const queueName = req.body.queueName
     const queueId = req.body.queueId
     service.addWaitingTicket(queueId)
-        .then(() => service.getCurrentTicket(queueName, queueId)
-            .then(ticket => res.send(
-                siren.toSirenObject(
-                    'Tickets',
-                    JSON.stringify(ticket),
-                    '[]',
-                    JSON.stringify(ticketSiren.addTicketLinks),
-                    '[]'
-                )
-            ))
-        )
+        .then(ticket => res.send(
+            siren.toSirenObject(
+                'Tickets',
+                JSON.stringify(ticket),
+                '',
+                JSON.stringify(ticketSiren.addTicketLinks),
+                ''
+            )
+        ))
         .catch(next)
 })
 
 //mobile-app
 router.put('/api/tickets', (req, res, next) => {
-    service.removeTicket()
+    const ticket = req.body.ticket
+    service.removeTicket(ticket)
         .then(() => res.send(
             siren.toSirenObject(
                 'Tickets',
                 '{}',
-                '[]',
+                '',
                 JSON.stringify(ticketSiren.deleteTicketLinks),
-                '[]'
+                ''
             )
         ))
         .catch(next)

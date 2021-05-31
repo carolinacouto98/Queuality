@@ -3,7 +3,6 @@
 let db
 
 const MongoClient = require('mongodb').MongoClient
-const ObjectId = require('mongodb').ObjectId
 
 const getAll = (col, key, projection) => {
     if (!key || !projection)
@@ -11,19 +10,19 @@ const getAll = (col, key, projection) => {
     return db.collection(col).find(key, projection).toArray()
 }
 
-const get = (col, id, projection) => db.collection(col).findOne({_id : ObjectId(id)}, projection)
+const get = (col, id, projection) => db.collection(col).findOne({_id: id}, projection)
 
-const insert = (col, document) => {
-    return db.collection(col).findOneAndUpdate(document, { $set : document }, { upsert : true, returnNewDocument : true })
-        .then(result => 
-            result.lastErrorObject.upserted)
-}
+const insert = (col, document) =>
+    db.collection(col).findOneAndUpdate(document, { $set : document }, { returnOriginal: false, upsert: true })
+        .then(res => res.value)
 
-const update = (col, id, object) => db.collection(col).findOneAndUpdate({_id : ObjectId(id)}, { $set : object })
+const update = (col, id, object) => db.collection(col).findOneAndUpdate({_id : id}, { $set : object }, {returnOriginal: false })
+    .then(res => res.value)
 
-const updateInc = (col, id, object) => db.collection(col).findOneAndUpdate({_id : ObjectId(id)}, object)
+const updateInc = (col, id, object) => db.collection(col).findOneAndUpdate({_id : id}, object,  { returnOriginal: false, upsert: true })
+    .then(res => res.value)
 
-const del = (col, id) => db.collection(col).deleteOne({_id : ObjectId(id)})
+const del = (col, id) => db.collection(col).deleteOne({_id : id})
 
 module.exports = {
     connection: async (url, dbName) => {
