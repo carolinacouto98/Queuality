@@ -8,8 +8,7 @@ require('dotenv').config()
 
 const app = express()
 const cors = require('cors')
-
-
+const { default: jwtDecode } = require('jwt-decode')
 
 
 function run(port, url, dbName) {
@@ -28,12 +27,11 @@ function run(port, url, dbName) {
             issuerBaseURL: process.env.ISSUER_BASE_URL, // eslint-disable-line no-undef
             baseURL: process.env.BASE_URL,              // eslint-disable-line no-undef
             clientID: process.env.CLIENT_ID,            // eslint-disable-line no-undef
-            clientSecret: process.env.CLIENT_SECRET,                 // eslint-disable-line no-undef
             secret: process.env.SECRET,                 // eslint-disable-line no-undef
-            // idpLogout: true, // logout from issuer provider too
+            authRequired: false,
             authorizationParams: {
                 response_type: 'code',
-                scope: 'openid',
+                scope: 'openid profile email',
             }
         })
     )
@@ -57,10 +55,10 @@ function run(port, url, dbName) {
     app.use(cors())
 
     // Enable preflight requests for all routes
-    app.options('*', cors(corsOptions));
+    app.options('*', cors(corsOptions))
 
     app.get('/', cors(corsOptions), (req, res, next) => {
-        res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
+        res.json({ message: 'This route is CORS-enabled for an allowed origin.' })
     })
 
     app.use(express.json())
