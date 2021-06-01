@@ -27,12 +27,7 @@ const getCurrentTicket = (queueId) =>
 /**
  * @returns {Promise<Number>}
  */
-const getWaitingTickets = () => repo
-    .getTotalNumberOfTickets(getDate())
-    .then(res => repo
-        .getNumberOfTicketsAnswered(getDate())
-        .then(result => res - result)
-    )
+const getWaitingTickets = () => Promise.resolve(common.ticketsList.length)
 
 /**
  * @returns {Promise<Void>}
