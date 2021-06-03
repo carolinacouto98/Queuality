@@ -96,12 +96,14 @@ router.delete('/api/queues/:queueId', (req, res, next) => {
 router.put('/api/queues/:queueId/current-ticket', (req, res, next) => {
     const queueId = req.params.queueId
     service.updateNumberOfTicketsAnswered(queueId)
-        .then(() => { 
-            tickets.shift()
-            res.send(
+        .then(nrOfTicketsAnswered => { 
+            let removedTicket
+            if(nrOfTicketsAnswered > 0)
+                removedTicket = tickets.shift()
+            return res.send(
                 siren.toSirenObject(
                     'Current Ticket',
-                    JSON.stringify(tickets),
+                    JSON.stringify(removedTicket),
                     '',
                     JSON.stringify(ticketSiren.updateAnsweredTicketsLinks(queueId)),
                     ''

@@ -19,5 +19,8 @@
   },
   "android": {
     "allowMixedContent": true
+  },
+  "ios": {
+    "contentInset": "always"
   }
 }
