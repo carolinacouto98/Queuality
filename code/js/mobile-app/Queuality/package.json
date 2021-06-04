@@ -10,6 +10,7 @@
     "@ionic-native/android-permissions": "^5.32.1",
     "@ionic/react": "^5.5.0",
     "@ionic/react-router": "^5.5.0",
+    "@ionic/storage": "^3.0.4",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.6.3",
@@ -66,7 +67,11 @@
     ]
   },
   "devDependencies": {
-    "@capacitor/cli": "^2.4.7"
+    "@capacitor/cli": "^2.4.7",
+    "@typescript-eslint/eslint-plugin": "^4.25.0",
+    "@typescript-eslint/parser": "^4.25.0",
+    "eslint": "^7.27.0",
+    "eslint-plugin-react": "^7.24.0"
   },
   "description": "An Ionic project"
 }

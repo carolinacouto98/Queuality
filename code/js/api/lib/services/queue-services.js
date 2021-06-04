@@ -56,7 +56,7 @@ const removeQueue = (id) => repo.deleteQueue(id)
 
 /**
  * @param {String} queueId
- * @returns {Promise<Void>}
+ * @returns {Promise<number>}
  */
 const updateNumberOfTicketsAnswered = queueId => 
     getQueue(queueId)
