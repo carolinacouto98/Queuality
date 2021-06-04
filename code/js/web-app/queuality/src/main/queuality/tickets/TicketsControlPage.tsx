@@ -6,6 +6,7 @@ import { QueueTicketCard } from './components/QueueTicketsCard';
 import { NewQueueTicketsCard } from './components/NewQueueTicketsCard';
 import { Link } from 'react-router-dom';
 import { CurrentTicketCard } from './components/CurrentTicketCard';
+import { NextTicketsCard } from './components/NextTicketsCards'
 
 export namespace TicketsControl {
 
@@ -18,16 +19,16 @@ export namespace TicketsControl {
     export function Page(props: PageProps) {
 
         const [tickets, setTickets] = useState<QueueTicket[]>([])
-
+        const [currentTicket, setCurrentTicket] = useState<QueueTicket>()
         
             useEffect(() => {
-                const ac = new AbortController();
                 props.ticketsService.getTickets()
                     .then(items => {
+                        setCurrentTicket(items[0])
+                        items.splice(0, 1)
                         setTickets(items)
                     })
-                return () => ac.abort()
-            }, [props.ticketsService, tickets])
+            }, [props.ticketsService, tickets, currentTicket])
         
 
         async function handleTicketNumberChange(queueId: string) : Promise<void> {
@@ -45,6 +46,7 @@ export namespace TicketsControl {
             <>
                 <PageHeader />
                 <PageBody 
+                    currentTicket = {currentTicket}
                     tickets = {tickets} 
                     addTicket = {handleTicketNumberChange} 
                 />
@@ -73,26 +75,22 @@ export namespace TicketsControl {
     }
 
     type TicketProps = {
+        currentTicket?: QueueTicket
         tickets: QueueTicket[]
         addTicket?: (queueId: string) => void
     }
 
     function PageBody(props: TicketProps) {
         return (
-            props.tickets && props.tickets.length ?
-                <Card.Group>
-                    <CurrentTicketCard ticket = {props.tickets[0]}/>
-                </Card.Group>
+            props.currentTicket && props.tickets ?
+                <>
+                    <CurrentTicketCard ticket={props.currentTicket}/>
+                    {props.tickets.map((item, index) => 
+                        <NextTicketsCard key={index} ticket={item}/>
+                    )}
+                    <NewQueueTicketsCard />
+                </>
             : null
-                /* {props.tickets ?
-                    <>
-                        {props.tickets.map( (item, index) => 
-                            <QueueTicketCard key={index} ticket={item} addTicket={props.addTicket}/>
-                        )}          
-                        <NewQueueTicketsCard />
-                    </>
-                    : null
-                } */
         )
     }
 }

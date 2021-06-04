@@ -27,12 +27,7 @@ const getCurrentTicket = (queueId) =>
 /**
  * @returns {Promise<Number>}
  */
-const getWaitingTickets = () => repo
-    .getTotalNumberOfTickets(getDate())
-    .then(res => repo
-        .getNumberOfTicketsAnswered(getDate())
-        .then(result => res - result)
-    )
+const getWaitingTickets = () => Promise.resolve(common.ticketsList.length)
 
 /**
  * @returns {Promise<Void>}
@@ -54,8 +49,8 @@ const addWaitingTicket = queueId => repo.updateTotalNumberOfTickets(getDate())
 const removeTicket = ticket => repo
     .decrementTotalNumberOfTickets(getDate())
     .then(() => {
-        const idx = common.ticketsList.findIndex(item => item === ticket)
-        common.ticketsList.splice(idx, 1, ticket)
+        const idx = common.ticketsList.findIndex(item => item.ticketNumber === ticket)
+        common.ticketsList.splice(idx, 1)
     })
     
 

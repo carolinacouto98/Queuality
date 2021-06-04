@@ -31,7 +31,7 @@ const updateQueue = (id, priority, subject) =>
         })
 
 const updateNumberOfTicketsAnswered = (id) => db.updateInc(collection, ObjectId(id), { $inc : { 'queueTicket.nrTicketsAnswered' : 1 } })
-    .then(queue => queue._id + queue.queueTicket.nrTicketsAnswered)
+    .then(queue => queue.queueTicket.nrTicketsAnswered)
 
 const deleteQueue = (id) => db.del(collection, ObjectId(id))
     .then(result => {
