@@ -1,0 +1,80 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{graphicx}
+
+\renewcommand{\contentsname}{Index}
+
+\title{
+    \textbf{Licenciatura em Engenharia Informática e de Computadores} \vspace{5mm} \\
+    \textbf{Queuality} \\ 
+    Sistema de Gestão de Filas de Espera
+}
+\author{
+    Joana Campos, A44792 \href{mailto:a44792@alunos.isel.pt}{a44792@alunos.isel.pt} 
+    \and Nuno Cardeal, A44863 \href{mailto:a44863@alunos.isel.pt}{a44863@alunos.isel.pt}
+    \and Carolina Couto, A44871 \href{mailto:a44871@alunos.isel.pt}{a44871@alunos.isel.pt} \\
+    \\
+    \textbf{Orientador:} Paulo Pereira \href{mailto:paulo.pereira@isel.pt}{paulo.pereira@isel.pt}
+}
+
+\begin{document}
+\maketitle
+\pagebreak
+\tableofcontents
+
+\pagebreak
+\section{Introdução}
+Numa sociedade onde existe cada vez mais adesão a multitasking, estar preso numa fila de espera,
+parado sem fazer nada, pode ser considerado uma perda de tempo. Tempo esse que poderia ser usado
+para trabalhar ou para “ir beber um café”. Principalmente nestes tempos de pandemia estar em contacto
+com outras pessoas deve ser evitado.
+
+Para contornar esta situação, uma solução viável seria um sistema de gestão de filas de espera que,
+assumindo que o cliente se encontra próximo do local onde espera ser servido, o notifica quando estiver
+próximo da sua vez, evitando assim que o cliente tenha de estar presencialmente na fila, podendo ir
+fazer outras coisas enquanto aguarda, melhorando assim a sua “qualidade de vida”.
+
+Neste projeto pretende-se criar um sistema de gestão de filas de espera. O sistema incluirá a
+autenticação dos funcionários para que possam realizar a gestão das diferentes filas. Terá ainda de
+admitir a existência de pelo menos um administrador que estará encarregue de editar as filas de espera.
+Os clientes terão a possibilidade de verem a senha atual de todas as filas, o número de senhas à sua
+frente, retirar uma senha ou fazer marcação, e ainda, serão notificados quando a sua vez estiver próxima. 
+
+\pagebreak
+\section{Caracterização da Solução}
+A solução deste projeto dividir-se-á em quatro partes, uma base de dados que irá guardar a
+informação de cada utilizador, uma web API, uma aplicação web dirigida para os funcionários do
+serviço e uma aplicação móvel dirigida para os clientes. 
+
+A Web API divide-se em duas partes, a implementação das funcionalidades da aplicação e o
+contrato público que disponibiliza as mesmas para as aplicações clientes. Como é possível ver na figura
+1 a Web API será o elo de ligação entre as funcionalidades da nossa solução e a aplicação de cliente e
+web. A implementação das funcionalidades irá ainda comunicar com a base de dados.
+
+A aplicação web será destinada aos funcionários, sejam eles os que realizam o atendimento aos
+clientes ou os que administram o sistema. Estes dois papéis são distintos uma vez que o primeiro estará
+encarregue de avançar na fila de espera, e o último terá permissões para alterar o sistema das mesmas.
+
+Para os clientes será disponibilizada uma aplicação móvel que permitirá obter a senha, conhecer
+quantas senhas se encontram à sua frente, assim como receber notificações quando faltar um
+determinado número de senhas para a sua vez.
+
+\pagebreak
+\section{Requisitos Funcionais}
+\subsection{Aplicação Web}
+\subsection{Aplicação Móvel}
+
+\pagebreak
+\section{Requisitos Não Funcionais}
+Para a solução deste projeto os recursos serão alocados numa base de dados não relacional, para dar
+oportunidade ao aprofundamento dos conhecimentos sobre a mesma. Esta base de dados irá guardar os
+utilizadores autenticados e as suas respetivas funções. Cada utilizador anónimo terá uma base de dados
+local que guardará marcações e/ou senhas juntamente com a informação adicional que for necessária
+no decorrer do projeto.
+Tenciona-se realizar deployment na cloud de modo que o projeto tenha oportunidade de ser
+distribuído a potenciais interessados. Terá a possibilidade de receber relatórios de análise de forma a
+ser possível monitorizar os potenciais problemas que possam vir a ocorrer no sistema.
+
+
+\end{document}
