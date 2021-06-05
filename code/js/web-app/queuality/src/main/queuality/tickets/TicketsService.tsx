@@ -2,7 +2,7 @@ import { QueueTicket } from "./ticketsModel"
 
 export interface TicketsService {
     getTickets: () => Promise<QueueTicket[]>
-    setNextTicket: (queueId: string) => Promise<QueueTicket>
+    setNextTicket: (queueId: string) => Promise<QueueTicket[]>
 }
 
 export function getTicketsService(): TicketsService {
@@ -14,7 +14,7 @@ export function getTicketsService(): TicketsService {
                 .catch(err => console.log(err))
         },
 
-        setNextTicket: async (queueId: string): Promise<QueueTicket> => {
+        setNextTicket: async (queueId: string): Promise<QueueTicket[]> => {
             const fetchRes = await fetch(`http://localhost:5000/api/queues/${queueId}/current-ticket`,
                 {
                     method: 'PUT',
@@ -23,7 +23,7 @@ export function getTicketsService(): TicketsService {
                     }
                 })
             const res = await fetchRes.json()
-            return res.properties.queueTicket.nrTicketsAnswered
+            return res.properties
         }
     }
 }

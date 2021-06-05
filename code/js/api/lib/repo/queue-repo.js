@@ -38,7 +38,7 @@ const deleteQueue = (id) => db.del(collection, ObjectId(id))
         if(!result) throw error.CustomException('The given queue does not exist', error.NOT_FOUND)
     })
 
-const resetQueueTicket = (id, date) => db.update(collection, ObjectId(id),{queueTicket: { nrTicketsAnswered: 0, nrTotalTickets: 0, date: date }})
+const resetQueueTicket = (id, date) => db.update(collection, ObjectId(id),{ queueTicket: { nrTicketsAnswered: 0, nrTotalTickets: 0, date: date }})
 
 const updateTotalNumberOfTickets = id => db.updateInc(collection, ObjectId(id), { $inc :{ 'queueTicket.nrTotalTickets': 1 } })
     .then(queue => {
