@@ -4,19 +4,16 @@ const queueRepo = require('../repo/queue-repo.js')
 
 const ticketsList = [] 
 
-async function resetTicketsInfo(date){
-    const currentDate = new Date().toDateString()
-    if(date && currentDate !== date) {
-        await repo.deleteTicketInfo(date)
-        await repo.resetTickets(date)
-        await queueRepo.getQueues()
-            .then(queues => queues.map(queue => {
-                queueRepo.resetQueueTicket(queue._id, currentDate)
-            }))
-    }
+const getDate = () => new Date().toDateString()
+
+async function resetTicketsInfo(queues, oldDate){   
+    await repo.deleteTicketInfo(oldDate)
+    await repo.resetTickets(oldDate)
+    return queues.map(async queue => await queueRepo.resetQueueTicket(queue._id, getDate()))
 }
 
 module.exports = {
     resetTicketsInfo,
-    ticketsList
+    ticketsList,
+    getDate
 } 

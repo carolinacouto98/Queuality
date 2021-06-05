@@ -7,15 +7,20 @@ const common = require('./common')
 // eslint-disable-next-line no-unused-vars
 const model = require('../common/model.js')
 
-
 /**
  * @returns {Promise<Array<model.Queue>>}
  */
-const getQueues = () => repo.getQueues()
-    .then(async queues => {
-        await common.resetTicketsInfo(queues[0]?.queueTicket.date)
-        return queues
-    })
+const getQueues = () => 
+    repo.getQueues()
+        .then(async queues => {
+            const oldDate = queues[0]?.queueTicket.date
+            if(oldDate !== common.getDate()) {
+                const array = await common.resetTicketsInfo(queues, oldDate)
+                const res = await Promise.all(array) 
+                return res    
+            }
+            return queues
+        })
 
 /**
  * @param {string} id

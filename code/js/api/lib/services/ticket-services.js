@@ -3,8 +3,6 @@ const repo = require('../repo/ticket-repo.js')
 const queueRepo = require('../repo/queue-repo.js')
 const common = require('./common.js')
 
-const getDate = () => new Date().toDateString()
-
 /**
  * @returns {Promise<Array>}
  */
@@ -32,7 +30,7 @@ const getWaitingTickets = () => Promise.resolve(common.ticketsList.length)
 /**
  * @returns {Promise<Void>}
 */
-const addWaitingTicket = queueId => repo.updateTotalNumberOfTickets(getDate())
+const addWaitingTicket = queueId => repo.updateTotalNumberOfTickets(common.getDate())
     .then(() => queueRepo.updateTotalNumberOfTickets(queueId))
     .then(ticketInfo => {
         if(ticketInfo.priority) {
@@ -47,7 +45,7 @@ const addWaitingTicket = queueId => repo.updateTotalNumberOfTickets(getDate())
  * @returns {Promise<Void>}
  */
 const removeTicket = ticket => repo
-    .decrementTotalNumberOfTickets(getDate())
+    .decrementTotalNumberOfTickets(common.getDate())
     .then(() => {
         const idx = common.ticketsList.findIndex(item => item.ticketNumber === ticket)
         common.ticketsList.splice(idx, 1)
