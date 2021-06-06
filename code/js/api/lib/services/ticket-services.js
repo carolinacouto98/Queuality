@@ -23,9 +23,14 @@ const getCurrentTicket = (queueId) =>
         .then(nr => queueId+nr)
 
 /**
+ * @param {String} tickets
  * @returns {Promise<Number>}
  */
-const getWaitingTickets = () => Promise.resolve(common.ticketsList.length)
+const getWaitingTickets = (ticket) => {
+    const idx = common.ticketsList.findIndex(ticketDetails => ticketDetails.ticketNumber === ticket)
+    return Promise.resolve(idx)
+}
+
 
 /**
  * @returns {Promise<Void>}

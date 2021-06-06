@@ -12,7 +12,7 @@ const Queues: React.FC = () => {
     useEffect( () => {
         context.queueService.getQueues()
             .then(data => setQueues(data))
-    },[setQueues])
+    },[setQueues, queues, context])
 
     return (
         <IonPage>

@@ -15,6 +15,8 @@ const Tickets: React.FC = () => {
     const [tickets, setTickets] = useState<TicketDetails[]>()
     const context = useContext(AppContext)
 
+    
+
     useIonViewWillEnter(() => {
         async function loadTickets() {
             const queues = await context.queueService.getQueues()

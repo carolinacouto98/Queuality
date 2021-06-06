@@ -24,7 +24,7 @@ const QueueCard: React.FC<QueueCardProps> = props => {
         context.queueService.getQueueTicket(props.queue._id)
             .then(data => {
                 console.log(data)
-                context.ticketService.getWaitingTickets()
+                context.ticketService.getWaitingTickets(data)
                     .then(waiting =>
                         setTicket(new TicketDetails(data, waiting ,props.queue.subject, props.queue.nrTicketsAnswered)))
             })

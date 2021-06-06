@@ -17,6 +17,10 @@ export async function getTickets(): Promise<TicketDetails[]> {
     return await store.get(KEY)
 }
 
+export async function getTicket(ticketNumber: string): Promise<TicketDetails| undefined> {
+    const tickets: TicketDetails[] = await store.get(KEY)
+    return tickets.find(ticket => ticket.ticket===ticketNumber)
+}
 
 export async function removeTicket(ticketId: string): Promise<void> {
     const oldTickets: TicketDetails[] = await store.get(KEY)
@@ -37,8 +41,12 @@ export async function removeTickets(tickets: TicketDetails[]): Promise<void> {
     await store.set(KEY, newTickets)
 }
 
-export async function updateWaitingTime(): Promise<void> {
+export async function updateWaitingTime(ticketNumber: string, waiting: number): Promise<void> {
     const tickets: TicketDetails[] = await store.get(KEY)
-    tickets.map( ticket => ticket.waitingTickets = ticket.waitingTickets-1)
+    tickets.map( ticket => {
+        if(ticket.ticket === ticketNumber)
+            ticket.waitingTickets = waiting
+        return ticket
+    })
     await store.set(KEY, tickets)
 }

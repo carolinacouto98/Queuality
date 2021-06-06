@@ -1,11 +1,14 @@
 import { IonCard, IonCardTitle, IonCol, IonGrid, IonIcon, IonItem, IonRow } from '@ionic/react'
-import { arrowBackOutline } from 'ionicons/icons'
+import { arrowBackOutline, close } from 'ionicons/icons'
 import React, { useContext } from 'react'
+import { AppContext } from '../../App'
 import { TicketDetails } from '../../model/TicketsModel'
 import { TicketsContext } from '../../pages/Tickets'
+import { removeTicket } from '../../services/TicketsStorage'
 
 const TicketsComponent: React.FC = () => {
     const tickets = useContext(TicketsContext).tickets
+    const context = useContext(AppContext)
     
     return(
         tickets.length?
@@ -15,7 +18,10 @@ const TicketsComponent: React.FC = () => {
                         <IonCard routerLink={`/tickets/${ticket.ticket}`} key={ticket.ticket}>
                             <IonItem>
                                 <IonCardTitle style={{marginTop:'5%', marginBottom:'5%'}}>{ticket.ticket}</IonCardTitle>
-                                <b slot='end'>{ticket.waitingTickets}</b>
+                                <IonIcon slot='end' icon={close} onClick={() => {
+                                    removeTicket(ticket.ticket)
+                                    context.ticketService.removeTicket(ticket.ticket)
+                                }}></IonIcon>
                             </IonItem>
                         </IonCard>   
                     ))}  

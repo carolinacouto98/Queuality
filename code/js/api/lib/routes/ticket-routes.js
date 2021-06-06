@@ -10,7 +10,8 @@ const router = Router()
 module.exports = router
 
 router.get('/api/tickets/waiting-tickets', (req, res, next) => {
-    service.getWaitingTickets()
+    const ticket = req.query.ticket
+    service.getWaitingTickets(ticket)
         .then((tickets)=> res.send(
             siren.toSirenObject(
                 'Tickets',

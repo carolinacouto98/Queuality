@@ -30,7 +30,7 @@ import './theme/variables.css'
 import { peopleOutline, ticketOutline, calendarOutline } from 'ionicons/icons'
 import React, { createContext } from 'react'
 import Ticket from './pages/Ticket'
-export const NGROK_PATH = 'https://7edc6b229736.ngrok.io'
+export const NGROK_PATH = 'https://8230972658f0.ngrok.io'
 
 export const AppContext = createContext({
     queueService: {} as QueuesService,

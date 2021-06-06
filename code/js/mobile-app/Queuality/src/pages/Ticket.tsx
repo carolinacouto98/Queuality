@@ -7,21 +7,24 @@ import React, { useContext, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router'
 import { AppContext } from '../App'
 import { TicketDetails } from '../model/TicketsModel'
-import {getTickets, removeTicket } from '../services/TicketsStorage'
+import {getTicket, removeTicket, updateWaitingTime } from '../services/TicketsStorage'
 type TicketDisplayProps = RouteComponentProps<{
     ticket: string
 }>
 const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
     const [ticketDetails, setTicketDetails] = useState<TicketDetails>()
     const {ticket} = match.params
+    const context = useContext(AppContext)
+
     useEffect(() => {   
         const ac = new AbortController()
-        getTickets().then(tickets => tickets.filter((tick: TicketDetails)  => tick.ticket === ticket)).then(ticket => setTicketDetails(ticket[0]))
-        console.log(ticketDetails)
+        context.ticketService.getWaitingTickets(ticket)
+            .then(waiting => updateWaitingTime(ticket, waiting))
+        getTicket(ticket).then(ticket => setTicketDetails(ticket))   
         return () => ac.abort()
-    }, [ticket])
+    }, [ticket, context])
     
-    const context = useContext(AppContext)
+    
     return ( 
         ticketDetails ?
             <IonPage>
@@ -43,7 +46,7 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
                         <h3>{ticketDetails.ticket}</h3>
                     </IonItem>
                     <IonItem lines='none' >
-                        <b >Tickets Left </b>
+                        <b >People Ahead </b>
                         <b slot='end'>{ticketDetails.waitingTickets}</b> 
                     </IonItem>
                     
