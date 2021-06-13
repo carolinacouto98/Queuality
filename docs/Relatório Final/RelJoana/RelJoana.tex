@@ -31,7 +31,7 @@ da página de filas tanto para android como para ios.
   \caption{IOS}
   \label{fig:queuesIos}
 \end{subfigure}
-\caption{Mock da página das fila}
+\caption{Mock da página das filas}
 \label{fig:mockQueues}
 \end{figure}
 Na página das senhas é apresentada ao cliente uma lista com as suas senhas (com um máximo de uma senha por fila) e, carregando na senha,
@@ -39,9 +39,45 @@ o cliente será redirecionado para outra página com os detalhes da mesma, entre
 estão à sua frente e em que número vai a fila para a qual tirou senha. Terá também a possbilidade de cancelar a senha em ambas as páginas
 deste módulo.
 
-\section{Rotas}
-\subsection{Filas}
-O módulo filas contem cinco rotas: 
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{mockTicketsAndroid}
+  \caption{Android}
+  \label{fig:ticketsAndroid}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{mockTicketsIOS}
+  \caption{IOS}
+  \label{fig:ticketsIos}
+\end{subfigure}
+\caption{Mock da página das senhas}
+\label{fig:mockTickets}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{mockTicketDetailsAndroid}
+  \caption{Android}
+  \label{fig:ticketDetailsAndroid}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{mockTicketDetailsIOS}
+  \caption{IOS}
+  \label{fig:ticketDetailsIos}
+\end{subfigure}
+\caption{Mock da página dos detalhes de uma senha}
+\label{fig:mockTicketDetails}
+\end{figure}
+
+\appendix
+\chapter{Documentação das Rotas da API}
+\input{chapters/appendix}
 
 
 \end{document}
