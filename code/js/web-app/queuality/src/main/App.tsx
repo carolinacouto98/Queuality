@@ -16,6 +16,9 @@ function PageRouter() {
         <Route exact path='/tickets'>
           <TicketsControl.Page ticketsService = {getTicketsService()}/>
         </Route>
+        <Route exact path='/employess'>
+          <TicketsControl.Page ticketsService = {getTicketsService()}/>
+        </Route>
       </Switch>
     </Router>
   )
