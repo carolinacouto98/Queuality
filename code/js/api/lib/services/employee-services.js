@@ -1,6 +1,7 @@
 'use strict'
 
 const repo = require('../repo/employee-repo.js')
+const error = require('../common/error.js')
 // eslint-disable-next-line no-unused-vars
 const model = require('../common/model.js')
 
@@ -11,33 +12,53 @@ const getEmployees = () => repo.getEmployees()
 
 /**
  * 
- * @param {String} id 
- * @returns {Promise<model.Employee>}
+ * @param {String} employeeId 
+ * @returns 
  */
-const getEmployee = (id) => repo.getEmployee(id)
-
+const getEmployee = (employeeId) => repo.getEmployee(employeeId)
 /**
  * 
  * @param {model.EmployeeInputModel} employee 
  * @returns {Promise<Object>}
  */
 const addEmployee = (employee) => 
-    repo.insertEmployee(employee)
-    
+    getEmployees()
+        .then(employees => {
+            if(employees.find(employeeInfo => employeeInfo._id === employee._id))
+                throw error.CustomException('That employee already exists', error.ALREADY_EXISTS)
+            return repo.insertEmployee(employee)
+        })
 
-const changeEmployeeRoles = (id, roles) => repo.updateRole(id, roles)
+/**
+ * 
+ * @param {model.EmployeeUpdateInputModel} employee
+ * @returns {Promise<Object>}
+ */
+
+const updateEmployee = (employee) => {
+    getEmployee(employee.id)
+        .then(employeeInfo => {
+            if(!employee.name) employee.name = employeeInfo.name
+            if(!employee.sections) employee.sections = employeeInfo.sections
+            if(!employee.roles) employee.roles = employeeInfo.roles
+            if(!employee.desk) employee.desk = employeeInfo.desk
+            return repo.updateEmployee(employee) 
+        })
+    
+}
 
 /**
  * 
  * @param {String} id 
  * @returns {Promise<Void>}
  */
-const removeEmployee = (id) => repo.deleteEmployee(id)
+const removeEmployee = (id) => {
+    repo.deleteEmployee(id)
+}
 
 module.exports = {
     getEmployees,
-    getEmployee,
+    updateEmployee,
     addEmployee,
-    changeEmployeeRoles,
     removeEmployee
 }
