@@ -51,6 +51,7 @@ const removeAppointment = (appointmentId) => repo.deleteAppointment(appointmentI
 const getAvailableHours = (subjectId, date) => 
     repo.getAvailableHours(subjectId, date)
 
+
 module.exports = {
     getAppointments,
     getAppointment,
