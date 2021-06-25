@@ -3,149 +3,89 @@
 const Joi = require('joi')
 
 /**
- * @typedef {Object} Employee
- * @property {String} _id
- * @property {String} name
- * @property {Array<String>} roles
+ * @typedef {Object} AppointmentWorkingHours
+ * @property {String} begin Hours of the day when should start all appointments. Format should be HH:mm.
+ * @property {String} end Hours of the day when should end all appointments. Format should be HH:mm.
+ * @property {Number} duration Duration of an appointment in minutes.
  */
-
-const Employee = Joi.object({
-    _id : Joi.string().required(),
-    name : Joi.string().required(),
-    roles : Joi.array().items(Joi.string()).default([])
-})
-
 /**
- * @typedef {Object} EmployeeInputModel
- * @property {String} name
- * @property {Array<String>} roles
- */
-
-const EmployeeInputModel = Joi.object({
-    name : Joi.string().required(),
-    roles : Joi.array().items(Joi.string()).default([])
-})
-
-/**
- * @typedef {Object} Ticket
- * @property {Number} nrTotalTickets
- * @property {Number} nrTicketsAnswered
- * @property {Date} date
- */
-
-const Ticket = Joi.object(
-    {
-        nrTotalTickets: Joi.number().default(0),
-        nrTicketsAnswered: Joi.number().default(0),
-        date: Joi.date().required()
-    }
-)
-/**
- * @typedef {Object} Queue
- * @property {String} _id
- * @property {Boolean} priority
- * @property {String} subject
- * @property {Ticket} queueTicket
- * 
- */
-
-const Queue = Joi.object({
-    _id: Joi.string().required(),
-    name: Joi.string().required(),
-    priority: Joi.boolean().default(false),
-    subject: Joi.string().required(),
-    queueTicket: Ticket.required()
-})
-
-/**
- * @typedef {Object} QueueInputModel
- * @property {String} name
- * @property {Boolean} priority
- * @property {String} subject
- * @property {Ticket} queueTicket
- */
-
-const QueueInputModel = Joi.object({
-    name: Joi.string().required(),
-    priority: Joi.boolean().default(false),
-    subject: Joi.string().required(),
-    queueTicket: Ticket.default({
-        nrTotalTickets: 0,
-        nrTicketsAnswered: 0,
-        date: new Date().toDateString()
-    })
-})
-
-/**
- * @typedef {Object} QueueUpdateInputModel
- * @property {String} _id
- * @property {Boolean} priority
- * @property {String} subject
- */
-
-const QueueUpdateInputModel = Joi.object({
-    _id: Joi.string().required(),
-    priority: Joi.boolean(),
-    subject: Joi.string()
-})
-
-/**
- * @typedef {Object} Appointment
- * @property {String} id
- * @property {Date} date
+ * @typedef {Object} Section
+ * @property {String} name The name of the section is unique.
+ * @property {Array<String>} employees The employees working in this section.
+ * @property {AppointmentWorkingHours} workingHours Details of hours and duration of an appointment in this section.
+ * @property {Array<String>} queue Array with the order for the next tickets to be answered.
+ * @property {Array<Subject>} subjects Array with all the subjects of this section.
  */
 /**
  * @typedef {Object} Subject
- * @property {String} _id
- * @property {String} desk
- * @property {String} subject
- * @property {String} duration in form of hh:mm:ss
- * @property {Array<Appointment>} appointments
+ * @property {String} name Name of the subject is unique.
+ * @property {String} subject Subject
+ * @property {Boolean} priority Priority of the subject
+ * @property {Number} currentTicket The number of the ticket that is being answered
+ * @property {Number} totalTicket The number of the tickets that have been taken
+ * @property {Date} date The current day 
+ * @property {Array<String>} desks
  */
-
-const Subject = Joi.object({
-    _id: Joi.string().required(),
-    desk: Joi.string().required(),
-    subject: Joi.string().required(),
-    duration: Joi.string().required(),
-    appointments: Joi.array().items({
-        id: Joi.string().required(),
-        date: Joi.date().required()
-    }).default([])
-})
+/**
+ * @typedef {Object} Employee
+ * @property {String} id
+ * @property {String} name
+ * @property {Array<String>} roles
+ * @property {Array<String>} sections
+ * @property {String} desk
+ */
+/**
+ * @typedef {Object} Appointment
+ * @property {ObjectId} _id
+ * @property {String} subject
+ * @property {String} desk
+ * @property {Date} date
+ * @property {String} section
+ */
 
 /**
  * @typedef {Object} AppointmentInputModel
+ * @property {String} subject
+ * @property {String} desk
  * @property {Date} date
+ * @property {String} section
  */
-
-const AppointmentInputModel = Joi.object({
-    date: Joi.date().required()
-})
-
+/**
+ * @typedef {Object} EmployeeInputModel
+ * @property {String} id
+ * @property {String} name
+ */
+/**
+ * @typedef {Object} EmployeeUpdateInputModel
+ * @property {String} id
+ * @property {String} name
+ * @property {Array<String>} roles
+ * @property {Array<String>} sections
+ * @property {String} desk
+ */
+/**
+ * @typedef {Object} SectionInputModel
+ * @property {String} name The name of the section is unique.
+ * @property {AppointmentWorkingHours} workingHours Details of hours and duration of an appointment in this section.
+*/
+/**
+ * @typedef {Object} SectionUpdateInputModel
+ * @property {String} name The name of the section is unique.
+ * @property {Array<String>} employees The employees working in this section.
+ * @property {AppointmentWorkingHours} workingHours Details of hours and duration of an appointment in this section.
+ * @property {Array<String>} queue Array with the order for the next tickets to be answered.
+ * @property {Array<Subject>} subjects Array with all the subjects of this section.
+ */
 /**
  * @typedef {Object} SubjectInputModel
- * @property {String} desk
- * @property {String} subject
- * @property {String} duration in form of hh:mm:ss
+ * @property {String} name Name of the subject is unique.
+ * @property {String} subject Subject
+ * @property {Boolean} priority Priority of the subject
  */
-
-const SubjectInputModel = Joi.object({
-    desk: Joi.string().required(),
-    subject: Joi.string().required(),
-    duration: Joi.string().required()
-})
-
-const id = Joi.string().required()
-
-module.exports = { 
-    Employee, 
-    EmployeeInputModel, 
-    Queue, 
-    QueueInputModel,
-    QueueUpdateInputModel, 
-    Subject,
-    SubjectInputModel,
-    AppointmentInputModel,
-    id 
-}
+/**
+ * @typedef {Object} SubjectUpdateInputModel
+ * @property {String} name Name of the subject is unique.
+ * @property {String} subject Subject
+ * @property {Boolean} priority Priority of the subject
+ * @property {Array<String>} desks
+ */
