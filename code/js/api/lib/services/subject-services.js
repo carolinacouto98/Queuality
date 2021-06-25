@@ -38,6 +38,7 @@ const updateSubject = (subject) =>
             const subjectInfo = await getSubject(subject.sectionId, subject.name)
             if(subject.priority === undefined) subject.priority = subjectInfo.priority
             if(!subject.subject) subject.subject = subjectInfo.subject
+            if(!subject.desks) subject.desks = subjectInfo.desks
             if(subject.priority && !subjectInfo.priority && subjects.find(s => s.priority)) 
                 throw error.CustomException('Cannot have more than one priority queue', error.ALREADY_EXISTS)
             return repo.updateSubject(subject)

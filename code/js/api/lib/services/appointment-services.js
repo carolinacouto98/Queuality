@@ -28,12 +28,11 @@ const addAppointment = appointment =>
     repo.insertAppointment(appointment)
 
 /**
- * @param {String} _id SubjectInfo id
  * @param {String} id Appointment id
  * @param {Date} date 
  * @returns {Promise<Void>}
  */
-const updateAppointment = (_id, id, date) => repo.updateAppointment(_id, id, date)
+const updateAppointment = (id, date) => repo.updateAppointment(id, date)
 
 
 /**

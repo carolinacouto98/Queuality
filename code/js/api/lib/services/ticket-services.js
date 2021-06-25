@@ -1,7 +1,7 @@
 'use strict'
 const repo = require('../repo/ticket-repo.js')
 const { getSection } = require('./section-services.js')
-const { getSubject } = require('./subject-services.js')
+const { getSubject, updateSubject } = require('./subject-services.js')
 
 const getDate = () => new Date()
 
@@ -12,16 +12,12 @@ const getDate = () => new Date()
  */
 const addTicket = (sectionId, subjectId) => 
     getSubject(sectionId, subjectId)
-        .then(subject => {
+        .then(async subject => {
             if(subject.date !== getDate()) {
-                subject.totalTickets = 0
-                subject.currentTicket = 0
+                await updateSubject(subject)
             }
-            repo.incrementTotalTickets(sectionId, subjectId)
-                .then(nrTicket => {
-                    repo.insertTicket(sectionId, subjectId.concat(nrTicket))
-                })
-            
+            const nrTicket = await repo.incrementTotalTickets(sectionId, subjectId)
+            await repo.insertTicket(sectionId, subjectId.concat(nrTicket), subject.priority)
         })
 
 /**
