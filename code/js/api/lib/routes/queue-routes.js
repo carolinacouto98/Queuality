@@ -5,6 +5,7 @@ const model = require('../common/model.js')
 const siren = require('../common/siren.js')
 const queueSiren = require('./siren/queue-siren.js')
 const ticketSiren = require('./siren/ticket-siren.js')
+const tickets = require('../services/common.js').ticketsList
 
 
 const Router = require('express').Router
@@ -35,10 +36,10 @@ router.post('/api/queues', (req, res, next) => {
     model.QueueInputModel.validateAsync({ name, priority, subject})
         .then(queue => 
             service.addQueue(queue)
-                .then(() => res.status(201).send(
+                .then(queue => res.status(201).send(
                     siren.toSirenObject(
                         'Queue', 
-                        '{}', 
+                        JSON.stringify(queue), 
                         '',
                         JSON.stringify(queueSiren.addQueueLinks),
                         ''
@@ -48,7 +49,7 @@ router.post('/api/queues', (req, res, next) => {
         .catch(next)
 })
 
-router.get('/api/queues/:queueId', (req, res, next) => {
+/*router.get('/api/queues/:queueId', (req, res, next) => {
     const id = req.params.queueId
     model.id.validateAsync(id)
         .then(id =>
@@ -56,7 +57,7 @@ router.get('/api/queues/:queueId', (req, res, next) => {
                 .then(queue => res.json(queue))
         )
         .catch(next)
-})
+})*/
 
 router.patch('/api/queues/:queueId', (req, res, next) => {
     const _id = req.params.queueId
@@ -65,13 +66,13 @@ router.patch('/api/queues/:queueId', (req, res, next) => {
     model.QueueUpdateInputModel.validateAsync({_id, priority, subject})
         .then(queue => 
             service.updateQueue(queue)
-                .then(() => res.send(
+                .then(queue => res.send(
                     siren.toSirenObject(
                         'Queue', 
-                        '{}', 
-                        '[]',
+                        JSON.stringify(queue), 
+                        '',
                         JSON.stringify(queueSiren.updateQueueLinks),
-                        '[]'
+                        ''
                     )
                 ))
                 .catch(next)
@@ -84,28 +85,30 @@ router.delete('/api/queues/:queueId', (req, res, next) => {
             siren.toSirenObject(
                 'Queue', 
                 '{}', 
-                '[]',
+                '',
                 JSON.stringify(queueSiren.deleteQueueLinks),
-                '[]'
+                ''
             )
         ))
         .catch(next)
 })
 
-
-
 router.put('/api/queues/:queueId/current-ticket', (req, res, next) => {
     const queueId = req.params.queueId
     service.updateNumberOfTicketsAnswered(queueId)
-        .then(() => res.send(
-            siren.toSirenObject(
-                'Current Ticket',
-                '{}',
-                '[]',
-                JSON.stringify(ticketSiren.updateAnsweredTicketsLinks(queueId)),
-                '[]'
-            )
-        ))
+        .then(nrOfTicketsAnswered => { 
+            let removedTicket
+            if(nrOfTicketsAnswered > 0)
+                removedTicket = tickets.shift()
+            return res.send(
+                siren.toSirenObject(
+                    'Current Ticket',
+                    JSON.stringify(removedTicket),
+                    '',
+                    JSON.stringify(ticketSiren.updateAnsweredTicketsLinks(queueId)),
+                    ''
+                )
+            )})
         .catch(next)
 })
 

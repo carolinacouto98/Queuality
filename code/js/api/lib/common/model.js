@@ -1,4 +1,5 @@
 'use strict'
+
 const Joi = require('joi')
 
 /**
@@ -42,7 +43,6 @@ const Ticket = Joi.object(
 /**
  * @typedef {Object} Queue
  * @property {String} _id
- * @property {String} name
  * @property {Boolean} priority
  * @property {String} subject
  * @property {Ticket} queueTicket
@@ -72,7 +72,7 @@ const QueueInputModel = Joi.object({
     queueTicket: Ticket.default({
         nrTotalTickets: 0,
         nrTicketsAnswered: 0,
-        date: new Date().toDateString().replace(/\s/g,'').padEnd(12,'-')
+        date: new Date().toDateString()
     })
 })
 

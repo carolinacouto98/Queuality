@@ -29,7 +29,7 @@ router.get('/api/employees/:id', (req, res, next) => {
         .then(employee => res.send(siren.toSirenObject(
             'Employee',
             JSON.stringify(employee),
-            '[]',
+            '',
             JSON.stringify(employeeSiren.getEmployeeLinks(id)),
             JSON.stringify([employeeSiren.updateEmployeeAction(id), employeeSiren.deleteEmployeeAction()])
         )))
@@ -41,13 +41,13 @@ router.post('/api/employees', (req, res, next) => {
     const roles = req.body.roles
     model.EmployeeInputModel.validateAsync({name, roles})
         .then(employee => service.addEmployee(employee)
-            .then(id => res.status(201).send(
+            .then(employee => res.status(201).send(
                 siren.toSirenObject(
-                        'Employee', 
-                        '{}', 
-                        '',
-                        JSON.stringify(employeeSiren.addEmployeeLinks(id)),
-                        ''
+                    'Employee', 
+                    JSON.stringify(employee), 
+                    '',
+                    JSON.stringify(employeeSiren.addEmployeeLinks(employee._id)),
+                    ''
                 )
             )))
         .catch(next)
@@ -61,10 +61,10 @@ router.patch('/api/employees/:id', (req, res, next) => {
             siren.toSirenObject(
                 'Employee', 
                 '{}', 
-                '[]',
+                '',
                 JSON.stringify(employeeSiren.updateEmployeeLinks(id)),
-                '[]'
-                )
+                ''
+            )
         ))
         .catch(next)
 })
@@ -78,9 +78,9 @@ router.delete('/api/employees/:id', (req, res, next) => {
                     siren.toSirenObject(
                         'Employee', 
                         '{}', 
-                        '[]',
+                        '',
                         JSON.stringify(employeeSiren.deleteEmployeeLinks),
-                        '[]'
+                        ''
                     )
                 ))
         })

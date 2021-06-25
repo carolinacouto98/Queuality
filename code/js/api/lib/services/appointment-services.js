@@ -1,92 +1,61 @@
 'use strict'
 const repo = require('../repo/appointment-repo.js')
-const error = require('../common/error.js')
 // eslint-disable-next-line no-unused-vars
 const model = require('../common/model.js')
 
 /**
- * @returns {Promise<Array<model.Subject>>}
- */
-const getSubjectsInfo = () => repo.getSubjectsInfo()
-
-/**
- * @returns {Promise<Array<String>>}
- */
-const getSubjects = () => repo.getSubjects()
-
-/**
- * @param {String} subject SubjectInfo name
- * @returns {Promise<String>}
- */
-const getDesks = subject => repo.getDesks(subject)
-
-
-/**
- * @param {String} id SubjectInfo id
+ * @param {String} sectionId Section id
+ * @param {ObjectId} deskId Desk Id
  * @returns {Promise<Array<model.Appointment>>}
  */
-const getAppointments = (id) => repo.getAppointments(id)
+const getAppointments = (sectionId, deskId) => 
+    repo.getAppointments(sectionId, deskId) //vai buscar os appointments que estão na secção e deskId do funcionário
 
 
 /**
  * 
- * @param {String} _id SubjectInfo id 
- * @param {String} id Appointment id
+ * @param {String} appointmentId Appointment id
  * @returns {Promise<model.Appointment>}
  */
-const getAppointment = (_id, id) => repo.getAppointment(_id, id)
+const getAppointment = (appointmentId) => repo.getAppointment(appointmentId) //vai buscar um appointment que tenha o id passado
 
 /**
  * 
- * @param {model.SubjectInputModel} subject
+ * @param {model.AppointmentInputModel} appointment
  * @returns {Promise<Void>}
  */
-const addSubject = subject => 
-    getSubjectsInfo().then(subjects => {
-        if (subjects.find(s => s.subject === subject.subject && s.desk === subject.desk)) 
-            throw error.CustomException('The given subject is already in the list of subjects', error.ALREADY_EXISTS)
-        return repo.insertSubject(subject)
-    })
-
+const addAppointment = appointment => 
+    repo.insertAppointment(appointment)
 
 /**
- * @param {String} _id SubjectInfo id
- * @param {Date} date 
- * @returns {Promise<Void>}
- */
-const addAppointment = (_id, date) => repo.insertAppointment(_id, date)
-
-/**
- * @param {String} _id SubjectInfo id
  * @param {String} id Appointment id
  * @param {Date} date 
  * @returns {Promise<Void>}
  */
-const updateAppointment = (_id, id, date) => repo.updateAppointment(_id, id, date)
+const updateAppointment = (id, date) => repo.updateAppointment(id, date)
 
 
 /**
- * @param {String} _id SubjectInfo id
- * @param {String} id Appointment id
+ * @param {String} appointmentId Appointment id
  * @returns {Promise<Void>}
  */
-const removeAppointment = (_id, id) => repo.deleteAppointment(_id, id)
+const removeAppointment = (appointmentId) => repo.deleteAppointment(appointmentId)
 
 /**
- * @param {String} _id SubjectInfo id
- * @returns {Promise<Void>}
+ * 
+ * @param {String} subjectId 
+ * @param {Date} date 
+ * @returns {Promise<model.AvailableHoursOutputModel>}
  */
-const removeSubject = _id => repo.deleteSubject(_id)
+const getAvailableHours = (subjectId, date) => 
+    repo.getAvailableHours(subjectId, date)
+
 
 module.exports = {
-    getSubjectsInfo,
-    getSubjects,
-    getDesks,
     getAppointments,
     getAppointment,
     addAppointment,
-    addSubject,
     updateAppointment,
     removeAppointment,
-    removeSubject 
+    getAvailableHours
 }

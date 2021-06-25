@@ -1,9 +1,9 @@
 'use strict'
 
+const ObjectId = require('mongodb').ObjectId
+
 const db = require('./queuality-db.js').methods
 const error = require('../common/error.js')
-
-const ObjectId = require('mongodb').ObjectId
 
 const collection = 'appointment'
 
@@ -18,7 +18,7 @@ const getDesks = subject => db.getAll(collection, {subject: subject}, { projecti
         return result
     })
 
-const getAppointments = (id) => db.get(collection, id)
+const getAppointments = (id) => db.get(collection, ObjectId(id))
     .then(result => {
         if (!result) throw error.CustomException('The given getSubjectInfo does not exist', error.NOT_FOUND)
         return result.appointments

@@ -1,16 +1,10 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonRouterOutlet } from '@ionic/react'
-import {Route} from 'react-router-dom'
-import AppointmentDetails from './AppointmentDetails'
+import { IonPage } from '@ionic/react'
 
 const Appointments: React.FC = () => {
     return (
+        // eslint-disable-next-line react/react-in-jsx-scope
         <IonPage>
-        <IonRouterOutlet>
-            <Route exact path="queuality/appontments/:id">
-                < AppointmentDetails/>
-            </Route>
-        </IonRouterOutlet>
-    </IonPage>
+        </IonPage>
     )
 }
 
