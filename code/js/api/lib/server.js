@@ -64,10 +64,10 @@ function run(port, url, dbName) {
     app.use(express.json())
     app.use(express.urlencoded({extended: false}))
 
-    app.use([
+    app.use('/queuality/api',[
         require('./routes/appointment-routes.js'),
         require('./routes/employee-routes.js'),
-        require('./routes/queue-routes.js'),
+        require('./routes/subject-routes.js'),
         require('./routes/ticket-routes.js')
     ])
     app.use((err, req, res, next) => {
