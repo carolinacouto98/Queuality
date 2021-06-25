@@ -1,36 +1,101 @@
 'use strict'
 
-const db = require('./queuality-db.js').methods
-const collection = 'ticket'
+const sectionRepo = require('./section-repo.js')
+const subjectRepo = require('./subject-repo.js')
+const Error = require('../common/error.js')
 
-const getTotalNumberOfTickets = (id) => db.get(collection, id, { projection: { 'nrTotalTickets' : 1 } })
+/**
+ * Increments the total number of tickets in the subject
+ * @param {String} section Section name
+ * @param {String} subject Subject name
+ * @returns {Promise<Void>}
+ */
+const incrementTotalTickets = (section, subject) => subjectRepo.getSubject(section, subject)
+    .then(async sub => {
+        sub.totalTicket++
+        await subjectRepo.updateSubject(section, sub)
+    })
 
-const getNumberOfTicketsAnswered = (id) => db.get(collection, id,  { projection: { 'nrTicketsAnswered' : 1 } })
+/**
+ * Inserts the given ticket into the waiting queue in the section.
+ * Puts it in the beginning of the queue if the priority is true.
+ * @param {String} section Section name
+ * @param {String} ticket Ticket to be inserted
+ * @param {Boolean} priority Priority of the subject
+ * @returns {Promise<Void>}
+ */
+const insertTicket = (section, ticket, priority) => sectionRepo.getSection(section)
+    .then(async sect => {
+        if (sect.queue.find(t => t === ticket))
+            throw new Error.CustomException(`The ticket ${ticket} is already in the queue`, Error.ALREADY_EXISTS)
+        if (priority) sect.queue = [ticket, ...sect.queue]
+        else sect.queue.push(ticket)
+        await sectionRepo.updateSection(sect)
+    })
 
-const updateTotalNumberOfTickets = (id) => db.updateInc(collection, id, { $inc : { 'nrTotalTickets' : 1 } })
+/**
+ * Decrements the total number of tickets in the subject
+ * @param {String} section Section name
+ * @param {String} subject Subject name
+ * @returns {Promise<Void>}
+ */
+const decrementTotalTickets = (section, subject) => subjectRepo.getSubject(section, subject)
+    .then(async sub => {
+        sub.totalTicket--
+        await subjectRepo.updateSubject(section, sub)
+    })
 
-const updateNumberOfTicketsAnswered = (id) => db.updateInc(collection, id, { $inc : { 'nrTicketsAnswered' : 1 }})
+/**
+ * Deletes the given ticket into the waiting queue in the section.
+ * @param {String} section Section name
+ * @param {String} ticket Ticket to be deleted
+ * @returns {Promise<Void>}
+ */
+const deleteTicket = (section, ticket) => sectionRepo.getSection(section)
+    .then(async sect => {
+        const idx = sect.queue.findIndex(t => t === ticket)
+        if (idx < 0)
+            throw new Error.CustomException(`The ticket ${ticket} does not exists in ${section}`, Error.NOT_FOUND)
+        sect.queue.splice(idx, 1)
+        await sectionRepo.updateSection(sect)
+    })
 
-const decrementTotalNumberOfTickets = (id) => db.updateInc(collection, id, { $inc : { 'nrTotalTickets' : -1 } })
+/**
+ * Returns the waiting queue for the given section
+ * @param {String} section Section name
+ * @returns {Promise<Array<String>>}
+ */
+const getQueueTickets = (section) => sectionRepo.getSection(section).then(s => s.queue)
 
-const deleteTicketInfo = (id) => db.del(collection, id)
+/**
+ * Removes the first ticket from the waiting queue
+ * @param {String} section Section name
+ * @returns {Promise<Void>}
+ */
+const removeTicket = (section) => sectionRepo.getSection(section)
+    .then(sect => {
+        sect.queue.splice(0, 1)
+        return sectionRepo.updateSection(sect)
+    })
 
-const resetTickets = (id) => db.update(collection, id,{ 'nrTicketsAnswered': 0, 'nrTotalTickets': 0 })
-
-const getDate = () => db.getAll(collection)
-    .then(tickets => {
-        if(tickets.length)
-            return tickets[0]._id
-        return null
+/**
+ * Increments the current number of tickets answered in the subject
+ * @param {String} section Section name
+ * @param {String} subject Subject name
+ * @returns {Promise<Void>}
+ */
+const incrementCurrentTicket = (section, subject) => subjectRepo.getSubject(section, subject)
+    .then(sub => {
+        sub.currentTicket++
+        return subjectRepo.updateSubject(section, sub)
     })
 
 module.exports = {
-    getDate,
-    getTotalNumberOfTickets,
-    getNumberOfTicketsAnswered,
-    updateTotalNumberOfTickets, 
-    updateNumberOfTicketsAnswered,
-    decrementTotalNumberOfTickets,
-    deleteTicketInfo,
-    resetTickets
+    incrementTotalTickets,
+    insertTicket,
+    decrementTotalTickets,
+    deleteTicket,
+    getQueueTickets,
+    removeTicket,
+    incrementCurrentTicket
 }

@@ -4,5 +4,6 @@
 **/.eslintrc.json
 **/.prettierrc.json
 **/.prettierignore
+**/.env
 .vscode
 .idea

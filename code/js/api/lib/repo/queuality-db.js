@@ -12,11 +12,14 @@ const getAll = (col, key, projection) => {
 
 const get = (col, id, projection) => db.collection(col).findOne({_id: id}, projection)
 
-const insert = (col, document) =>
-    db.collection(col).findOneAndUpdate(document, { $set : document }, { returnOriginal: false, upsert: true })
-        .then(res => res.value)
+const getByProperties = (col, object, projection) => db.collection(col).findOne(object, projection)
 
-const update = (col, id, object) => db.collection(col).findOneAndUpdate({_id : id}, { $set : object }, {returnOriginal: false })
+const insert = (col, document) => db.collection(col)
+    .findOneAndUpdate(document, { $set : document }, { returnOriginal: false, upsert: true })
+    .then(res => res.value)
+
+const update = (col, id, object) => db.collection(col)
+    .findOneAndUpdate({_id : id}, { $set : object }, {returnOriginal: false })
     .then(res => res.value)
 
 const updateInc = (col, id, object) => db.collection(col).findOneAndUpdate({_id : id}, object,  { returnOriginal: false, upsert: true })
@@ -32,5 +35,5 @@ module.exports = {
         console.log('Connected successfully to database.')
         return await client
     }, 
-    methods: {getAll, get, insert, update, updateInc, del}
+    methods: {getAll, get, getByProperties, insert, update, updateInc, del}
 }
