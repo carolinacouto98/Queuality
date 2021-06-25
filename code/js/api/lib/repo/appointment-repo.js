@@ -3,72 +3,58 @@
 const ObjectId = require('mongodb').ObjectId
 
 const db = require('./queuality-db.js').methods
-const error = require('../common/error.js')
+const Error = require('../common/error.js')
+const { Appointment, AppointmentInputModel } = require('../common/model.js')  // eslint-disable-line no-unused-vars
 
 const collection = 'appointment'
 
-const getSubjectsInfo = () => db.getAll(collection)
+/**
+ * Gets all the appointments from the database
+ * @param {String} section Section name
+ * @param {String} desk Desk name
+ * @returns {Promise<Array<Appointment>>} 
+ */
+const getAppointments = (section, desk) => db.getAll(collection, { section, desk }, {})
 
-const getSubjects = () => db.getAll(collection)
-    .then(result => result.map(item => item.subject))
-
-const getDesks = subject => db.getAll(collection, {subject: subject}, { projection: { desk: 1 } })
-    .then(result => {
-        if (!result) throw error.CustomException('The given getSubjectInfo does not exist', error.NOT_FOUND)
-        return result
-    })
-
-const getAppointments = (id) => db.get(collection, ObjectId(id))
-    .then(result => {
-        if (!result) throw error.CustomException('The given getSubjectInfo does not exist', error.NOT_FOUND)
-        return result.appointments
-    })
-
-const getAppointment = (_id, id) => getAppointments(_id)
-    .then(result => {
-        const appointment = result.find(item => item.id.id.toString() === id)
-        if(!appointment) throw error.CustomException('The given appointment does not exist', error.NOT_FOUND)
+/**
+ * Gets an appointment
+ * @param {String} id Appointment id
+ * @returns {Promise<Appointment>}
+ */
+const getAppointment = (id) => db.get(collection, ObjectId(id))
+    .then(appointment => {
+        if (!appointment)
+            throw new Error.CustomException(`The appointment with id ${id} does not exist`, Error.NOT_FOUND)
         return appointment
     })
 
-const insertSubject = subject => db.insert(collection, subject)
+/**
+ * Inserts an appointment into the database
+ * @param {AppointmentInputModel} appointment Appointment to be inserted
+ * @returns {Promise<Appointment>}
+ */
+const insertAppointment = (appointment) => db.insert(collection, appointment)
 
-const insertAppointment = (_id, date) => getAppointments(_id)
-    .then(async result => {
-        let id = ObjectId()
-        while ((await getAppointments(_id)).find(item => item.id === id))
-            id = ObjectId()
-        result[result.length] = {id, date} 
-        db.update(collection, _id, {appointments : result})
-    })
+/**
+ * Updates an appointment, to be the same as the given, with the same ID has the given appointment
+ * @param {Appointment} appointment New Appointment
+ * @returns {Promise<Appointment>}
+ */
+const updateAppointment = (appointment) => getAppointment(appointment._id)
+    .then(() => db.update(collection, appointment._id, appointment))
 
-const updateAppointment = (_id, id, date) => getAppointments(_id)
-    .then(result => {
-        const appointment = result.find(item => item.id.id.toString() === id)
-        if(!appointment) throw error.CustomException('The given appointment does not exist', error.NOT_FOUND)
-        appointment.date = date
-        db.update(collection, _id, {appointments: result})
-    })
+/**
+ * Deletes an appointment from the database with the given id
+ * @param {String} id Appointment id
+ * @returns {Promise<Appointment>}
+ */
+const deleteAppointment = (id) => getAppointment(id)
+    .then(() => db.del(collection, ObjectId(id)))
 
-const deleteSubject = id => db.del(collection, id)
-
-const deleteAppointment = (_id, id) => getAppointments(_id)
-    .then(result => {
-        const appointment = result.find(item => item.id.id.toString() === id)
-        if(!appointment) throw error.CustomException('The given appointment does not exist', error.NOT_FOUND)
-        result = result.filter(item => item.id != id)
-        db.update(collection, _id, {appointments: result})
-    })
-    
 module.exports = {
-    getSubjectsInfo,
-    getSubjects,
-    getDesks,
-    getAppointments, 
+    getAppointments,
     getAppointment,
-    insertSubject, 
-    insertAppointment, 
-    updateAppointment, 
-    deleteAppointment,
-    deleteSubject
+    insertAppointment,
+    updateAppointment,
+    deleteAppointment
 }

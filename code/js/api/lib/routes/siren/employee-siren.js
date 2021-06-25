@@ -1,43 +1,47 @@
 'use strict'
-const siren = require('../../common/siren.js')
+const siren = require('../../common/siren')
 
-const getEmployeesLinks = [siren.selfLink('/api/employees')]
-const getEmployeeLinks = (id) => [siren.selfLink(`/api/employees/${id}`)]
-const addEmployeeLinks = (id) => [siren.selfLink('/api/employees'), siren.SirenLink(['/rel/employee'], `/api/employees/${id}`)]
-const updateEmployeeLinks = (id) => [siren.selfLink(`/api/employees/${id}`), siren.SirenLink(['/rel/employees'],'/api/employees')]
-const deleteEmployeeLinks = [siren.SirenLink(['/rel/employees'],'/api/employees')]
+const getEmployeesLinks = [siren.selfLink(`${siren.BASENAME}/employees`)]
+const addEmployeeLinks = (id) => [siren.selfLink(`${siren.BASENAME}/employees`), new siren.SirenLink(['/rel/employee'], `${siren.BASENAME}/employees/${id}`)]
+const updateEmployeeLinks = (id) => [siren.selfLink(`${siren.BASENAME}/employees/${id}`), new siren.SirenLink(['/rel/employees'],`${siren.BASENAME}/employees`)]
+const deleteEmployeeLinks = [new siren.SirenLink(['/rel/employees'],`${siren.BASENAME}/employees`)]
 
 function addEmployeeAction(){
-    return siren.SirenAction(
+    return new siren.SirenAction(
         'add-employee',
         'Add a Employee',
         'POST',
-        '/api/employees',
-        JSON.stringify([
-            siren.addField('name', 'text'),
-            siren.addField('roles', 'object')
-        ])
+        `${siren.BASENAME}/employees`,
+        [
+            new siren.Field('name', 'text'),
+            new siren.Field('roles', 'object'),
+            new siren.Field('sections', 'object'),
+            new siren.Field('desk', 'string')
+        ]
     )
 }
 
 function updateEmployeeAction (id) {
-    return siren.SirenAction(
+    return new siren.SirenAction(
         'update-employee',
-         'Update an Employee',
-         'PATCH',
-        `/api/employees/${id}`,
-        JSON.stringify([
-            siren.addField('roles', 'object')
-        ])
+        'Update an Employee',
+        'PATCH',
+        `${siren.BASENAME}/employees/${id}`,
+        [
+            new siren.Field('name', 'string'),
+            new siren.Field('roles', 'object'),
+            new siren.Field('sections', 'object'),
+            new siren.Field('desk', 'string')
+        ]
     )
 } 
 
 function deleteEmployeeAction (id) {
-   return siren.SirenAction(
+    return new siren.SirenAction(
         'delete-employee',
         'Delete an Employee',
         'DELETE',
-        `/api/employees/${id}`
+        `${siren.BASENAME}/employees/${id}`
     )
 } 
 
@@ -45,13 +49,11 @@ function setSubEntities(employees){
     const subEntities = []
     employees.forEach(element => {
         subEntities.push(
-            siren.addSubEntity(
-                'Employee',
-                '/rel/employee',
-                '{}',  
-                JSON.stringify([siren.selfLink(`/api/queues/${element._id}`)]),
-                '[]',
-                ''
+            new siren.EmbeddedEntity( 
+                ['/rel/employee'],
+                [siren.selfLink(`/api/queues/${element._id}`)],
+                element,
+                ['Employee']
             )        
         )
     })
@@ -59,7 +61,6 @@ function setSubEntities(employees){
 }
 
 module.exports = {
-    getEmployeeLinks,
     getEmployeesLinks,
     addEmployeeLinks,
     updateEmployeeLinks,

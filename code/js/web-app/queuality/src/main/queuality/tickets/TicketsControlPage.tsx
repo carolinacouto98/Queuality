@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Header, Icon, Card, Breadcrumb } from 'semantic-ui-react';
+import React, { createContext, useEffect, useState, Dispatch } from 'react';
+import { Header, Icon, Breadcrumb } from 'semantic-ui-react';
 import { QueueTicket } from './ticketsModel'
 import { TicketsService } from './TicketsService'
-import { QueueTicketCard } from './components/QueueTicketsCard';
 import { NewQueueTicketsCard } from './components/NewQueueTicketsCard';
 import { Link } from 'react-router-dom';
 import { CurrentTicketCard } from './components/CurrentTicketCard';
 import { NextTicketsCard } from './components/NextTicketsCards'
+import { NextTicketButton } from './components/NextTicketButton';
 
 export namespace TicketsControl {
 
@@ -15,29 +15,27 @@ export namespace TicketsControl {
     }
     
     
+    export const showTicketContext = createContext({
+        showTicket: false,
+        setShowTicket: () => {}
+    })    
 
     export function Page(props: PageProps) {
 
         const [tickets, setTickets] = useState<QueueTicket[]>([])
-        const [currentTicket, setCurrentTicket] = useState<QueueTicket>()
-        
             useEffect(() => {
                 props.ticketsService.getTickets()
                     .then(items => {
-                        setCurrentTicket(items[0])
-                        items.splice(0, 1)
                         setTickets(items)
                     })
-            }, [props.ticketsService, tickets, currentTicket])
+            }, [props.ticketsService, tickets])
         
 
-        async function handleTicketNumberChange(queueId: string) : Promise<void> {
+        async function handleNextTicket() : Promise<void> {
             if(tickets) {
-                await props.ticketsService.setNextTicket(queueId)
+                await props.ticketsService.setNextTicket(tickets[0]._id)
                     .then(res => {
-                        const newQueueTicketArr = tickets
-                        newQueueTicketArr.push(res)
-                        setTickets(newQueueTicketArr)
+                        setTickets(res)
                     })
             }
         }
@@ -46,9 +44,8 @@ export namespace TicketsControl {
             <>
                 <PageHeader />
                 <PageBody 
-                    currentTicket = {currentTicket}
                     tickets = {tickets} 
-                    addTicket = {handleTicketNumberChange} 
+                    nextTicket = {handleNextTicket} 
                 />
             </>
         )
@@ -75,22 +72,25 @@ export namespace TicketsControl {
     }
 
     type TicketProps = {
-        currentTicket?: QueueTicket
         tickets: QueueTicket[]
-        addTicket?: (queueId: string) => void
+        nextTicket?: () => void
     }
 
     function PageBody(props: TicketProps) {
+        const [ticket, setShowTicket] = useState(false)
         return (
-            props.currentTicket && props.tickets ?
-                <>
-                    <CurrentTicketCard ticket={props.currentTicket}/>
-                    {props.tickets.map((item, index) => 
+            <>
+                <showTicketContext.Provider value = {{showTicket: ticket, setShowTicket: () => setShowTicket(true)}}>
+                    <CurrentTicketCard ticket={props.tickets[0]} showTicket={ticket}/>
+                    <NextTicketButton nextTicket = {props.nextTicket}/>
+                </showTicketContext.Provider>
+                {props.tickets ?                  
+                    props.tickets.map((item, index) => 
                         <NextTicketsCard key={index} ticket={item}/>
-                    )}
-                    <NewQueueTicketsCard />
-                </>
-            : null
+                    )
+                : null}
+                <NewQueueTicketsCard />
+            </>
         )
     }
 }

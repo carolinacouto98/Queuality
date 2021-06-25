@@ -1,186 +1,108 @@
 'use strict'
 
 const service = require('../services/appointment-services.js')
-const model = require('../common/model.js')
-const siren = require('../common/siren.js')
+//const model = require('../common/model.js')
+const { Entity } = require('../common/siren.js')
 const appointmentSiren = require('./siren/appointment-siren.js')
 
 const Router = require('express').Router
+const error = require('../common/error.js')
 const router = Router()
 
 module.exports = router
 
-router.get('/api/subject-manager', (req, res, next) =>
-    service.getSubjectsInfo()
-        .then(infos => res.send(
-            siren.toSirenObject(
-                'SubjectsInfo',
-                JSON.stringify(infos),
-                JSON.stringify(appointmentSiren.setSubjectsInfoEntity()),
-                JSON.stringify(appointmentSiren.getSubjectsInfoLinks),
-                '[]'
-            )
-            
-        ))
-        .catch(next)
-)
-//mobile-app
-router.get('/api/subject-manager/subjects', (req, res, next) => 
-    service.getSubjects()
-        .then(subjects => res.send(
-            siren.toSirenObject(
-                'Subjects',
-                JSON.stringify(subjects),
-                JSON.stringify(appointmentSiren.setSubjectsSubEntities(subjects)),
-                JSON.stringify(appointmentSiren.getSubjectsLinks),
-                JSON.stringify([appointmentSiren.addSubjectAction()])
-            )
-        ))
-        .catch(next)
-)
-//mobile-app
-router.get('/api/subject-manager/subjects/:subject/desks', (req, res, next) => {
-    const subject = req.params.subject
-    model.id.validateAsync(subject)
-        .then(subject => service.getDesks(subject)
-            .then(desks => res.send(
-                siren.toSirenObject(
-                    'Desks',
-                    JSON.stringify(desks),
-                    '[]',
-                    JSON.stringify(appointmentSiren.getDeskLinks(subject)),
-                    '[]'
-                )
-            )))
-        .catch(next)
-})
-
-router.get('/api/subject-manager/subjects/:subject/appointments', (req, res, next) => {
-    const _id = req.params.subject
-    model.id.validateAsync(_id)
-        .then(id => service.getAppointments(id)
+router.get('/appointments', (req, res, next) => {
+    const subject = req.query.subject
+    const day = req.query.day
+    const section = req.query.section
+    const desk = req.query.desk
+    if(subject && day && !section && !desk)
+        service.getAvailableHours(subject, day)
+            .then(availableHours => res.send(
+                new Entity(
+                    'Get Available Hours',
+                    ['Available Hours'],
+                    appointmentSiren.getAvailableHoursLinks(subject, day),
+                    availableHours
+                )))
+            .catch(next)
+    else if( section && desk && !subject && !day) 
+        service.getAppointments(section, desk)
             .then(appointments => res.send(
-                siren.toSirenObject(
-                    'Appointments',
-                    JSON.stringify(appointments),
-                    JSON.stringify(appointmentSiren.setAppointmentsSubEntities(_id,appointments)),
-                    JSON.stringify(appointmentSiren.getAppointmentsLinks(_id)),
-                    JSON.stringify([appointmentSiren.addAppointmentAction(_id)])
-                )
+                new Entity(
+                    'Get Appointments',
+                    ['Appointments'],
+                    appointmentSiren.getAppointmentsLinks(section, desk),
+                    appointments,
+                    [appointmentSiren.addAppointmentAction()],
+                    appointmentSiren.setSubEntities(appointments)
+                    
+                )))
+            .catch(next)
+    else
+        throw error.CustomException('Invalid Query Parameters', error.BAD_REQUEST)
+    
+})
 
+router.get('/appointments/:appointmentId', (req, res, next) => {
+    const id = req.params.appointmentId
+    service.getAppointment(id)
+        .then(appointment => res.send(
+            new Entity(
+                'Get an Appointment',
+                ['Appointment'],
+                appointmentSiren.getAppointmentLinks(id),
+                appointment,
+                [
+                    appointmentSiren.deleteAppointmentAction(id), 
+                    appointmentSiren.updateAppointmentAction(id)
+                ]
+            )
+        ))
+        .catch(next)
+})
+//mobile-app
+router.patch('/appointments/:appointmentId', (req, res, next) => {
+    const id = req.params.appointmentId
+    const date = req.body.date
+    if(!date)
+        throw error.CustomException('Missing Parameters', error.BAD_REQUEST)
+    service.updateAppointment(id, date)
+        .then(appointment => res.send(
+            new Entity(
+                'Update an Appointment',
+                ['Appointment'],
+                appointmentSiren.updateAppointmentLinks(id, appointment.section, appointment.desk),
+                appointment
+            )
+        ))
+        .catch(next)
+})
+//mobile-app
+router.post('/appointments', (req, res, next) => {
+    const appointment = req.body
+    if(!appointment)
+        throw error.CustomException('Missing required Parameters', error.BAD_REQUEST)
+    service.addAppointment(appointment)
+        .then(appointment => res.status(201).send(
+            new Entity(
+                'Add an Appointment',
+                ['Appointments'],
+                appointmentSiren.addAppointmentLinks(appointment._id),
+                appointment
             )))
         .catch(next)
 })
-//mobile-app
-router.get('/api/subject-manager/subjects/:subject/appointments/:id', (req, res, next) => {
-    const id = req.params.id
-    const subject = req.params.subject
-    model.id.validateAsync(subject)
-        .then(_id => model.id.validateAsync(id)
-            .then(id => service.getAppointment(_id, id)
-                .then(appointment => res.send(
-                    siren.toSirenObject(
-                        'Appointment',
-                        JSON.stringify(appointment),
-                        '[]',
-                        JSON.stringify(appointmentSiren.getAppointmentLinks(subject, id)),
-                        JSON.stringify([appointmentSiren.deleteAppointmentAction(subject,id), appointmentSiren.updateAppointmentAction(subject,id)])
-                    )
-                ))))
-        .catch(next)
-})
-//mobile-app
-router.patch('/api/subject-manager/subjects/:subject/appointments/:id', (req, res, next) => {
-    const id = req.params.id
-    const subject = req.params.subject
-    const appointment = req.body
-    model.id.validateAsync(subject)
-        .then(async _id => { return { _id: _id, id: await model.id.validateAsync(id) } })
-        .then(async ({_id, id}) => { return {
-            _id: _id,
-            id: id,
-            appointment: await model.AppointmentInputModel.validateAsync(appointment)
-        }})
-        .then(({_id, id, appointment}) => service.updateAppointment(_id, id, appointment.date))
-        .then(() => res.send(
-            siren.toSirenObject(
-                'Appointment',
-                '{}',
-                '',
-                JSON.stringify(appointmentSiren.updateAppointmentLinks(subject, id)),
-                ''
-            )
-        ))
-        .catch(next)
-})
-//mobile-app
-router.post('/api/subject-manager/subjects/:subject/appointments', (req, res, next) => {
-    const subject = req.params.subject
-    const appointment = req.body
-    model.id.validateAsync(subject)
-        .then(_id => { return {
-            _id: _id,
-            appointment: model.AppointmentInputModel.validateAsync(appointment)
-        }})
-        .then(({_id, appointment}) => service.addAppointment(_id, appointment.date))
-        .then(appointment => res.status(201).send(
-            siren.toSirenObject(
-                'Appointments',
-                JSON.stringify(appointment),
-                '',
-                JSON.stringify(appointmentSiren.addAppointmentLinks(subject, appointment._id)),
-                ''
-            )
-        ))
-        .catch(next)
-})
 
-router.post('/api/subject-manager', (req, res, next) => {
-    const subject = req.body
-    model.SubjectInputModel.validateAsync(subject)
-        .then(subject => service.addSubject(subject))
-        .then(() => res.status(201).send(
-            siren.toSirenObject(
-                'Subjects',
-                '{}',
-                '[]',
-                JSON.stringify(appointmentSiren.addSubjectLinks),
-                '[]'
-            )
-        ))
-        .catch(next)
-})
 //mobile-app
-router.delete('/api/subject-manager/subjects/:subject/appointments/:id', (req, res, next) => {
-    const id = req.params.id
-    const subject = req.params.subject
-    model.id.validateAsync(subject)
-        .then(async _id => { return { _id: _id, id: await model.id.validateAsync(id) } })
-        .then(({_id, id}) => service.removeAppointment(_id, id))
-        .then(() => res.send(
-            siren.toSirenObject(
-                'Appointment',
-                '{}',
-                '[]',
-                JSON.stringify(appointmentSiren.deleteAppointmentLinks(subject)),
-                '[]'
-            )
-        ))
-        .catch(next)
-})
-
-router.delete('/api/subject-manager/subjects/:subject', (req, res, next) => {
-    const subject = req.params.subject
-    model.id.validateAsync(subject)
-        .then(_id => service.removeSubject(_id))
-        .then(() => res.send(
-            siren.toSirenObject(
-                'Subject',
-                '{}',
-                '[]',
-                JSON.stringify(appointmentSiren.deleteSubjectLinks),
-                '[]'
-            )
-        ))
+router.delete('appointments/:appointmentId', (req, res, next) => {
+    const id = req.params.appointmentId
+    service.removeAppointment(id)
+        .then((section, desk) => res.send(
+            new Entity(
+                'Delete an Appointment',
+                ['Appointment'],
+                appointmentSiren.deleteAppointmentLinks(section, desk)
+            )))
         .catch(next)
 })
