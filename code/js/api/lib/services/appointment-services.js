@@ -1,5 +1,6 @@
 'use strict'
 const repo = require('../repo/appointment-repo.js')
+const { getSection } = require('../repo/section-repo.js')
 // eslint-disable-next-line no-unused-vars
 const model = require('../common/model.js')
 
@@ -47,8 +48,13 @@ const removeAppointment = (appointmentId) => repo.deleteAppointment(appointmentI
  * @param {Date} date 
  * @returns {Promise<model.AvailableHoursOutputModel>}
  */
-const getAvailableHours = (subjectId, date) => 
-    repo.getAvailableHours(subjectId, date)
+const getAvailableHours = async (sectionId, subjectId, date) => {
+    const workingHours = (await getSection(sectionId)).workingHours
+    const len = Math.floor((workingHours.end - workingHours.begin) / workingHours.duration)
+    const hoursOfDay = Array.from({length : len}, (_, i) => workingHours.begin + workingHours.duration * i)
+    const appointments = await repo.getAppointments(sectionId, subjectId)
+    
+}
 
 
 module.exports = {
