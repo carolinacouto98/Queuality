@@ -1,5 +1,5 @@
 'use strict'
-const siren = require('../../common/siren')
+const siren = require('../../common/siren.js')
 
 const getEmployeesLinks = [siren.selfLink(`${siren.BASENAME}/employees`)]
 const addEmployeeLinks = (id) => [siren.selfLink(`${siren.BASENAME}/employees`), new siren.SirenLink(['/rel/employee'], `${siren.BASENAME}/employees/${id}`)]
@@ -10,7 +10,7 @@ function addEmployeeAction(){
     return new siren.SirenAction(
         'add-employee',
         'Add a Employee',
-        'POST',
+        siren.HttpMethod.POST,
         `${siren.BASENAME}/employees`,
         [
             new siren.Field('name', 'text'),
@@ -25,7 +25,7 @@ function updateEmployeeAction (id) {
     return new siren.SirenAction(
         'update-employee',
         'Update an Employee',
-        'PATCH',
+        siren.HttpMethod.PATCH,
         `${siren.BASENAME}/employees/${id}`,
         [
             new siren.Field('name', 'string'),
@@ -40,7 +40,7 @@ function deleteEmployeeAction (id) {
     return new siren.SirenAction(
         'delete-employee',
         'Delete an Employee',
-        'DELETE',
+        siren.HttpMethod.DELETE,
         `${siren.BASENAME}/employees/${id}`
     )
 } 
@@ -51,7 +51,7 @@ function setSubEntities(employees){
         subEntities.push(
             new siren.EmbeddedEntity( 
                 ['/rel/employee'],
-                [siren.selfLink(`/api/queues/${element._id}`)],
+                [siren.selfLink(`${siren.BASENAME}/api/employes/${element._id}`)],
                 element,
                 ['Employee']
             )        

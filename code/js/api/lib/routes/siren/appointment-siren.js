@@ -1,5 +1,5 @@
 'use strict'
-const siren = require('../../common/siren')
+const siren = require('../../common/siren.js')
 
 const getAvailableHoursLinks = (subject, day) => [siren.selfLink(`${siren.BASENAME}/appointments?subject=${subject}&day=${day}`)]
 const getAppointmentsLinks = (section, desk) => [siren.selfLink(`${siren.BASENAME}/appointments?section=${section}&desk=${desk}`)]
@@ -18,7 +18,7 @@ function addAppointmentAction(){
     return new siren.SirenAction(
         'add-appointment',
         'Add an Appointment',
-        'POST',
+        siren.HttpMethod.POST,
         `${siren.BASENAME}/appointments`,
         [
             new siren.Field('date', 'datetime'),
@@ -33,7 +33,7 @@ function updateAppointmentAction (id) {
     return new siren.SirenAction(
         'update-appointment',
         'Update an Appointment',
-        'PATCH',
+        siren.HttpMethod.PATCH,
         `${siren.BASENAME}/appointments/${id}`,
         [
             new siren.Field('date', 'datetime')
@@ -45,7 +45,7 @@ function deleteAppointmentAction (id) {
     return siren.SirenAction(
         'delete-appointment',
         'Delete an Appointment',
-        'DELETE',
+        siren.HttpMethod.DELETE,
         `${siren.BASENAME}/appointments/${id}`
     )
 } 

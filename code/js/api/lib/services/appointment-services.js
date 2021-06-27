@@ -31,7 +31,7 @@ const addAppointment = async appointment => {
     const len = Math.floor((workingHours.end - workingHours.begin) / workingHours.duration)
     const hoursOfDay = Array.from({length : len}, (_, i) => workingHours.begin + workingHours.duration * i)
     if (!hoursOfDay.includes(appointment.date.getHours() * 60 + appointment.date.getMinutes()))
-        throw new Error.CustomException(`The hours passed should be one of those: ${hoursOfDay}`, Error.BAD_REQUEST)
+        throw Error.CustomException(`The hours passed should be one of those: ${hoursOfDay}`, Error.BAD_REQUEST)
     const subject = await getSubject(appointment.section, appointment.subject)
     const appointments = await repo.getAppointmentsByDate(appointment.section, appointment.subject, appointment.date)
     if (appointments.length === subject.desks.length) return false
@@ -62,6 +62,5 @@ module.exports = {
     getAppointment,
     addAppointment,
     updateAppointment,
-    removeAppointment,
-    getAvailableHours
+    removeAppointment
 }

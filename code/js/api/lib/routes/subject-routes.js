@@ -2,7 +2,7 @@
 
 const service = require('../services/subject-services.js')
 const model = require('../common/model.js')
-const {Entity} = require('../common/siren')
+const {Entity} = require('../common/siren.js')
 const subjectSiren = require('./siren/subject-siren.js')
 
 const Router = require('express').Router
@@ -19,29 +19,29 @@ router.get('/sections/:sectionId/subjects', (req, res, next) => {
                 new Entity(
                     'Get Subjects',
                     ['Subjects'], 
-                    subjectSiren.getSubjectsLinks(sectionId),
+                    subjectSiren.getSubjectsLinks(sectionId.replace(' ', '-')),
                     subjects,
-                    [subjectSiren.addSubjectAction(sectionId)], 
-                    subjectSiren.setSubEntities(subjects)
+                    [subjectSiren.addSubjectAction(sectionId.replace(' ', '-'))], 
+                    subjectSiren.setSubEntities(sectionId.replace(' ', '-'),subjects)
                 )))
         .catch(next)
 })
-
+//check
 router.post('/sections/:sectionId/subjects', (req, res, next) => {
     const sectionId = req.params.sectionId
-    const name = req.body.name
+    const _id = req.body._id
     const priority = req.body.priority
     const subject = req.body.subject
-    if(!name || !priority || !subject)
+    if(!_id|| priority  == undefined || !subject)
         throw error.CustomException('Missing required parameters', error.BAD_REQUEST)
-    model.SubjectInputModel.validateAsync({ sectionId, name, priority, subject})
+    model.subjectInputModel.validateAsync({ _id, priority, subject})
         .then(subject => 
-            service.addSubject(subject)
+            service.addSubject(sectionId, subject)
                 .then(subject => res.status(201).send(
                     new Entity(
                         'Add a Subject',
                         ['Subject'], 
-                        subjectSiren.addSubjectLinks(sectionId, subject._id),
+                        subjectSiren.addSubjectLinks(sectionId.replace(' ', '-'), subject._id),
                         subject
                     ))))
         .catch(next)
@@ -49,19 +49,20 @@ router.post('/sections/:sectionId/subjects', (req, res, next) => {
 
 router.patch('/sections/:sectionId/subjects/:subjectId', (req, res, next) => {
     const sectionId = req.params.sectionId
-    const subjectId = req.params.subjectId
+    const _id = req.params.subjectId
     const priority = req.body.priority
     const subject = req.body.subject
+    const desks = req.body.desks
     if(!priority && !subject)
         throw error.CustomException('Missing Parameters', error.BAD_REQUEST)
-    model.SubjectUpdateInputModel.validateAsync({sectionId, subjectId, priority, subject})
+    model.subjectUpdateInputModel.validateAsync({_id, priority, subject, desks})
         .then(subject => 
             service.updateSubject(subject)
                 .then(subject => res.send(
                     new Entity(
                         'Update a Subject',
                         ['Subject'],
-                        subjectSiren.updateSubjectLinks(sectionId, subjectId),
+                        subjectSiren.updateSubjectLinks(sectionId.replace(' ', '-'), subjectId),
                         subject
                     )))
                 .catch(next)
@@ -69,8 +70,8 @@ router.patch('/sections/:sectionId/subjects/:subjectId', (req, res, next) => {
 
 router.delete('/sections/:sectionId/subjects/:subjectId', (req, res, next) => {
     const sectionId = req.params.sectionId
-    const subjectId = req.params.subjectId
-    service.removeSubject(sectionId, subjectId)
+    const _id = req.params.subjectId
+    service.removeSubject(sectionId, _id)
         .then(() => res.send(
             new Entity(
                 'Delete a Subject',
@@ -82,15 +83,16 @@ router.delete('/sections/:sectionId/subjects/:subjectId', (req, res, next) => {
 
 router.put('/sections/:sectionId/subjects/:subjectId', (req, res, next) => {
     const sectionId = req.params.sectionId
-    const subjectId = req.params.subjectId
-    const ticket=req.body.ticket
-    service.removeTicket(sectionId, subjectId, ticket)
+    const _id = req.params.subjectId
+    const ticket = req.body.ticket
+
+    service.removeTicket(sectionId, _id, ticket)
         .then(removedTicket => 
             res.send(
                 new Entity(
                     'Remove a Ticket',
                     ['Ticket'],
-                    subjectSiren.removeTicketLinks(sectionId, subjectId),
+                    subjectSiren.removeTicketLinks(sectionId.replace(' ', '-'), _id),
                     removedTicket
                 )))
         .catch(next)

@@ -275,7 +275,6 @@ it('test route to add tickets to queue with wrong body', () => frisby
 
 //------------------SUBJECT---------------------
 
-// eslint-disable-next-line no-undef
 it('test route to get subjects from section', () => frisby
     .get('http://localhost:5000/queuality/api/sections/Section%20%1/subjects')
     .expect('status', 200)
@@ -286,7 +285,8 @@ it('test route to get subjects from section', () => frisby
             'priority' : false,
             'currentTicket' : 0,
             'totalTickets' : 2,
-            'date' : '23/06/2021'
+            'date' : '23/06/2021',
+            'desks': ['desk2' ,'desk3']
         },
         {
             'name' : 'B',
@@ -294,7 +294,8 @@ it('test route to get subjects from section', () => frisby
             'priority' : true,
             'currentTicket' : 0,
             'totalTickets' : 1,
-            'date' : '23/06/2021'
+            'date' : '23/06/2021',
+            'desks': ['desk2' ,'desk3']
         },
         {
             'name' : 'C',
@@ -302,7 +303,8 @@ it('test route to get subjects from section', () => frisby
             'priority' : false,
             'currentTicket' : 0,
             'totalTickets' : 2,
-            'date' : '23/06/2021'
+            'date' : '23/06/2021',
+            'desks': ['desk2' ,'desk3']
         }
     ]})
 )
@@ -313,7 +315,7 @@ it('test route to get subjects from section that doesnt exist', () => frisby
 )
 
 it('test route to add subject to section', () => frisby
-    .post('http://localhost:5000/queuality/api/sections/Section%20%1/subjects', {name: 'D', subject: 'Levantamentos', priority:false})
+    .post('http://localhost:5000/queuality/api/sections/Section%20%1/subjects', {name: 'D', subject: 'Levantamentos', priority:false, 'desks': ['desk1', 'desk2', 'desk3']})
     .expect('status', 201)
     .expect('json','properties', {
         'name' : 'D',
@@ -321,7 +323,8 @@ it('test route to add subject to section', () => frisby
         'priority' : false,
         'currentTicket' : 0,
         'totalTickets' : 0,
-        'date' : '23/06/2021'
+        'date' : '23/06/2021',
+        'desks': ['desk1', 'desk2', 'desk3']
     })
 )
 
@@ -349,7 +352,8 @@ it('test route to update subject from section', () => frisby
         'priority' : false,
         'currentTicket' : 0,
         'totalTickets' : 0,
-        'date' : '23/06/2021'
+        'date' : '23/06/2021',
+        'desks': ['desk1', 'desk2', 'desk3']
     })
 )
 
@@ -562,7 +566,8 @@ const sections = [
                 'priority' : false,
                 'currentTicket' : 0,
                 'totalTickets' : 2,
-                'date' : '23/06/2021'
+                'date' : '23/06/2021',
+                'desks': ['desk2' ,'desk3']
             },
             {
                 'name' : 'B',
@@ -570,7 +575,8 @@ const sections = [
                 'priority' : true,
                 'currentTicket' : 0,
                 'totalTickets' : 1,
-                'date' : '23/06/2021'
+                'date' : '23/06/2021',
+                'desks': ['desk2' ,'desk3']
             },
             {
                 'name' : 'C',
@@ -578,7 +584,8 @@ const sections = [
                 'priority' : false,
                 'currentTicket' : 0,
                 'totalTickets' : 2,
-                'date' : '23/06/2021'
+                'date' : '23/06/2021',
+                'desks': ['desk2' ,'desk3']
             }
         ]
     },{
@@ -597,7 +604,8 @@ const sections = [
                 'priority' : false,
                 'currentTicket' : 0,
                 'totalTickets' : 2,
-                'date' : '23/06/2021'
+                'date' : '23/06/2021',
+                'desks': ['desk1', 'desk3']
             },
             {
                 'name' : 'B',
@@ -605,7 +613,8 @@ const sections = [
                 'priority' : true,
                 'currentTicket' : 1,
                 'totalTickets' : 2,
-                'date' : '23/06/2021'
+                'date' : '23/06/2021',
+                'desks': ['desk1' ,'desk3']
             },
             {
                 'name' : 'C',
@@ -613,7 +622,8 @@ const sections = [
                 'priority' : false,
                 'currentTicket' : 0,
                 'totalTickets' : 3,
-                'date' : '23/06/2021'
+                'date' : '23/06/2021',
+                'desks': ['desk1' ,'desk3']
             }
         ]
     },
@@ -633,7 +643,8 @@ const sections = [
                 'priority' : false,
                 'currentTicket' : 1,
                 'totalTickets' : 2,
-                'date' : '23/06/2021'
+                'date' : '23/06/2021',
+                'desks': ['desk1', 'desk2']
             },
             {
                 'name' : 'B',
@@ -641,7 +652,8 @@ const sections = [
                 'priority' : true,
                 'currentTicket' : 0,
                 'totalTickets' : 2,
-                'date' : '23/06/2021'
+                'date' : '23/06/2021',
+                'desks': ['desk1, desk2']
             },
             {
                 'name' : 'C',
@@ -649,7 +661,8 @@ const sections = [
                 'priority' : false,
                 'currentTicket' : 2,
                 'totalTickets' : 2,
-                'date' : '23/06/2021'
+                'date' : '23/06/2021',
+                'desks': ['desk1', 'desk2']
             }
         ]
     }

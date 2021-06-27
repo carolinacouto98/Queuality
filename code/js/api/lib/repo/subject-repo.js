@@ -3,6 +3,7 @@
 const sectionRepo = require('./section-repo.js')
 const Error = require('../common/error.js')
 const { Subject } = require('../common/model.js') // eslint-disable-line no-unused-vars
+
 /**
  * Gets all subjects from a section.
  * @param {String} section Section name
@@ -21,7 +22,7 @@ const getSubject = (section, subject) => sectionRepo.getSection(section)
     .then(s => s.subjects.find(sub => sub.name === subject))
     .then(sub => {
         if (!sub)
-            throw new Error.CustomException(`The subject ${subject} does not exists`, Error.NOT_FOUND)
+            throw Error.CustomException(`The subject ${subject} does not exists`, Error.NOT_FOUND)
         return sub
     })
 
@@ -31,11 +32,11 @@ const getSubject = (section, subject) => sectionRepo.getSection(section)
  * @param {Subject} subject Subject to be added
  * @returns {Subject} The subject added
  */
-const addSubject = (section, subject) => sectionRepo.getSection(section)
+const insertSubject = (section, subject) => sectionRepo.getSection(section)
     .then(async sect => {
         const subjects = await getSubjects(section)
-        if (subjects.findIndex(sub => sub.name === subject.name))
-            throw new Error.CustomException(`The subject ${subject.name} is already in the database`, Error.ALREADY_EXISTS)
+        if (subjects.find(sub => sub._id === subject._id))
+            throw Error.CustomException(`The subject ${subject._id} is already in the database`, Error.ALREADY_EXISTS)
         sect.subjects.push(subject)
         return subject
     })
@@ -51,7 +52,7 @@ const updateSubject = (section, subject) => sectionRepo.getSection(section)
         const subjects = await getSubjects(section)
         const idx = subjects.findIndex(sub => sub.name === subject.name)
         if (idx < 0)
-            throw new Error.CustomException(`The subject ${subject} is not in the database`, Error.NOT_FOUND)
+            throw Error.CustomException(`The subject ${subject} is not in the database`, Error.NOT_FOUND)
         sect.subjects[idx] = subject
         const s = await sectionRepo.updateSection(sect)
         return s.subjects[idx]
@@ -69,7 +70,7 @@ const deleteSubject = (section, subject) => sectionRepo.getSection(section)
         const subjects = await getSubjects(section)
         const idx = subjects.findIndex(sub => sub.name === subject.name)
         if (idx < 0)
-            throw new Error.CustomException(`The subject ${subject} is not in the database`, Error.NOT_FOUND)
+            throw Error.CustomException(`The subject ${subject} is not in the database`, Error.NOT_FOUND)
         const ret = subjects[idx]
         sect.subjects.splice(idx, 1)
         await sectionRepo.updateSection(sect)
@@ -79,7 +80,7 @@ const deleteSubject = (section, subject) => sectionRepo.getSection(section)
 module.exports = {
     getSubjects,
     getSubject,
-    addSubject,
+    insertSubject,
     updateSubject,
     deleteSubject
 }
