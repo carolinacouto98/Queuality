@@ -1,8 +1,9 @@
 'use strict'
 const repo = require('../repo/appointment-repo.js')
 const { getSection } = require('../repo/section-repo.js')
-// eslint-disable-next-line no-unused-vars
-const model = require('../common/model.js')
+const { getSubject } = require('../repo/subject-repo.js')
+const { Appointment, AppointmentInputModel } = require('../common/model.js') // eslint-disable-line no-unused-vars
+const Error = require('../common/error.js')
 
 /**
  * @param {String} sectionId Section id
@@ -22,11 +23,24 @@ const getAppointment = (appointmentId) => repo.getAppointment(appointmentId) //v
 
 /**
  * 
- * @param {model.AppointmentInputModel} appointment
- * @returns {Promise<Void>}
+ * @param {AppointmentInputModel} appointment
+ * @returns {Promise<Boolean>}
  */
-const addAppointment = appointment => 
-    repo.insertAppointment(appointment)
+const addAppointment = async appointment => {
+    const workingHours = (await getSection(appointment.section)).workingHours
+    const len = Math.floor((workingHours.end - workingHours.begin) / workingHours.duration)
+    const hoursOfDay = Array.from({length : len}, (_, i) => workingHours.begin + workingHours.duration * i)
+    if (!hoursOfDay.includes(appointment.date.getHours() * 60 + appointment.date.getMinutes()))
+        throw new Error.CustomException(`The hours passed should be one of those: ${hoursOfDay}`, Error.BAD_REQUEST)
+    const subject = await getSubject(appointment.section, appointment.subject)
+    const appointments = await repo.getAppointmentsByDate(appointment.section, appointment.subject, appointment.date)
+    if (appointments.length === subject.desks.length) return false
+    const availableDesk = appointments.map(app => app.desk)
+        .find(desk => !subject.desks.includes(desk))
+    appointment.desk = availableDesk
+    await repo.insertAppointment(appointment)
+    return true
+}
 
 /**
  * @param {String} id Appointment id
@@ -41,20 +55,6 @@ const updateAppointment = (id, date) => repo.updateAppointment(id, date)
  * @returns {Promise<Void>}
  */
 const removeAppointment = (appointmentId) => repo.deleteAppointment(appointmentId)
-
-/**
- * 
- * @param {String} subjectId 
- * @param {Date} date 
- * @returns {Promise<model.AvailableHoursOutputModel>}
- */
-const getAvailableHours = async (sectionId, subjectId, date) => {
-    const workingHours = (await getSection(sectionId)).workingHours
-    const len = Math.floor((workingHours.end - workingHours.begin) / workingHours.duration)
-    const hoursOfDay = Array.from({length : len}, (_, i) => workingHours.begin + workingHours.duration * i)
-    const appointments = await repo.getAppointments(sectionId, subjectId)
-    
-}
 
 
 module.exports = {

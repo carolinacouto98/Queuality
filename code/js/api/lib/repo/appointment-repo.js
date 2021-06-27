@@ -29,6 +29,15 @@ const getAppointment = (id) => db.get(collection, ObjectId(id))
     })
 
 /**
+ * Gets all the appointments from the database
+ * @param {String} section Section name
+ * @param {String} subject Subject name
+ * @param {Date} date 
+ * @returns {Promise<Array<Appointment>>} 
+ */
+const getAppointmentsByDate = (section, subject, date) => db.getAll(collection, { section, subject, date }, {})
+
+/**
  * Inserts an appointment into the database
  * @param {AppointmentInputModel} appointment Appointment to be inserted
  * @returns {Promise<Appointment>}
@@ -54,6 +63,7 @@ const deleteAppointment = (id) => getAppointment(id)
 module.exports = {
     getAppointments,
     getAppointment,
+    getAppointmentsByDate,
     insertAppointment,
     updateAppointment,
     deleteAppointment
