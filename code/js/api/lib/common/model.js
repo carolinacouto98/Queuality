@@ -8,6 +8,11 @@ const Joi = require('joi')
  * @property {String} end Hours of the day when should end all appointments. Format should be HH:mm.
  * @property {Number} duration Duration of an appointment in minutes.
  */
+const appointmentWorkingHoursSchema = {
+    begin: Joi.string().required(),
+    end: Joi.string().required(),
+    duration: Joi.number().required(),
+}
 /**
  * @typedef {Object} Section
  * @property {String} name The name of the section is unique.
@@ -16,6 +21,13 @@ const Joi = require('joi')
  * @property {Array<String>} queue Array with the order for the next tickets to be answered.
  * @property {Array<Subject>} subjects Array with all the subjects of this section.
  */
+const section = Joi.object({
+    name: Joi.string().required(),
+    employees: Joi.array().items(Joi.string()).required(),
+    workingHours: Joi.object(appointmentWorkingHoursSchema).required(),
+    queue: Joi.array().items(Joi.string()).required(),
+    subjects: Joi.array().items(Joi.object(subjectSchema)).required()
+})
 /**
  * @typedef {Object} Subject
  * @property {String} name Name of the subject is unique.
@@ -26,6 +38,16 @@ const Joi = require('joi')
  * @property {Date} date The current day 
  * @property {Array<String>} desks
  */
+const subjectSchema = {
+    name: Joi.string().required(),
+    subject: Joi.string().required(),
+    priority: Joi.boolean().required(),
+    currentTicket: Joi.number().required(),
+    totalTickets: Joi.number().required(),
+    date: Joi.date().required(),
+    desks: Joi.array().items(Joi.string()).required()
+}
+const subject = Joi.object(subjectSchema)
 /**
  * @typedef {Object} Employee
  * @property {String} id
@@ -34,6 +56,13 @@ const Joi = require('joi')
  * @property {Array<String>} sections
  * @property {String} desk
  */
+const employee = Joi.object({
+    id: Joi.string().required(),
+    name: Joi.string().required(),
+    roles: Joi.array.items(Joi.string()).required(),
+    sections: Joi.array.items(Joi.string()).required(),
+    desk: Joi.string()
+})
 /**
  * @typedef {Object} Appointment
  * @property {ObjectId} _id
@@ -42,6 +71,13 @@ const Joi = require('joi')
  * @property {Date} date
  * @property {String} section
  */
+const appointment = Joi.object({
+    _id: Joi.õbject().required(),
+    subject: Joi.string().required,
+    desk: Joi.string().required,
+    date: Joi.date().required,
+    section: Joi.string().required
+})
 
 /**
  * @typedef {Object} AppointmentInputModel
@@ -50,11 +86,21 @@ const Joi = require('joi')
  * @property {Date} date
  * @property {String} section
  */
+const appointmentInputModel = Joi.object({
+    subject: Joi.string().required(),
+    desk: Joi.string(),
+    date: Joi.date().required(),
+    section: Joi.string().required()
+})
 /**
  * @typedef {Object} EmployeeInputModel
  * @property {String} id
  * @property {String} name
  */
+const employeeInputModel = Joi.object({ 
+    id: Joi.string().required(),
+    name: Joi.string().required()
+})
 /**
  * @typedef {Object} EmployeeUpdateInputModel
  * @property {String} id
@@ -63,11 +109,22 @@ const Joi = require('joi')
  * @property {Array<String>} sections
  * @property {String} desk
  */
+const employeeUpdateInputModel = Joi.object({ 
+    id: Joi.string().required(),
+    name: Joi.string(),
+    roles: Joi.array().items(Joi.string()),
+    section: Joi.array().items(Joi.string()),
+    desk: Joi.string()
+})
 /**
  * @typedef {Object} SectionInputModel
  * @property {String} name The name of the section is unique.
  * @property {AppointmentWorkingHours} workingHours Details of hours and duration of an appointment in this section.
 */
+const sectionInputModel = Joi.object({
+    name: Joi.string().required(),
+    workingHours: Joi.object(appointmentWorkingHoursSchema).required()
+})
 /**
  * @typedef {Object} SectionUpdateInputModel
  * @property {String} name The name of the section is unique.
@@ -76,12 +133,24 @@ const Joi = require('joi')
  * @property {Array<String>} queue Array with the order for the next tickets to be answered.
  * @property {Array<Subject>} subjects Array with all the subjects of this section.
  */
+const sectionUpdateInputModel = Joi.object({
+    name: Joi.string().required(),
+    employees: Joi.array().items(Joi.string()),
+    workingHours: Joi.object(appointmentWorkingHoursSchema),
+    queue: Joi.array().items(Joi.string()),
+    subjects: Joi.array().items(subjectSchema)
+})
 /**
  * @typedef {Object} SubjectInputModel
  * @property {String} name Name of the subject is unique.
  * @property {String} subject Subject
  * @property {Boolean} priority Priority of the subject
  */
+const subjectInputModel = Joi.object({
+    name: Joi.string().required(),
+    subject: Joi.string().required(),
+    priority: Joi.boolean().required()
+})
 /**
  * @typedef {Object} SubjectUpdateInputModel
  * @property {String} name Name of the subject is unique.
@@ -89,3 +158,23 @@ const Joi = require('joi')
  * @property {Boolean} priority Priority of the subject
  * @property {Array<String>} desks
  */
+const subjectUpdateInputModel = Joi.object({
+    name: Joi.string().required(),
+    subject: Joi.string(),
+    priority: Joi.boolean(),
+    desks: Joi.array().items(Joi.string())
+})
+
+module.exports = {
+    section,
+    subject,
+    employee,
+    appointment,
+    sectionInputModel,
+    sectionUpdateInputModel,
+    subjectInputModel,
+    subjectUpdateInputModel,
+    employeeInputModel,
+    employeeUpdateInputModel,
+    appointmentInputModel
+}
