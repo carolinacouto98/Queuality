@@ -1,15 +1,18 @@
-import {NGROK_PATH} from '../App'
+import {NGROK_PATH, API_BASE_URL} from '../App'
+import * as Siren from '../common/Siren'
+import * as Fetch from '../common/FetchUtils'
 
 export interface TicketsService {
-    removeTicket: (ticket: string) => Promise<void>,
-    getWaitingTickets: () => Promise<number>
+    removeTicket: (sectionName: string, subjectName: string, ticket: string) => Fetch.Request<Siren.Entity<string, void>>,
 }
 
-export function createTicketsService() : TicketsService {
+export function getTicketsService() : TicketsService {
+    const headers = new Headers({})
+    headers.append('Accept', 'application/json')
+    headers.append('Content-type', 'application/json')
     return{
-        removeTicket: async (ticket: string) : Promise<void> => {
-            const path = `${NGROK_PATH}/api/tickets/`
-            fetch(path,
+        removeTicket:  (sectionName: string, subjectName: string, ticket: string) : Fetch.Request<Siren.Entity<string, void>> => 
+            Fetch.cancelableRequest(new URL(`${NGROK_PATH}${API_BASE_URL}/sections/${sectionName}/subjects/${subjectName}`),
                 {
                     method: 'PUT',
                     headers: {
@@ -19,12 +22,6 @@ export function createTicketsService() : TicketsService {
                     body: JSON.stringify({ticket: ticket})
                 }
             )
-        },
-        getWaitingTickets: async (): Promise<number> => {
-            const path = `${NGROK_PATH}/api/tickets/waiting-tickets`
-            return  fetch (path)
-                .then(res => res.json())
-                .then(data => data.properties)
-        }
+        
     }
 }

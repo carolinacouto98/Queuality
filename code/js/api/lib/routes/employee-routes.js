@@ -9,7 +9,8 @@ const error = require('../common/error.js')
 const router = Router()
 module.exports = router
 
-router.get('/employees', (req, res, next) => {
+//check
+router.get('/employees', (req, res, next) => { 
     service.getEmployees()
         .then(employees => res.send(
             new Entity(
@@ -23,6 +24,7 @@ router.get('/employees', (req, res, next) => {
         .catch(next)
 })
 
+//duvida
 router.post('/employees', (req, res, next) => {
     const name = req.body.name
     const roles = req.body.roles
@@ -30,7 +32,7 @@ router.post('/employees', (req, res, next) => {
     const desk = req.body.desk
     if(!name || !sections || !roles)
         throw error.CustomException('Missing required parameters', error.BAD_REQUEST)
-    model.EmployeeInputModel.validateAsync({name, roles, sections, desk})
+    model.employeeInputModel.validateAsync({name, roles, sections, desk})
         .then(employee => service.addEmployee(employee)
             .then(employee => res.status(201).send(
                 new Entity(
@@ -50,7 +52,7 @@ router.patch('/employees/:employeeId', (req, res, next) => {
     const desk = req.body.desk
     if(!name && !roles && !sections && !desk)
         throw error.CustomException('Missing Parameters', error.BAD_REQUEST)
-    model.EmployeeUpdateInputModel.validateAsync({id,name, roles, sections, desk})
+    model.employeeUpdateInputModel.validateAsync({id, name, roles, sections, desk})
         .then(employee =>
             service.updateEmployee(employee)
                 .then(employee => res.send(

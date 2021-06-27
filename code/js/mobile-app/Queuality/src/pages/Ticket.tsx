@@ -16,7 +16,7 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
     const {ticket} = match.params
     useEffect(() => {   
         const ac = new AbortController()
-        getTickets().then(tickets => tickets.filter((tick: TicketDetails)  => tick.ticket === ticket)).then(ticket => setTicketDetails(ticket[0]))
+        getTickets().then(tickets => tickets.find((tick: TicketDetails)  => tick.ticket === ticket)).then(ticket => setTicketDetails(ticket))
         console.log(ticketDetails)
         return () => ac.abort()
     }, [ticket])
@@ -27,7 +27,7 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
             <IonPage>
                 <IonHeader translucent>
                     <IonToolbar>
-                        <IonTitle>{ticketDetails.queueSubject}</IonTitle>
+                        <IonTitle>{ticketDetails.subject.subject}</IonTitle>
                         <IonButtons slot='end'>
                             <IonButton routerLink='/tickets' >Close</IonButton>
                         </IonButtons>
@@ -37,7 +37,7 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
                     <IonItem  lines='none'>
                         <IonIcon slot='end' onClick={() => {
                             removeTicket(ticketDetails.ticket)
-                            context.ticketService.removeTicket(ticketDetails.ticket)
+                            context.ticketService.removeTicket(ticketDetails.sectionName,ticketDetails.subject.name, ticketDetails.ticket)
                             history.goBack()
                         }} icon ={trashBinOutline}/>
                         <h3>{ticketDetails.ticket}</h3>
@@ -49,7 +49,7 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
                     
                     <IonItem lines='none'>
                         <b>Current Ticket</b> 
-                        <b slot='end'>{ticketDetails.queueNumber}</b>
+                        <b slot='end'>{ticketDetails.subject.currentTicket}</b>
                     </IonItem>
                 </IonContent> 
             </IonPage>

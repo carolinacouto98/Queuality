@@ -24,7 +24,7 @@ const getAppointments = (section, desk) => db.getAll(collection, { section, desk
 const getAppointment = (id) => db.get(collection, ObjectId(id))
     .then(appointment => {
         if (!appointment)
-            throw new Error.CustomException(`The appointment with id ${id} does not exist`, Error.NOT_FOUND)
+            throw Error.CustomException(`The appointment with id ${id} does not exist`, Error.NOT_FOUND)
         return appointment
     })
 

@@ -57,7 +57,7 @@ const updateSection = (section) => {
  * @param {String} sectionName 
  * @returns {Promise<Void>}
  */
-const removeSection = (sectionName) => repo.deleteQueue(sectionName)
+const removeSection = (sectionName) => repo.deleteSection(sectionName)
 
 /**
  * @param {String} hours HH:mm

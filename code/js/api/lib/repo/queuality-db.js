@@ -25,7 +25,7 @@ const update = (col, id, object) => db.collection(col)
 const updateInc = (col, id, object) => db.collection(col).findOneAndUpdate({_id : id}, object,  { returnOriginal: false, upsert: true })
     .then(res => res.value)
 
-const del = (col, id) => db.collection(col).deleteOne({_id : id})
+const del = (col, name) => db.collection(col).deleteOne({name : name})
 
 module.exports = {
     connection: async (url, dbName) => {

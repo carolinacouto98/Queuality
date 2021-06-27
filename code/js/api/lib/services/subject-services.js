@@ -25,7 +25,7 @@ const getSubject = (sectionName, subjectId) => repo.getSubject(sectionName, subj
   * @param {model.SubjectInputModel} subject
   * @returns {Promise<Void>}
   */
-const addSubject = (subject) => repo.insertSubject(subject)
+const addSubject = (section, subject) => repo.insertSubject(section, subject)
 
 /**
   * @param {model.SubjectUpdateInputModel} subject

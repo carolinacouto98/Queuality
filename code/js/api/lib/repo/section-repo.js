@@ -1,6 +1,5 @@
 'use strict'
 
-
 const db = require('./queuality-db.js').methods
 const Error = require('../common/error.js')
 const { Section } = require('../common/model.js') // eslint-disable-line no-unused-vars
@@ -18,10 +17,10 @@ const getSections = () => db.getAll(collection)
  * @param {String} name The name of the section
  * @returns {Promise<Section>} Section
  */
-const getSection = (name) => db.getByProperties(collection, {name: name})
+const getSection = (name) => db.getByProperties(collection, {_id: name})
     .then((section) => {
         if (!section)
-            throw new Error.CustomException(`The section ${section} is not in the database`, Error.NOT_FOUND)
+            throw Error.CustomException(`The section ${name} is not in the database`, Error.NOT_FOUND)
         return section
     })
 
@@ -37,8 +36,8 @@ const insertSection = (section) => db.insert(collection, section)
  * @param {Section} section Section to replace the the one with the same name
  * @returns {Promise<Section>}
  */
-const updateSection = (section) => getSection(section.name)
-    .then(() => db.update(collection, section.name, section))
+const updateSection = (section) => getSection(section._id)
+    .then(() => db.update(collection, section._id, section))
 
 /**
  * Deletes a section given its name 
