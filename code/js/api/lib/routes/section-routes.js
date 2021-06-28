@@ -7,9 +7,10 @@ const sectionSiren = require('./siren/section-siren.js')
 const Router = require('express').Router
 const { Entity } = require('../common/siren.js')
 const error = require('../common/error.js')
+const auth = require('../common/auth.js')
 const router = Router()
 
-router.get('/sections',(req, res, next)=> {
+router.get('/sections', (req, res, next) => {
     service.getSections()
         .then(sections => 
             res.send(
@@ -23,7 +24,7 @@ router.get('/sections',(req, res, next)=> {
         .catch(next)
 })
 
-router.post('/sections', (req, res, next) => {
+router.post('/sections', auth('Manage Sections'), (req, res, next) => {
     const name = req.body.name
     const workingHours = req.body.workingHours
     if(!name && !workingHours)
@@ -40,7 +41,7 @@ router.post('/sections', (req, res, next) => {
         .catch(next)
 })
 
-router.patch('/sections/:sectionId', (req, res, next) => {
+router.patch('/sections/:sectionId', auth('Manage Sections'), (req, res, next) => {
     const _id = req.params.sectionId
     const workingHours = req.body
     if(!workingHours)
@@ -57,7 +58,7 @@ router.patch('/sections/:sectionId', (req, res, next) => {
                 .catch(next)
         )})
 
-router.delete('/sections/:sectionId', (req, res, next) => {
+router.delete('/sections/:sectionId', auth('Manage Sections'), (req, res, next) => {
     const id = req.params.sectionId
     service.removeSection(id)
         .then(() => res.send(

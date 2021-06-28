@@ -23,7 +23,7 @@ router.get('/employees', (req, res, next) => {
         .catch(next)
 })
 
-router.post('/employees', (req, res, next) => {
+router.post('/employees', auth('Manage Employees'), (req, res, next) => {
     const name = req.body.name
     const roles = req.body.roles
     const sections = req.body.sections
@@ -42,7 +42,7 @@ router.post('/employees', (req, res, next) => {
         .catch(next)
 })
 
-router.patch('/employees/:employeeId', (req, res, next) => {
+router.patch('/employees/:employeeId', auth('Manage Employees'), (req, res, next) => {
     const id = req.params.employeeId
     const name = req.body.name
     const roles = req.body.roles
@@ -62,10 +62,9 @@ router.patch('/employees/:employeeId', (req, res, next) => {
                     )))
                 .catch(next)
         )
-   
 })
     
-router.delete('/employees/:employeeId', (req, res, next) => {
+router.delete('/employees/:employeeId', auth('Manage Employees'), (req, res, next) => {
     const id = req.params.id
     model.id.validateAsync(id)
         .then(id => {
