@@ -2,7 +2,7 @@
 
 const sectionRepo = require('./section-repo.js')
 const Error = require('../common/error.js')
-const { Subject } = require('../common/model.js') // eslint-disable-line no-unused-vars
+const { Subject, SubjectInputModel, SubjectUpdateInputModel } = require('../common/model.js') // eslint-disable-line no-unused-vars
 
 /**
  * Gets all subjects from a section.
@@ -29,22 +29,27 @@ const getSubject = (section, subject) => sectionRepo.getSection(section)
 /**
  * Adds a subject to a section.
  * @param {String} section Section name
- * @param {Subject} subject Subject to be added
+ * @param {SubjectInputModel} subject Subject to be added
  * @returns {Subject} The subject added
  */
 const insertSubject = (section, subject) => sectionRepo.getSection(section)
     .then(async sect => {
         const subjects = await getSubjects(section)
-        if (subjects.find(sub => sub._id === subject._id))
-            throw Error.CustomException(`The subject ${subject._id} is already in the database`, Error.ALREADY_EXISTS)
+        if (subjects.find(sub => sub.name === subject.name))
+            throw Error.CustomException(`The subject ${subject.name} is already in the database`, Error.ALREADY_EXISTS)
+        subject.currentTicket = 0
+        subject.totalTicket = 0
+        subject.date = new Date()
+        subject.desks = []
         sect.subjects.push(subject)
+        sectionRepo.updateSection(sect)
         return subject
     })
 
 /**
  * Updates a subject of a section.
  * @param {String} section Name of the subject section
- * @param {Subject} subject Subject to replace the subject with the same name
+ * @param {SubjectUpdateInputModel} subject Subject to replace the subject with the same name
  * @returns {Promise<Subject>} The new subject
  */ 
 const updateSubject = (section, subject) => sectionRepo.getSection(section)
@@ -53,6 +58,9 @@ const updateSubject = (section, subject) => sectionRepo.getSection(section)
         const idx = subjects.findIndex(sub => sub.name === subject.name)
         if (idx < 0)
             throw Error.CustomException(`The subject ${subject} is not in the database`, Error.NOT_FOUND)
+        subject.currentTicket = sect.subjects[idx].currentTicket
+        subject.totalTicket = sect.subjects[idx].totalTicket
+        subject.date = sect.subjects[idx].date
         sect.subjects[idx] = subject
         const s = await sectionRepo.updateSection(sect)
         return s.subjects[idx]

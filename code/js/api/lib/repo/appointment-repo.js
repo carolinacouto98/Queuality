@@ -46,11 +46,15 @@ const insertAppointment = (appointment) => db.insert(collection, appointment)
 
 /**
  * Updates an appointment, to be the same as the given, with the same ID has the given appointment
- * @param {Appointment} appointment New Appointment
+ * @param {String} id Appointment id
+ * @param {Date} date New Date
  * @returns {Promise<Appointment>}
  */
-const updateAppointment = (appointment) => getAppointment(appointment._id)
-    .then(() => db.update(collection, appointment._id, appointment))
+const updateAppointment = (id) => getAppointment(ObjectId(id))
+    .then(appointment => {
+        appointment.date = date
+        return db.update(collection, id, appointment)
+    })
 
 /**
  * Deletes an appointment from the database with the given id
