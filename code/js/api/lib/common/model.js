@@ -1,6 +1,7 @@
 'use strict'
 
 const Joi = require('joi')
+const { ObjectId } = require('mongodb')
 
 /**
  * @typedef {Object} AppointmentWorkingHours
@@ -16,7 +17,7 @@ const appointmentWorkingHoursSchema = {
 
 /**
  * @typedef {Object} Subject
- * @property {String} _id Name of the subject is unique.
+ * @property {String} name Name of the subject is unique.
  * @property {String} subject Subject
  * @property {Boolean} priority Priority of the subject
  * @property {Number} currentTicket The number of the ticket that is being answered
@@ -24,8 +25,8 @@ const appointmentWorkingHoursSchema = {
  * @property {Date} date The current day 
  * @property {Array<String>} desks
  */
- const subjectSchema = {
-    _id: Joi.string().required(),
+const subjectSchema = {
+    name: Joi.string().required(),
     subject: Joi.string().required(),
     priority: Joi.boolean().required(),
     currentTicket: Joi.number().required(),
@@ -142,24 +143,24 @@ const sectionUpdateInputModel = Joi.object({
 })
 /**
  * @typedef {Object} SubjectInputModel
- * @property {String} _id Name of the subject is unique.
+ * @property {String} name Name of the subject is unique.
  * @property {String} subject Subject
  * @property {Boolean} priority Priority of the subject
  */
 const subjectInputModel = Joi.object({
-    _id: Joi.string().required(),
+    name: Joi.string().required(),
     subject: Joi.string().required(),
     priority: Joi.boolean().required()
 })
 /**
  * @typedef {Object} SubjectUpdateInputModel
- * @property {String} _id Name of the subject is unique.
+ * @property {String} name Name of the subject is unique.
  * @property {String} subject Subject
  * @property {Boolean} priority Priority of the subject
  * @property {Array<String>} desks
  */
 const subjectUpdateInputModel = Joi.object({
-    _id: Joi.string().required(),
+    name: Joi.string().required(),
     subject: Joi.string(),
     priority: Joi.boolean(),
     desks: Joi.array().items(Joi.string())

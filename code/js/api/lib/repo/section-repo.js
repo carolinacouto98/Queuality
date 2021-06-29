@@ -2,7 +2,7 @@
 
 const db = require('./queuality-db.js').methods
 const Error = require('../common/error.js')
-const { Section } = require('../common/model.js') // eslint-disable-line no-unused-vars
+const { Section, SectionInputModel, SectionUpdateInputModel } = require('../common/model.js') // eslint-disable-line no-unused-vars
 
 const collection = 'section'
 
@@ -14,37 +14,45 @@ const getSections = () => db.getAll(collection)
 
 /**
  * Gets a section from the database by its name.
- * @param {String} name The name of the section
+ * @param {String} id The name of the section
  * @returns {Promise<Section>} Section
  */
-const getSection = (name) => db.getByProperties(collection, {_id: name})
+const getSection = (id) => db.get(collection, id)
     .then((section) => {
         if (!section)
-            throw Error.CustomException(`The section ${name} is not in the database`, Error.NOT_FOUND)
+            throw Error.CustomException(`The section ${id} is not in the database`, Error.NOT_FOUND)
         return section
     })
 
 /**
  * Inserts a new section into the database
- * @param {Section} section Section to be inserted
+ * @param {SectionInputModel} section Section to be inserted
  * @returns {Promise<Section>}
  */
-const insertSection = (section) => db.insert(collection, section)
+const insertSection = (section) => {
+    section.employees = []
+    section.queue = []
+    section.subjects = []
+    db.insert(collection, section)
+}
 
 /**
  * Updates a section in the database with the same name that is passed in the parameter 
- * @param {Section} section Section to replace the the one with the same name
+ * @param {SectionUpdateInputModel} section Section to replace the the one with the same name
  * @returns {Promise<Section>}
  */
 const updateSection = (section) => getSection(section._id)
-    .then(() => db.update(collection, section._id, section))
+    .then(sect => {
+        sect.workingHours = section.workingHours
+        db.update(collection, sect._id, sect)
+    })
 
 /**
  * Deletes a section given its name 
- * @param {String} name Name of the section to be deleted
+ * @param {String} id Name of the section to be deleted
  * @returns {Promise<Section>}
  */
-const deleteSection = (name) => getSection(name)
-    .then(() => db.del(collection, name))
+const deleteSection = (id) => getSection(id)
+    .then(() => db.del(collection, id))
 
 module.exports = {getSections, getSection, insertSection, updateSection, deleteSection}
