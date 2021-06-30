@@ -9,7 +9,7 @@ const { Entity } = require('../common/siren.js')
 const error = require('../common/error.js')
 const router = Router()
 module.exports=router
-//check
+
 router.get('/sections',(req, res, next)=> {
     service.getSections()
         .then(sections => 
@@ -24,7 +24,7 @@ router.get('/sections',(req, res, next)=> {
                 )))
         .catch(next)
 })
-//check
+
 router.post('/sections', (req, res, next) => {
     const _id = req.body._id
     const workingHours = req.body.workingHours
@@ -60,7 +60,7 @@ router.patch('/sections/:sectionId', (req, res, next) => {
                 .catch(next)
         )})
 
-        //check
+       
 router.delete('/sections/:sectionId', (req, res, next) => {
     const _id = req.params.sectionId
     service.removeSection(_id)

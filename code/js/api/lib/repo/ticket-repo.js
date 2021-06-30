@@ -3,6 +3,8 @@
 const sectionRepo = require('./section-repo.js')
 const subjectRepo = require('./subject-repo.js')
 const Error = require('../common/error.js')
+const db = require('../repo/queuality-db.js').methods
+const collection = 'section'
 
 /**
  * Increments the total number of tickets in the subject
@@ -12,8 +14,9 @@ const Error = require('../common/error.js')
  */
 const incrementTotalTickets = (section, subject) => subjectRepo.getSubject(section, subject)
     .then(async sub => {
-        sub.totalTicket++
+        sub.totalTickets++
         await subjectRepo.updateSubject(section, sub)
+        return sub.totalTickets
     })
 
 /**
@@ -41,15 +44,20 @@ const insertTicket = (section, ticket, priority) => sectionRepo.getSection(secti
  */
 const decrementTotalTickets = (section, subject) => subjectRepo.getSubject(section, subject)
     .then(async sub => {
-        sub.totalTicket--
+        sub.totalTickets--
         await subjectRepo.updateSubject(section, sub)
+      /*  const arr = await subjectRepo.getSubjects(section)
+        const idx = arr.findIndex(s => s === sub)
+        const object ={}
+        object[`subjects.${idx}.totalTickets`] = -1
+        await db.updateInc(collection, section, object) */
     })
 
 /**
  * Deletes the given ticket into the waiting queue in the section.
  * @param {String} section Section name
  * @param {String} ticket Ticket to be deleted
- * @returns {Promise<Void>}
+ * @returns {Promise<String>}
  */
 const deleteTicket = (section, ticket) => sectionRepo.getSection(section)
     .then(async sect => {
@@ -58,6 +66,7 @@ const deleteTicket = (section, ticket) => sectionRepo.getSection(section)
             throw Error.CustomException(`The ticket ${ticket} does not exists in ${section}`, Error.NOT_FOUND)
         sect.queue.splice(idx, 1)
         await sectionRepo.updateSection(sect)
+        return ticket
     })
 
 /**

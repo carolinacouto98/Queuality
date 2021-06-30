@@ -29,12 +29,9 @@ const getSection = (id) => db.get(collection, id)
  * @param {SectionInputModel} section Section to be inserted
  * @returns {Promise<Section>}
  */
-const insertSection = (section) => {
-    section.employees = []
-    section.queue = []
-    section.subjects = []
+const insertSection = (section) => 
     db.insert(collection, section)
-}
+
 
 /**
  * Updates a section in the database with the same name that is passed in the parameter 
@@ -42,10 +39,9 @@ const insertSection = (section) => {
  * @returns {Promise<Section>}
  */
 const updateSection = (section) => getSection(section._id)
-    .then(sect => {
-        sect.workingHours = section.workingHours
-        db.update(collection, sect._id, sect)
-    })
+    .then(sect => 
+        db.update(collection, sect._id, section)
+    )
 
 /**
  * Deletes a section given its name 

@@ -27,6 +27,20 @@ const getSubject = (section, subject) => sectionRepo.getSection(section)
     })
 
 /**
+ * Get a subject from a section.
+ * @param {String} section Section name
+ * @param {String} subject Subject subject
+ * @returns {Promise<Array<String>>} Subject
+ */
+ const getSubjectDesks = (section, subject) => sectionRepo.getSection(section)
+ .then(s => s.subjects.find(sub => sub.subject === subject))
+ .then(sub => {
+     if (!sub)
+         throw Error.CustomException(`The subject ${subject} does not exists`, Error.NOT_FOUND)
+     return sub.desks
+ })
+
+/**
  * Adds a subject to a section.
  * @param {String} section Section name
  * @param {SubjectInputModel} subject Subject to be added
@@ -37,12 +51,8 @@ const insertSubject = (section, subject) => sectionRepo.getSection(section)
         const subjects = await getSubjects(section)
         if (subjects.find(sub => sub.name === subject.name))
             throw Error.CustomException(`The subject ${subject.name} is already in the database`, Error.ALREADY_EXISTS)
-        subject.currentTicket = 0
-        subject.totalTicket = 0
-        subject.date = new Date()
-        subject.desks = []
         sect.subjects.push(subject)
-        sectionRepo.updateSection(sect)
+        await sectionRepo.updateSection(sect)
         return subject
     })
 
@@ -58,9 +68,6 @@ const updateSubject = (section, subject) => sectionRepo.getSection(section)
         const idx = subjects.findIndex(sub => sub.name === subject.name)
         if (idx < 0)
             throw Error.CustomException(`The subject ${subject} is not in the database`, Error.NOT_FOUND)
-        subject.currentTicket = sect.subjects[idx].currentTicket
-        subject.totalTicket = sect.subjects[idx].totalTicket
-        subject.date = sect.subjects[idx].date
         sect.subjects[idx] = subject
         const s = await sectionRepo.updateSection(sect)
         return s.subjects[idx]
@@ -76,7 +83,7 @@ const updateSubject = (section, subject) => sectionRepo.getSection(section)
 const deleteSubject = (section, subject) => sectionRepo.getSection(section)
     .then(async sect => {
         const subjects = await getSubjects(section)
-        const idx = subjects.findIndex(sub => sub.name === subject.name)
+        const idx = subjects.findIndex(sub => sub.name === subject)
         if (idx < 0)
             throw Error.CustomException(`The subject ${subject} is not in the database`, Error.NOT_FOUND)
         const ret = subjects[idx]
@@ -90,5 +97,6 @@ module.exports = {
     getSubject,
     insertSubject,
     updateSubject,
-    deleteSubject
+    deleteSubject,
+    getSubjectDesks
 }

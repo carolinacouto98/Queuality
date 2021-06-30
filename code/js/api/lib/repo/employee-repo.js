@@ -28,11 +28,8 @@ const getEmployee = (id) => db.get(collection, id)
  * @param {EmployeeInputModel} employee Employee to be inserted
  * @returns {Promise<Employee>}
  */
-const insertEmployee = (employee) => {
-    employee.roles = []
-    employee.sections = []
+const insertEmployee = (employee) => 
     db.insert(collection, employee)
-}
 
 /**
  * Updates an existing employee in the database.

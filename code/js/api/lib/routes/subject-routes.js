@@ -1,6 +1,7 @@
 'use strict'
 
 const service = require('../services/subject-services.js')
+const ticketService = require('../services/ticket-services.js')
 const model = require('../common/model.js')
 const {Entity} = require('../common/siren.js')
 const subjectSiren = require('./siren/subject-siren.js')
@@ -26,43 +27,43 @@ router.get('/sections/:sectionId/subjects', (req, res, next) => {
                 )))
         .catch(next)
 })
-//check
+
 router.post('/sections/:sectionId/subjects', (req, res, next) => {
     const sectionId = req.params.sectionId
-    const _id = req.body._id
+    const name = req.body.name
     const priority = req.body.priority
     const subject = req.body.subject
-    if(!_id|| priority  == undefined || !subject)
+    if(!name|| priority  == undefined || !subject)
         throw error.CustomException('Missing required parameters', error.BAD_REQUEST)
-    model.subjectInputModel.validateAsync({ _id, priority, subject})
+    model.subjectInputModel.validateAsync({ name, priority, subject})
         .then(subject => 
             service.addSubject(sectionId, subject)
                 .then(subject => res.status(201).send(
                     new Entity(
                         'Add a Subject',
                         ['Subject'], 
-                        subjectSiren.addSubjectLinks(sectionId.replace(' ', '-'), subject._id),
+                        subjectSiren.addSubjectLinks(sectionId.replace(' ', '-'), subject.name),
                         subject
                     ))))
         .catch(next)
 })
 
-router.patch('/sections/:sectionId/subjects/:subjectId', (req, res, next) => {
+router.patch('/sections/:sectionId/subjects/:subjectName', (req, res, next) => {
     const sectionId = req.params.sectionId
-    const _id = req.params.subjectId
+    const name = req.params.subjectName
     const priority = req.body.priority
     const subject = req.body.subject
     const desks = req.body.desks
-    if(!priority && !subject)
+    if(priority == undefined && !subject && !desks)
         throw error.CustomException('Missing Parameters', error.BAD_REQUEST)
-    model.subjectUpdateInputModel.validateAsync({_id, priority, subject, desks})
+    model.subjectUpdateInputModel.validateAsync({name, priority, subject, desks})
         .then(subject => 
-            service.updateSubject(subject)
+            service.updateSubject(sectionId, subject)
                 .then(subject => res.send(
                     new Entity(
                         'Update a Subject',
                         ['Subject'],
-                        subjectSiren.updateSubjectLinks(sectionId.replace(' ', '-'), subjectId),
+                        subjectSiren.updateSubjectLinks(sectionId.replace(' ', '-'), name),
                         subject
                     )))
                 .catch(next)
@@ -71,12 +72,12 @@ router.patch('/sections/:sectionId/subjects/:subjectId', (req, res, next) => {
 router.delete('/sections/:sectionId/subjects/:subjectId', (req, res, next) => {
     const sectionId = req.params.sectionId
     const _id = req.params.subjectId
-    service.removeSubject(sectionId, _id)
+    service.deleteSubject(sectionId, _id)
         .then(() => res.send(
             new Entity(
                 'Delete a Subject',
                 ['Subject'], 
-                subjectSiren.deleteSubjectLinks(sectionId)
+                subjectSiren.deleteSubjectLinks(sectionId.replace(' ','-'))
             )))
         .catch(next)
 })
@@ -85,8 +86,9 @@ router.put('/sections/:sectionId/subjects/:subjectId', (req, res, next) => {
     const sectionId = req.params.sectionId
     const _id = req.params.subjectId
     const ticket = req.body.ticket
-
-    service.removeTicket(sectionId, _id, ticket)
+    if(ticket[0]!== _id)
+        throw error.CustomException('Ticket id and Subject Id dont match', error.BAD_REQUEST)
+    ticketService.removeTicket(sectionId, _id, ticket)
         .then(removedTicket => 
             res.send(
                 new Entity(

@@ -1,7 +1,7 @@
 'use strict'
 const repo = require('../repo/appointment-repo.js')
 const { getSection } = require('../repo/section-repo.js')
-const { getSubject } = require('../repo/subject-repo.js')
+const { getSubjectDesks } = require('../repo/subject-repo.js')
 const { Appointment, AppointmentInputModel } = require('../common/model.js') // eslint-disable-line no-unused-vars
 const Error = require('../common/error.js')
 
@@ -32,14 +32,12 @@ const addAppointment = async appointment => {
     const hoursOfDay = Array.from({length : len}, (_, i) => workingHours.begin + workingHours.duration * i)
     if (!hoursOfDay.includes(appointment.date.getHours() * 60 + appointment.date.getMinutes()))
         throw Error.CustomException(`The hours passed should be one of those: ${hoursOfDay}`, Error.BAD_REQUEST)
-    const subject = await getSubject(appointment.section, appointment.subject)
+    const desks = await getSubjectDesks(appointment.section, appointment.subject)
     const appointments = await repo.getAppointmentsByDate(appointment.section, appointment.subject, appointment.date)
-    if (appointments.length === subject.desks.length) return false
-    const availableDesk = appointments.map(app => app.desk)
-        .find(desk => !subject.desks.includes(desk))
+    if (appointments.length === desks.length) return undefined
+    const availableDesk = desks.find(desk => !appointments.find(app => app.desk===desk))
     appointment.desk = availableDesk
-    await repo.insertAppointment(appointment)
-    return true
+    return repo.insertAppointment(appointment)
 }
 
 /**
