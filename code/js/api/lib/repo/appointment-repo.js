@@ -50,10 +50,10 @@ const insertAppointment = (appointment) => db.insert(collection, appointment)
  * @param {Date} date New Date
  * @returns {Promise<Appointment>}
  */
-const updateAppointment = (id) => getAppointment(ObjectId(id))
+const updateAppointment = (id, date) => getAppointment(ObjectId(id))
     .then(appointment => {
         appointment.date = date
-        return db.update(collection, id, appointment)
+        return db.update(collection, ObjectId(id), appointment)
     })
 
 /**
@@ -62,7 +62,10 @@ const updateAppointment = (id) => getAppointment(ObjectId(id))
  * @returns {Promise<Appointment>}
  */
 const deleteAppointment = (id) => getAppointment(id)
-    .then(() => db.del(collection, ObjectId(id)))
+    .then(appointment => {
+        db.del(collection, ObjectId(id))
+        return appointment
+    })
 
 module.exports = {
     getAppointments,

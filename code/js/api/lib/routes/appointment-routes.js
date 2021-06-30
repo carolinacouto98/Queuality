@@ -70,34 +70,33 @@ router.patch('/appointments/:appointmentId', (req, res, next) => {
 router.post('/appointments', (req, res, next) => {
     const section = req.body.section
     const date = req.body.date
-    const desk = req.body.desk
     const subject = req.body.subject
     if(!section && !date && !desk && !subject)
         throw error.CustomException('Missing required Parameters', error.BAD_REQUEST)
     else    
-        model.appointmentInputModel.validateAsync({subject, desk, date, section})
+        model.appointmentInputModel.validateAsync({subject, date, section})
             .then(appointment =>
                 service.addAppointment(appointment)
                     .then(appointment => res.status(201).send(
                         new Entity(
                             'Add an Appointment',
                             ['Appointments'],
-                            appointmentSiren.addAppointmentLinks(appointment._id),
-                            appointment
+                            appointmentSiren.addAppointmentLinks(appointment? appointment._id: undefined),
+                            appointment?? undefined
                         )))
                     .catch(next)
             )
 })
 
 //mobile-app
-router.delete('appointments/:appointmentId', (req, res, next) => {
+router.delete('/appointments/:appointmentId', (req, res, next) => {
     const id = req.params.appointmentId
     service.removeAppointment(id)
-        .then((section, desk) => res.send(
+        .then(appointment => res.send(
             new Entity(
                 'Delete an Appointment',
                 ['Appointment'],
-                appointmentSiren.deleteAppointmentLinks(section, desk)
+                appointmentSiren.deleteAppointmentLinks(appointment.section.replace(' ', '-'), appointment.desk)
             )))
         .catch(next)
 })

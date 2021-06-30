@@ -23,7 +23,7 @@ const getSubject = (sectionName, subjectId) => repo.getSubject(sectionName, subj
 
 /**
   * @param {model.SubjectInputModel} subject
-  * @returns {Promise<Void>}
+  * @returns {Promise<Subject>}
   */
 const addSubject = (section, subject) => repo.insertSubject(section, subject)
 
@@ -31,17 +31,20 @@ const addSubject = (section, subject) => repo.insertSubject(section, subject)
   * @param {model.SubjectUpdateInputModel} subject
   * @returns {Promise<Void>}
   */
-const updateSubject = (subject) => 
-    sectionService.getSection(subject.sectionId)
-        .then(section => getSubjects(section.name))
+const updateSubject = (sectionId, subject) => 
+    sectionService.getSection(sectionId)
+        .then(section => getSubjects(section._id))
         .then(async subjects => {
-            const subjectInfo = await getSubject(subject.sectionId, subject.name)
+            const subjectInfo = await getSubject(sectionId, subject.name)
             if(subject.priority === undefined) subject.priority = subjectInfo.priority
             if(!subject.subject) subject.subject = subjectInfo.subject
             if(!subject.desks) subject.desks = subjectInfo.desks
+            subject.date = subjectInfo.date
+            subject.currentTicket = subjectInfo.currentTicket
+            subject.totalTickets = subjectInfo.totalTickets
             if(subject.priority && !subjectInfo.priority && subjects.find(s => s.priority)) 
                 throw error.CustomException('Cannot have more than one priority queue', error.ALREADY_EXISTS)
-            return repo.updateSubject(subject)
+            return repo.updateSubject(sectionId, subject)
         })
 /**
  * @param {String} sectionId

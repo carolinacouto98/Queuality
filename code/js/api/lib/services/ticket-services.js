@@ -14,10 +14,11 @@ const addTicket = (sectionId, subjectId) =>
     getSubject(sectionId, subjectId)
         .then(async subject => {
             if(subject.date !== getDate()) {
-                await updateSubject(subject)
+                await updateSubject(sectionId, subject)
             }
             const nrTicket = await repo.incrementTotalTickets(sectionId, subjectId)
             await repo.insertTicket(sectionId, subjectId.concat(nrTicket), subject.priority)
+            return nrTicket
         })
 
 /**
@@ -25,12 +26,14 @@ const addTicket = (sectionId, subjectId) =>
  * @param {String} sectionId 
  * @param {String} subjectId 
  * @param {String} ticket 
- * @returns {Promise<Void>}
+ * @returns {Promise<String>}
  */
-const removeTicket = (sectionId, subjectId, ticket) => {
-    const decrementPromise = repo.decrementTotalTickets(sectionId, subjectId)
-    const deletePromise = repo.deleteTicket(sectionId, ticket)
-    return Promise.all([decrementPromise, deletePromise])
+const removeTicket = async (sectionId, subjectId, ticket) => {
+    const decrementPromise = await repo.decrementTotalTickets(sectionId, subjectId)
+    const deletePromise = await repo.deleteTicket(sectionId, ticket)
+    return deletePromise
+    /*return Promise.all([decrementPromise, deletePromise])
+        .then(([_, deleted]) => deleted) */
 }
 
 /**

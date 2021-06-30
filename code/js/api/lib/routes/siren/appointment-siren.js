@@ -8,10 +8,12 @@ const updateAppointmentLinks = (id, section, desk) => [
     siren.selfLink(`${siren.BASENAME}/appointments/${id}`),
     new siren.SirenLink(['/rel/appointments'],`${siren.BASENAME}/appointments?section=${section}&desk=${desk}`)
 ]
-const addAppointmentLinks = (id) => [
+const addAppointmentLinks = (id) => {id? [
     siren.selfLink(`${siren.BASENAME}/appointments`),
     new siren.SirenLink(['/rel/appointment'],`${siren.BASENAME}/appointments/${id}`)
-]
+] :
+[siren.selfLink(`${siren.BASENAME}/appointments`)]
+}
 const deleteAppointmentLinks = (section, desk) => [ new siren.SirenLink(['/rel/appointments'], `${siren.BASENAME}/appointments?section=${section}&desk=${desk}`)]
 
 function addAppointmentAction(){
@@ -42,7 +44,7 @@ function updateAppointmentAction (id) {
 } 
 
 function deleteAppointmentAction (id) {
-    return siren.SirenAction(
+    return new siren.SirenAction(
         'delete-appointment',
         'Delete an Appointment',
         siren.HttpMethod.DELETE,
