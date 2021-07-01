@@ -24,7 +24,7 @@ const getAppointments = (section, desk) => db.getAll(collection, { section, desk
 const getAppointment = (id) => db.get(collection, ObjectId(id))
     .then(appointment => {
         if (!appointment)
-            throw new Error.CustomException(`The appointment with id ${id} does not exist`, Error.NOT_FOUND)
+            throw Error.CustomException(`The appointment with id ${id} does not exist`, Error.NOT_FOUND)
         return appointment
     })
 
@@ -46,11 +46,15 @@ const insertAppointment = (appointment) => db.insert(collection, appointment)
 
 /**
  * Updates an appointment, to be the same as the given, with the same ID has the given appointment
- * @param {Appointment} appointment New Appointment
+ * @param {String} id Appointment id
+ * @param {Date} date New Date
  * @returns {Promise<Appointment>}
  */
-const updateAppointment = (appointment) => getAppointment(appointment._id)
-    .then(() => db.update(collection, appointment._id, appointment))
+const updateAppointment = (id, date) => getAppointment(ObjectId(id))
+    .then(appointment => {
+        appointment.date = date
+        return db.update(collection, ObjectId(id), appointment)
+    })
 
 /**
  * Deletes an appointment from the database with the given id
@@ -58,7 +62,10 @@ const updateAppointment = (appointment) => getAppointment(appointment._id)
  * @returns {Promise<Appointment>}
  */
 const deleteAppointment = (id) => getAppointment(id)
-    .then(() => db.del(collection, ObjectId(id)))
+    .then(appointment => {
+        db.del(collection, ObjectId(id))
+        return appointment
+    })
 
 module.exports = {
     getAppointments,

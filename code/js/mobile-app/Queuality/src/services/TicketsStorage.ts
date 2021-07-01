@@ -31,12 +31,6 @@ export async function removeTicket(ticketId: string): Promise<void> {
     await store.set(KEY, newTickets)
 }
 
-export async function removeTickets(tickets: TicketDetails[]): Promise<void> {
-    const oldTickets: TicketDetails[] = await store.get(KEY)
-    const newTickets = oldTickets.filter(ticket => !tickets.includes(ticket))
-    await store.set(KEY, newTickets)
-}
-
 export async function updateWaitingTime(): Promise<void> {
     const tickets: TicketDetails[] = await store.get(KEY)
     tickets.map( ticket => ticket.waitingTickets = ticket.waitingTickets-1)

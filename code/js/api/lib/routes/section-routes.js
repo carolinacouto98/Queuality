@@ -1,14 +1,15 @@
 'use strict'
 
 const service = require('../services/section-services.js')
+const ticketService = require('../services/ticket-services.js')
 const model = require('../common/model.js')
-
 const sectionSiren = require('./siren/section-siren.js')
 const Router = require('express').Router
 const { Entity } = require('../common/siren.js')
 const error = require('../common/error.js')
 const auth = require('../common/auth.js')
 const router = Router()
+module.exports=router
 
 router.get('/sections', (req, res, next) => {
     service.getSections()
@@ -16,6 +17,7 @@ router.get('/sections', (req, res, next) => {
             res.send(
                 new Entity(
                     'Get Sections',
+                    ['Sections'],
                     sectionSiren.getSectionsLinks,
                     sections,
                     [sectionSiren.addSectionAction()],
@@ -24,18 +26,19 @@ router.get('/sections', (req, res, next) => {
         .catch(next)
 })
 
-router.post('/sections', auth('Manage Sections'), (req, res, next) => {
-    const name = req.body.name
+router.post('/sections', (req, res, next) => {
+    const _id = req.body._id
     const workingHours = req.body.workingHours
-    if(!name && !workingHours)
+    if(!_id && !workingHours)
         throw error.CustomException('Missing Required Parameters', error.BAD_REQUEST)
-    model.SectionInputModel.validateAsync({ name, workingHours})
+    model.sectionInputModel.validateAsync({ _id, workingHours})
         .then(section => 
             service.addSection(section)
                 .then(section => res.status(201).send(
                     new Entity(
                         'Add a Section',
-                        sectionSiren.addSectionLinks(section._id),
+                        ['Section'],
+                        sectionSiren.addSectionLinks(_id.replace(' ', '-')),
                         section
                     ))))
         .catch(next)
@@ -43,24 +46,25 @@ router.post('/sections', auth('Manage Sections'), (req, res, next) => {
 
 router.patch('/sections/:sectionId', auth('Manage Sections'), (req, res, next) => {
     const _id = req.params.sectionId
-    const workingHours = req.body
+    const workingHours = req.body.workingHours
     if(!workingHours)
         throw error.CustomException('Missing Parameters', error.BAD_REQUEST)
-    model.SectionUpdateInputModel.validateAsync({_id, workingHours})
+    model.sectionUpdateInputModel.validateAsync({_id, workingHours})
         .then(section => 
             service.updateSection(section)
                 .then(section => res.send(
                     new Entity(
                         'Update a Section', 
-                        sectionSiren.updateSectionLinks(section._id),
+                        sectionSiren.updateSectionLinks(section._id.replace(' ', '-')),
                         section
                     )))
                 .catch(next)
         )})
 
-router.delete('/sections/:sectionId', auth('Manage Sections'), (req, res, next) => {
-    const id = req.params.sectionId
-    service.removeSection(id)
+       
+router.delete('/sections/:sectionId', (req, res, next) => {
+    const _id = req.params.sectionId
+    service.removeSection(_id)
         .then(() => res.send(
             new Entity(
                 'Delete a Section', 
@@ -70,40 +74,40 @@ router.delete('/sections/:sectionId', auth('Manage Sections'), (req, res, next) 
 })
 
 router.post('/sections/:sectionId/queue', (req, res, next) => {
-    const sectionId = req.body.sectionId
+    const _id = req.params.sectionId
     const subjectName = req.body.subject
-    service.addTicket(sectionId, subjectName)
+    ticketService.addTicket(_id, subjectName)
         .then(ticket => res.send(
             new Entity(
                 'Add a Ticket',
                 ['Tickets'],
-                sectionSiren.addTicketLinks(sectionId),
+                sectionSiren.addTicketLinks(_id.replace(' ', '-')),
                 ticket
             )))
         .catch(next)
 })
 
 router.get('/sections/:sectionId/queue', (req, res, next) => {
-    const sectionId = req.body.sectionId
+    const _id = req.params.sectionId
     const nextTicket = req.query.next
-    const subject = req.query.subjectId
+    const subject = req.query.subject
     if(nextTicket) 
-        service.getNextTicket(sectionId, subject)
+        ticketService.getNextTicket(_id, subject)
             .then(ticket => res.send(
                 new Entity(
                     'Next Ticket',
                     ['Tickets'],
-                    sectionSiren.getNextTicketLinks(sectionId, subject),
+                    sectionSiren.getNextTicketLinks(_id.replace(' ', '-'), subject),
                     ticket
                 )))
             .catch(next)
     else
-        service.getQueueTicket(sectionId)
+        ticketService.getQueueTickets(_id)
             .then(tickets => res.send(
                 new Entity(
                     'Get Tickets',
                     ['Tickets'],
-                    sectionSiren.getQueueTicketsLinks(sectionId),
+                    sectionSiren.getQueueTicketsLinks(_id.replace(' ', '-')),
                     tickets
                 )
             ))

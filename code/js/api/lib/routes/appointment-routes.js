@@ -1,7 +1,7 @@
 'use strict'
 
 const service = require('../services/appointment-services.js')
-//const model = require('../common/model.js')
+const model = require('../common/model.js')
 const { Entity } = require('../common/siren.js')
 const appointmentSiren = require('./siren/appointment-siren.js')
 
@@ -12,21 +12,9 @@ const router = Router()
 module.exports = router
 
 router.get('/appointments', (req, res, next) => {
-    const subject = req.query.subject
-    const day = req.query.day
     const section = req.query.section
     const desk = req.query.desk
-    if(subject && day && !section && !desk)
-        service.getAvailableHours(subject, day)
-            .then(availableHours => res.send(
-                new Entity(
-                    'Get Available Hours',
-                    ['Available Hours'],
-                    appointmentSiren.getAvailableHoursLinks(subject, day),
-                    availableHours
-                )))
-            .catch(next)
-    else if( section && desk && !subject && !day) 
+    if( section && desk) 
         service.getAppointments(section, desk)
             .then(appointments => res.send(
                 new Entity(
@@ -80,29 +68,35 @@ router.patch('/appointments/:appointmentId', (req, res, next) => {
 })
 //mobile-app
 router.post('/appointments', (req, res, next) => {
-    const appointment = req.body
-    if(!appointment)
+    const section = req.body.section
+    const date = req.body.date
+    const subject = req.body.subject
+    if(!section && !date && !desk && !subject)
         throw error.CustomException('Missing required Parameters', error.BAD_REQUEST)
-    service.addAppointment(appointment)
-        .then(appointment => res.status(201).send(
-            new Entity(
-                'Add an Appointment',
-                ['Appointments'],
-                appointmentSiren.addAppointmentLinks(appointment._id),
-                appointment
-            )))
-        .catch(next)
+    else    
+        model.appointmentInputModel.validateAsync({subject, date, section})
+            .then(appointment =>
+                service.addAppointment(appointment)
+                    .then(appointment => res.status(201).send(
+                        new Entity(
+                            'Add an Appointment',
+                            ['Appointments'],
+                            appointmentSiren.addAppointmentLinks(appointment? appointment._id: undefined),
+                            appointment?? undefined
+                        )))
+                    .catch(next)
+            )
 })
 
 //mobile-app
-router.delete('appointments/:appointmentId', (req, res, next) => {
+router.delete('/appointments/:appointmentId', (req, res, next) => {
     const id = req.params.appointmentId
     service.removeAppointment(id)
-        .then((section, desk) => res.send(
+        .then(appointment => res.send(
             new Entity(
                 'Delete an Appointment',
                 ['Appointment'],
-                appointmentSiren.deleteAppointmentLinks(section, desk)
+                appointmentSiren.deleteAppointmentLinks(appointment.section.replace(' ', '-'), appointment.desk)
             )))
         .catch(next)
 })

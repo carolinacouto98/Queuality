@@ -16,6 +16,7 @@ const TicketsComponent: React.FC = () => {
                             <IonItem>
                                 <IonCardTitle style={{marginTop:'5%', marginBottom:'5%'}}>{ticket.ticket}</IonCardTitle>
                                 <b slot='end'>{ticket.waitingTickets}</b>
+                                <b>{ticket.sectionName}</b>
                             </IonItem>
                         </IonCard>   
                     ))}  

@@ -1,40 +1,28 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable react/prop-types */
 import {IonBadge, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonIcon, IonItem, IonRow, useIonAlert } from '@ionic/react'
-import React, { useContext, useState } from 'react'
-import { Queue } from '../../model/QueuesModel'
+import React, { useState } from 'react'
+import { Subject } from '../../model/SubjectModel'
 import { accessibilityOutline } from 'ionicons/icons'
-import './QueueCard.css'
-import { TicketDetails } from '../../model/TicketsModel'
-import { AppContext } from '../../App'
-import { setTicket } from '../../services/TicketsStorage'
+import './SubjectCard.css'
 
-interface QueueCardProps {
-    queue: Queue
+type Props = {
+    subject: Subject,
+    ticketHandler(subjectName: string) : void
 }
 
-const QueueCard: React.FC<QueueCardProps> = props => {
-    const context = useContext(AppContext)
+const SubjectCard: React.FC<Props> = ({subject, ticketHandler})=> {
     const [alert] = useIonAlert()
     const [isDisabled, disable] = useState(false)
-    
-    
     const handleTicketClick = async () => {
         disable(true)
-        context.queueService.getQueueTicket(props.queue._id)
-            .then(data => {
-                console.log(data)
-                context.ticketService.getWaitingTickets()
-                    .then(waiting =>
-                        setTicket(new TicketDetails(data, waiting ,props.queue.subject, props.queue.nrTicketsAnswered)))
-            })
-            .catch(e => console.log(e))
+        ticketHandler(subject.name)
     }
 
     return(
-        <IonCard disabled={isDisabled} className='QueueCard' id ={props.queue._id} button onClick={() => {
+        <IonCard disabled={isDisabled} className='SubjectCard' id ={subject.name} button onClick={() => {
             alert({
-                message: `Are you sure you want to get a ticket from ${props.queue.name}?`,
+                message: `Are you sure you want to get a ticket to ${subject.subject}?`,
                 buttons: [
                     {
                         text: 'Cancel',
@@ -57,22 +45,22 @@ const QueueCard: React.FC<QueueCardProps> = props => {
                         <IonGrid>
                             <IonRow>
                                 <IonCol>
-                                    {props.queue.name} 
+                                    {subject.name} 
                                 </IonCol>
                                 <IonCol>
-                                    {props.queue.priority? <IonIcon icon={accessibilityOutline} size='small'/>: null}
+                                    {subject.priority? <IonIcon icon={accessibilityOutline} size='small'/>: null}
                                 </IonCol>
                             </IonRow>
                         </IonGrid>
-                        <IonBadge slot='end' color='medium'>{props.queue.nrTicketsAnswered}</IonBadge> 
+                        <IonBadge slot='end' color='medium'>{subject.currentTicket}</IonBadge> 
                     </IonItem> 
                 </IonCardTitle>  
             </IonCardHeader>
             <IonCardContent>
-                {props.queue.subject}
+                {subject.subject}
             </IonCardContent> 
         </IonCard>
     )
 }
 
-export default QueueCard
+export default SubjectCard

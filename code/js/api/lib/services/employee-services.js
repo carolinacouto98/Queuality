@@ -24,7 +24,7 @@ const getEmployee = (employeeId) => repo.getEmployee(employeeId)
 const addEmployee = (employee) => 
     getEmployees()
         .then(employees => {
-            if(employees.find(employeeInfo => employeeInfo.id === employee.id))
+            if(employees.find(employeeInfo => employeeInfo._id === employee._id))
                 throw error.CustomException('That employee already exists', error.ALREADY_EXISTS)
             return repo.insertEmployee(employee)
         })
@@ -36,7 +36,7 @@ const addEmployee = (employee) =>
  */
 
 const updateEmployee = (employee) => 
-    getEmployee(employee.id)
+    getEmployee(employee._id)
         .then(employeeInfo => {
             if(!employee.name) employee.name = employeeInfo.name
             if(!employee.sections) employee.sections = employeeInfo.sections

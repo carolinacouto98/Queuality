@@ -32,11 +32,14 @@ const getSection = (sectionId) => repo.getSection(sectionId)
  * @param {model.SectionInputModel} section
  * @returns {Promise<Void>}
  */
-const addSection = (section) => {
+const addSection = async (section) => {
     const wh = section.workingHours
     section.workingHours.begin = hoursToMinutes(wh.begin)
     section.workingHours.end = hoursToMinutes(wh.end)
-    return repo.insertSection(section)
+    const inserted = await repo.insertSection(section)
+    inserted.workingHours.begin = minutesToHours(inserted.workingHours.begin)
+    inserted.workingHours.end = minutesToHours(inserted.workingHours.end)
+    return inserted
 }
 
 /**
@@ -44,20 +47,23 @@ const addSection = (section) => {
  * @param {model.SectionUpdateInputModel} queue 
  * @returns {Promise<Void>}
  */
-const updateSection = (section) => {
+const updateSection = async (section) => {
     if (section.workingHours) {
         const wh = section.workingHours
         section.workingHours.begin = hoursToMinutes(wh.begin)
         section.workingHours.end = hoursToMinutes(wh.end)
     }
-    return repo.updateSection(section)
+    const updated = await repo.updateSection(section)
+    updated.workingHours.begin = minutesToHours(updated.workingHours.begin)
+    updated.workingHours.end = minutesToHours(updated.workingHours.end)
+    return updated
 }
 
 /**
  * @param {String} sectionName 
  * @returns {Promise<Void>}
  */
-const removeSection = (sectionName) => repo.deleteQueue(sectionName)
+const removeSection = (sectionName) => repo.deleteSection(sectionName)
 
 /**
  * @param {String} hours HH:mm

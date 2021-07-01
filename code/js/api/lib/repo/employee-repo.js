@@ -2,7 +2,7 @@
 
 const db = require('./queuality-db.js').methods
 const Error = require('../common/error.js')
-const { Employee, EmployeeInputModel } = require('../common/model.js')  // eslint-disable-line no-unused-vars
+const { Employee, EmployeeInputModel, EmployeeUpdateInputModel } = require('../common/model.js')  // eslint-disable-line no-unused-vars
 
 const collection = 'employee'
 
@@ -28,15 +28,16 @@ const getEmployee = (id) => db.get(collection, id)
  * @param {EmployeeInputModel} employee Employee to be inserted
  * @returns {Promise<Employee>}
  */
-const insertEmployee = (employee) => db.insert(collection, employee)
+const insertEmployee = (employee) => 
+    db.insert(collection, employee)
 
 /**
  * Updates an existing employee in the database.
- * @param {Employee} employee New employee to replace the one with the same id 
+ * @param {EmployeeUpdateInputModel} employee New employee to replace the one with the same id 
  * @returns {Promise<Employee>}
  */
-const updateEmployee = (employee) => getEmployee(employee.id)
-    .then(() => db.update(collection, employee.id, employee))
+const updateEmployee = (employee) => getEmployee(employee._id)
+    .then(() => db.update(collection, employee._id, employee))
 
 /**
  * Deletes an employee from the database given its id.
