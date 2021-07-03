@@ -37,7 +37,7 @@ const updateSubject = (sectionId, subject) =>
         .then(async subjects => {
             const subjectInfo = await getSubject(sectionId, subject.name)
             if(subject.priority === undefined) subject.priority = subjectInfo.priority
-            if(!subject.subject) subject.subject = subjectInfo.subject
+            if(!subject.description) subject.subject = subjectInfo.description
             if(!subject.desks) subject.desks = subjectInfo.desks
             subject.date = subjectInfo.date
             subject.currentTicket = subjectInfo.currentTicket

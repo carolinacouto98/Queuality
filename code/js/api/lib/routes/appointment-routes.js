@@ -82,7 +82,7 @@ router.post('/appointments', (req, res, next) => {
                             'Add an Appointment',
                             ['Appointments'],
                             appointmentSiren.addAppointmentLinks(appointment? appointment._id: undefined),
-                            appointment?? undefined
+                            appointment
                         )))
                     .catch(next)
             )

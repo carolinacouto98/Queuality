@@ -29,7 +29,7 @@ export type EmbeddedEntity<T> = {
     title: string
 }
 
-export type Entity<T,K> = {
+export type Entity<T, K> = {
     title: string,
     class: string[],
     properties: T,

@@ -32,10 +32,10 @@ router.post('/sections/:sectionId/subjects', (req, res, next) => {
     const sectionId = req.params.sectionId
     const name = req.body.name
     const priority = req.body.priority
-    const subject = req.body.subject
+    const description = req.body.description
     if(!name|| priority  == undefined || !subject)
         throw error.CustomException('Missing required parameters', error.BAD_REQUEST)
-    model.subjectInputModel.validateAsync({ name, priority, subject})
+    model.subjectInputModel.validateAsync({ name, priority, description})
         .then(subject => 
             service.addSubject(sectionId, subject)
                 .then(subject => res.status(201).send(
@@ -52,11 +52,11 @@ router.patch('/sections/:sectionId/subjects/:subjectName', (req, res, next) => {
     const sectionId = req.params.sectionId
     const name = req.params.subjectName
     const priority = req.body.priority
-    const subject = req.body.subject
+    const description = req.body.description
     const desks = req.body.desks
     if(priority == undefined && !subject && !desks)
         throw error.CustomException('Missing Parameters', error.BAD_REQUEST)
-    model.subjectUpdateInputModel.validateAsync({name, priority, subject, desks})
+    model.subjectUpdateInputModel.validateAsync({name, priority, description, desks})
         .then(subject => 
             service.updateSubject(sectionId, subject)
                 .then(subject => res.send(
