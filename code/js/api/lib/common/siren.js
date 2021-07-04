@@ -21,7 +21,7 @@ class SirenLink {
 /**
  * @class
  * @param {string} name
- * @param {Array<string>} type
+ * @param {string} type
  */
 
 class Field {
@@ -72,16 +72,17 @@ class EmbeddedEntity {
 }
 
 /**
- * @class
- * @param {string} title
- * @param {Array<string>} classes
- * @param {Array<SirenLink>} links
- * @param {any} properties
- * @param {Array<SirenAction>} actions
- * @param {EmbeddedEntity} entities
+ * @module Entity
  */
-
 class Entity {
+    /**
+     * @param {string} title
+     * @param {Array<string>} classes
+     * @param {Array<SirenLink>} links
+     * @param {any} properties
+     * @param {Array<SirenAction>} actions
+     * @param {EmbeddedEntity} entities
+     */
     constructor(title, classes, links, properties = undefined,  actions = undefined, entities = undefined) {
         this.title = title    
         this.class = classes

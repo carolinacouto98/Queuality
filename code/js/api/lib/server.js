@@ -22,7 +22,7 @@ function run(port, url, dbName) {
     ]
     
 
-    app.use(
+    /*app.use(
         auth({
             issuerBaseURL: process.env.ISSUER_BASE_URL, // eslint-disable-line no-undef
             baseURL: process.env.BASE_URL,              // eslint-disable-line no-undef
@@ -34,7 +34,7 @@ function run(port, url, dbName) {
                 scope: 'openid profile email',
             }
         })
-    )
+    )*/
 
     app.use((req, res, next) => {
         res.append('Access-Control-Allow-Origin', ['*'])

@@ -68,6 +68,7 @@ router.delete('/sections/:sectionId', (req, res, next) => {
         .then(() => res.send(
             new Entity(
                 'Delete a Section', 
+                undefined,
                 sectionSiren.deleteSectionLinks
             )))
         .catch(next)
