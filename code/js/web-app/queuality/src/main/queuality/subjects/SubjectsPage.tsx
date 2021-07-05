@@ -1,10 +1,16 @@
 import { SubjectsService } from "./SubjectsService";
-
+import './timeinput.css'
 type SubjectsPageProps = {
     service: SubjectsService
 }
+
 export default function SubjectsPage({ service }: SubjectsPageProps) {
     return(
-        <h1>I don't exist yet.</h1>
+        <table className="datetime-tool">
+            <tr>
+                <td><label htmlFor="time">Time:</label></td>
+                <td><input type="time"/></td>
+            </tr>
+        </table>
     )
 }

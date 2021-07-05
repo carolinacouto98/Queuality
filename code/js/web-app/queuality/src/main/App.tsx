@@ -9,6 +9,8 @@ import { getTicketsService } from './queuality/tickets/TicketsService'
 import { getSectionsService } from './queuality/sections/SectionsService'
 import { getSubjectsService } from './queuality/subjects/SubjectsService'
 
+export const API_BASE_URL = 'http://localhost:5000/queuality'
+
 function PageRouter() {
   return (
     <Router>
