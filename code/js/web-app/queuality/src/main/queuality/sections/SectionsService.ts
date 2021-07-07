@@ -23,15 +23,21 @@ export function getSectionsService(): SectionsService {
         getSection: (sectionId: string): Fetch.Request<Siren.Entity<Model.Section, void>> =>
             Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections/${sectionId}`))
         ,
-        addSection: (section: Model.Section): Fetch.Request<Siren.Entity<Model.CreateSection, void>> => 
-            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections`), { 
+        addSection: (section: Model.Section): Fetch.Request<Siren.Entity<Model.CreateSection, void>> => {            
+            const body = {
+                _id : section._id,
+                workingHours : {
+                    begin: section.workingHours!!.begin,
+                    end: section.workingHours!!.end,
+                    duration: section.workingHours!!.duration
+                }
+            }
+            return Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections`), { 
                 method: 'POST',
                 headers: headers,
-                body: JSON.stringify({
-                    section
-                })
+                body: JSON.stringify(body)
             })
-        ,
+        },
         updateSection: (sectionId: string, workingHours: Model.WorkingHours): Fetch.Request<Siren.Entity<Model.Section, void>> => 
             Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections/${sectionId}`), { 
                 method: 'PATCH',

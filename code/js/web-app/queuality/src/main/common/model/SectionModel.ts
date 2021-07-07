@@ -33,9 +33,9 @@ export class CreateSection  {
 export class WorkingHours {
     begin?: string
     end?: string
-    duration?: string
-
-    constructor(begin: string, end: string, duration: string) {
+    duration?: number
+    static MINDURATION: number = 0
+    constructor(begin: string, end: string, duration: number) {
         this.begin = begin
         this.end = end
         this.duration = duration
