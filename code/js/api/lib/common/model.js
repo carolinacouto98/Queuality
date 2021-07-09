@@ -52,6 +52,18 @@ const section = Joi.object({
     subjects: Joi.array().items(Joi.object(subjectSchema)).required()
 })
 
+const roles = [
+    'Manage Sections',
+    'Manage Section',
+    'Manage Employees',
+    'Manage Section\'s Employees Roles',
+    'Manage Section\'s Appointments',
+    'Manage Employee\'s Appointments',
+    'Manage Desk\'s Subject',
+    'Answer Appointments',
+    'Answer Tickets'
+]
+
 /**
  * @typedef {Object} Employee
  * @property {String} _id
@@ -63,7 +75,7 @@ const section = Joi.object({
 const employee = Joi.object({
     _id: Joi.string().required(),
     name: Joi.string().required(),
-    roles: Joi.array().items(Joi.string()).required(),
+    roles: Joi.array().items(Joi.valid(roles)).required(),
     sections: Joi.array().items(Joi.string()).required(),
     desk: Joi.string()
 })
@@ -118,7 +130,7 @@ const employeeInputModel = Joi.object({
 const employeeUpdateInputModel = Joi.object({ 
     _id: Joi.string().required(),
     name: Joi.string(),
-    roles: Joi.array().items(Joi.string()),
+    roles: Joi.array().items(Joi.valid(roles)),
     sections: Joi.array().items(Joi.string()),
     desk: Joi.string()
 })
