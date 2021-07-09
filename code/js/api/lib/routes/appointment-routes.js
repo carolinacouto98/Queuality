@@ -14,7 +14,10 @@ module.exports = router
 router.get('/appointments', (req, res, next) => {
     const section = req.query.section
     const desk = req.query.desk
-    if( section && desk) 
+    if (!req.employee?.roles.includes('Manage Section\'s Appointments') || !req.employee.sections.includes(section))
+        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
+    
+    if(section && desk) 
         service.getAppointments(section, desk)
             .then(appointments => res.send(
                 new Entity(

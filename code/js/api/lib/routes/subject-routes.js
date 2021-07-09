@@ -23,7 +23,7 @@ router.get('/sections/:sectionId/subjects', (req, res, next) => {
                     subjectSiren.getSubjectsLinks(sectionId.replace(' ', '-')),
                     subjects,
                     [subjectSiren.addSubjectAction(sectionId.replace(' ', '-'))], 
-                    subjectSiren.setSubEntities(sectionId.replace(' ', '-'),subjects)
+                    subjectSiren.setSubEntities(sectionId.replace(' ', '-'), subjects)
                 )))
         .catch(next)
 })
@@ -33,6 +33,8 @@ router.post('/sections/:sectionId/subjects', (req, res, next) => {
     const name = req.body.name
     const priority = req.body.priority
     const description = req.body.description
+    if (!req.employee.roles?.includes('Manage Section') || !req.employee?.sections.includes(sectionId))
+        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     if(!name|| priority  == undefined || !subject)
         throw error.CustomException('Missing required parameters', error.BAD_REQUEST)
     model.subjectInputModel.validateAsync({ name, priority, description})
@@ -54,6 +56,8 @@ router.patch('/sections/:sectionId/subjects/:subjectName', (req, res, next) => {
     const priority = req.body.priority
     const description = req.body.description
     const desks = req.body.desks
+    if (!req.employee?.roles.includes('Manage Section') || !req.employee?.sections.includes(sectionId))
+        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     if(priority == undefined && !subject && !desks)
         throw error.CustomException('Missing Parameters', error.BAD_REQUEST)
     model.subjectUpdateInputModel.validateAsync({name, priority, description, desks})
@@ -72,6 +76,8 @@ router.patch('/sections/:sectionId/subjects/:subjectName', (req, res, next) => {
 router.delete('/sections/:sectionId/subjects/:subjectId', (req, res, next) => {
     const sectionId = req.params.sectionId
     const _id = req.params.subjectId
+    if (!req.employee?.roles.includes('Manage Section') || !req.employee?.sections.includes(sectionId))
+        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     service.deleteSubject(sectionId, _id)
         .then(() => res.send(
             new Entity(
