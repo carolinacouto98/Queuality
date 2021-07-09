@@ -1,11 +1,11 @@
-import * as Model from '../../common/model/SectionModel'
-import * as Fetch from '../../common/FetchUtils'
-import * as Siren from '../../common/Siren'
+import * as Model from '../model/SectionModel'
+import * as Fetch from '../FetchUtils'
+import * as Siren from '../Siren'
 
 import { API_BASE_URL } from '../../App'
 
 export interface SectionsService {
-    getSections: () => Fetch.Request<Siren.Entity<Model.SectionsDto, Model.Section>>
+    getSections: () => Fetch.Request<Siren.Entity<void, Model.Section>>
     getSection: (sectionId: string) => Fetch.Request<Siren.Entity<Model.Section, void>>
     addSection: (section: Model.Section) => Fetch.Request<Siren.Entity<Model.CreateSection, void>>
     updateSection: (sectionId: string, workingHours: Model.WorkingHours) => Fetch.Request<Siren.Entity<Model.Section, void>>
@@ -17,7 +17,7 @@ export function getSectionsService(): SectionsService {
     headers.append('Content-type', 'application/json')
     headers.append('Accept', 'application/json')
     return {
-        getSections: (): Fetch.Request<Siren.Entity<Model.SectionsDto, Model.Section>> =>
+        getSections: (): Fetch.Request<Siren.Entity<void, Model.Section>> =>
             Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections`), {headers: headers})
         ,
         getSection: (sectionId: string): Fetch.Request<Siren.Entity<Model.Section, void>> =>

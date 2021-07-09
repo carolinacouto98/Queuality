@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { SectionsService } from './SectionsService'
+import { SectionsService } from '../../common/services/SectionsService'
 import * as API from '../../common/FetchUtils'
 import * as Siren from '../../common/Siren'
 import * as Model from '../../common/model/SectionModel'
@@ -11,8 +11,8 @@ type SectionsPageProps = {
     service: SectionsService
 }
 
-type SectionsInfo = API.FetchInfo<Siren.Entity<Model.SectionsDto, Model.Section>>
-type SectionsUpdate = API.Request<Siren.Entity<Model.SectionsDto, Model.Section>>
+type SectionsInfo = API.FetchInfo<Siren.Entity<void, Model.Section>>
+type SectionsUpdate = API.Request<Siren.Entity<void, Model.Section>>
 
 function getSectionsValue(sections?: SectionsInfo) : Model.Section[] | undefined {
     const entities = sections?.result?.body?.entities
@@ -32,7 +32,7 @@ export default function SectionsPage(props: SectionsPageProps) {
         async function sendSectionsRequest(request: SectionsUpdate) {
             try {
                 setSections({ status: API.FetchState.NOT_READY })
-                const result: API.Result<Siren.Entity<Model.SectionsDto, Model.Section>> = await request.send()
+                const result: API.Result<Siren.Entity<void, Model.Section>> = await request.send()
                 if(!result.header.ok) {
                     return
                 }

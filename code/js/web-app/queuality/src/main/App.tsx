@@ -3,11 +3,11 @@ import logo from './logo.svg'
 import './App.css'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import SectionsPage from './queuality/sections/SectionsPage'
-import SubjectsPage from './queuality/subjects/SubjectsPage'
+import SectionPage from './queuality/section/SectionPage'
 import { TicketsControl } from './queuality/tickets/TicketsControlPage'
 import { getTicketsService } from './queuality/tickets/TicketsService'
-import { getSectionsService } from './queuality/sections/SectionsService'
-import { getSubjectsService } from './queuality/subjects/SubjectsService'
+import { getSectionsService } from './common/services/SectionsService'
+import { getSubjectsService } from './common/services/SubjectsService'
 
 export const API_BASE_URL = 'http://localhost:5000/queuality'
 
@@ -19,7 +19,7 @@ function PageRouter() {
           <SectionsPage service={getSectionsService()}/>
         </Route>
         <Route exact path='/queuality/sections/:sectionId/subjects'>
-          <SubjectsPage service={getSubjectsService()}/>
+          <SectionPage sectionsService={getSectionsService()} subjectsService={getSubjectsService()}/>
         </Route>
         <Route exact path='/tickets'>
           <TicketsControl.Page ticketsService = {getTicketsService()}/>

@@ -35,11 +35,11 @@ export default function SectionList(props: ListProps) {
     return(
       <>
         <List divided size='large' relaxed animated verticalAlign='middle'>       
-            { props.sections.map(section => {      
-              sectionId = section._id!!
+            { props.entities.map(entity => {      
+              sectionId = entity.properties?._id!!
               const link = getSectionLink(props.entities, sectionId)
               return (
-                <List.Item key={section._id}>
+                <List.Item key={entity.properties?._id}>
                   <List.Content floated='right'>
                     <Icon link name='trash alternate outline' onClick={() => dispatch({ type: 'open', size: 'tiny' })} />
                   </List.Content>
