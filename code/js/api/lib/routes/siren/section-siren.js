@@ -46,7 +46,16 @@ function deleteSectionAction (sectionId) {
         siren.HttpMethod.DELETE,
         `${siren.BASENAME}/sections/${sectionId}`
     )
-} 
+}
+
+function answerTicketAction (sectionId) {
+    return new siren.SirenAction(
+        'answer-ticket',
+        'Answer a Ticket',
+        siren.HttpMethod.GET,
+        `${siren.BASENAME}/sections/${sectionId}/queue`
+    )
+}
 
 function setSubEntities(sections){
     const subEntities = []
@@ -82,5 +91,8 @@ module.exports = {
     updateSectionLinks,
     deleteSectionLinks,
     addSectionAction,
+    updateSectionAction,
+    deleteSectionAction,
+    answerTicketAction,
     setSubEntities
 }

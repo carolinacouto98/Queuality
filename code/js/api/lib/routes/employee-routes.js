@@ -6,11 +6,13 @@ const { Entity } = require('../common/siren.js')
 const employeeSiren = require('./siren/employee-siren.js')
 const Router = require('express').Router
 const error = require('../common/error.js')
+const requiresAuth = require('../common/auth.js')
 const router = Router()
 module.exports = router
 
-//check
-router.get('/employees', (req, res, next) => { 
+router.get('/employees', requiresAuth(), (req, res, next) => {
+    if (!req.employee?.roles.includes('Manage Employees'))
+        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     service.getEmployees()
         .then(employees => res.send(
             new Entity(
@@ -24,7 +26,9 @@ router.get('/employees', (req, res, next) => {
         .catch(next)
 })
 
-router.post('/employees', (req, res, next) => {
+router.post('/employees', requiresAuth(), (req, res, next) => {
+    if (!req.employee?.roles.includes('Manage Employees'))
+        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     const name = req.body.name
     const _id = req.body._id
     if(!name || !_id)
@@ -41,7 +45,9 @@ router.post('/employees', (req, res, next) => {
         .catch(next)
 })
 
-router.patch('/employees/:employeeId', (req, res, next) => {
+router.patch('/employees/:employeeId', requiresAuth(), (req, res, next) => {
+    if (!req.employee?.roles.includes('Manage Employees'))
+        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     const _id = req.params.employeeId
     const name = req.body.name
     const roles = req.body.roles
@@ -63,7 +69,9 @@ router.patch('/employees/:employeeId', (req, res, next) => {
         )
 })
     
-router.delete('/employees/:employeeId', (req, res, next) => {
+router.delete('/employees/:employeeId', requiresAuth(), (req, res, next) => {
+    if (!req.employee?.roles.includes('Manage Employees'))
+        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     const id = req.params.employeeId
     service.removeEmployee(id)
         .then(() => res.send(

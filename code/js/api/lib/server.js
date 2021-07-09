@@ -21,20 +21,23 @@ function run(port, url, dbName) {
         'http://localhost:8100'
     ]
     
-
-    /*app.use(
-        auth({
-            issuerBaseURL: process.env.ISSUER_BASE_URL, // eslint-disable-line no-undef
-            baseURL: process.env.BASE_URL,              // eslint-disable-line no-undef
-            clientID: process.env.CLIENT_ID,            // eslint-disable-line no-undef
-            secret: process.env.SECRET,                 // eslint-disable-line no-undef
-            authRequired: false,
-            authorizationParams: {
-                response_type: 'code',
-                scope: 'openid profile email',
-            }
+    process.env.ISSUERS
+        .split(';')
+        .forEach(issuer => {
+            app.use(
+                auth({
+                    issuerBaseURL: process.env[`${issuer}_ISSUER_BASE_URL`], // eslint-disable-line no-undef
+                    baseURL: process.env.BASE_URL,                           // eslint-disable-line no-undef
+                    clientID: process.env[`${issuer}_CLIENT_ID`],            // eslint-disable-line no-undef
+                    secret: process.env[`${issuer}_SECRET`],                 // eslint-disable-line no-undef
+                    authRequired: false,
+                    authorizationParams: {
+                        response_type: 'code',
+                        scope: 'openid profile email',
+                    }
+                })
+            )
         })
-    )*/
 
     app.use((req, res, next) => {
         res.append('Access-Control-Allow-Origin', ['*'])

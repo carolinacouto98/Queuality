@@ -7,25 +7,59 @@ const sectionSiren = require('./siren/section-siren.js')
 const Router = require('express').Router
 const { Entity } = require('../common/siren.js')
 const error = require('../common/error.js')
+const auth = require('../common/auth.js')
 const router = Router()
 module.exports=router
 
-router.get('/sections',(req, res, next)=> {
+router.get('/sections', (req, res, next) => {
     service.getSections()
-        .then(sections => 
+        .then(sections => {
+            const actions = []
+            if (req.employee) {
+                sections = sections.filter(section => req.employee.includes(section._id))
+                if (req.employee.roles.includes('Manage Sections'))
+                    actions.push(sectionSiren.addSectionAction())
+            }
             res.send(
                 new Entity(
                     'Get Sections',
                     ['Sections'],
                     sectionSiren.getSectionsLinks,
-                    sections,
-                    [sectionSiren.addSectionAction()],
+                    undefined,
+                    actions,
                     sectionSiren.setSubEntities(sections)
+                ))
+        })
+        .catch(next)
+})
+
+router.get('/sections/:sectionId', (req, res, next) => {
+    const _id = req.params.sectionId
+    const actions = []
+    if (req.employee?.roles.includes('Manage Section') && req.employee?.sections.includes(_id)) {
+        actions.push(sectionSiren.updateSectionAction(_id))
+        actions.push(sectionSiren.deleteSectionAction(_id))
+    }
+    if (req.employee.roles.includes('Answer Ticket') && req.employee.sections.includes(_id))
+        actions.push(sectionSiren.answerTicketAction(_id))
+
+    service.getSection(_id)
+        .then(section => 
+            res.send(
+                new Entity(
+                    'Get Section',
+                    ['Section'],
+                    sectionSiren.addSectionLinks(_id),
+                    section,
+                    actions,
+                    //sectionSiren.setSubEntities(section.subjects)
                 )))
         .catch(next)
 })
 
 router.post('/sections', (req, res, next) => {
+    if (!req.employee?.roles.includes('Manage Sections'))
+        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     const _id = req.body._id
     const workingHours = req.body.workingHours
     if(!_id && !workingHours)
@@ -43,8 +77,10 @@ router.post('/sections', (req, res, next) => {
         .catch(next)
 })
 
-router.patch('/sections/:sectionId', (req, res, next) => {
+router.patch('/sections/:sectionId', auth('Manage Sections'), (req, res, next) => {
     const _id = req.params.sectionId
+    if (!req.employee?.roles.includes('Manage Section') || !req.employee?.sections.includes(_id))
+        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     const workingHours = req.body.workingHours
     if(!workingHours)
         throw error.CustomException('Missing Parameters', error.BAD_REQUEST)
@@ -60,9 +96,11 @@ router.patch('/sections/:sectionId', (req, res, next) => {
                 .catch(next)
         )})
 
-       
 router.delete('/sections/:sectionId', (req, res, next) => {
     const _id = req.params.sectionId
+    if (!req.employee?.roles.includes('Manage Sections') 
+        && (!req.employee?.roles.includes('Manage Section') || !req.employee?.sections.includes(_id)))
+        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     service.removeSection(_id)
         .then(() => res.send(
             new Entity(
@@ -91,7 +129,9 @@ router.get('/sections/:sectionId/queue', (req, res, next) => {
     const _id = req.params.sectionId
     const nextTicket = req.query.next
     const subject = req.query.subject
-    if(nextTicket) 
+    if(nextTicket) {
+        if (!req.employee?.roles.includes('Answer Ticket') || !req.employee?.sections.includes(_id))
+            next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
         ticketService.getNextTicket(_id, subject)
             .then(ticket => res.send(
                 new Entity(
@@ -101,6 +141,7 @@ router.get('/sections/:sectionId/queue', (req, res, next) => {
                     ticket
                 )))
             .catch(next)
+    }
     else
         ticketService.getQueueTickets(_id)
             .then(tickets => res.send(
