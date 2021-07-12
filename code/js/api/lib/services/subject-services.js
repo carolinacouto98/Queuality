@@ -2,9 +2,8 @@
 
 const repo = require('../repo/subject-repo.js')
 const sectionService = require('./section-services.js')
-const error = require('../common/error.js')
-// eslint-disable-next-line no-unused-vars
-const model = require('../common/model.js')
+const error = require('../common/error.js') 
+const model = require('../common/model.js') // eslint-disable-line no-unused-vars
 
 
 /**
@@ -25,7 +24,13 @@ const getSubject = (sectionName, subjectId) => repo.getSubject(sectionName, subj
   * @param {model.SubjectInputModel} subject
   * @returns {Promise<Subject>}
   */
-const addSubject = (section, subject) => repo.insertSubject(section, subject)
+const addSubject = (section, subject) => 
+    getSubjects(section)
+        .then(async subjects => {
+            if (subject.priority && subjects.find(subject => subject.priority))
+                throw new error.CustomException(`There is already a priority subject in ${section}.`, error.ALREADY_EXISTS)
+            repo.insertSubject(section, subject)
+        })
 
 /**
   * @param {model.SubjectUpdateInputModel} subject
@@ -43,7 +48,7 @@ const updateSubject = (sectionId, subject) =>
             subject.currentTicket = subjectInfo.currentTicket
             subject.totalTickets = subjectInfo.totalTickets
             if(subject.priority && !subjectInfo.priority && subjects.find(s => s.priority)) 
-                throw error.CustomException('Cannot have more than one priority queue', error.ALREADY_EXISTS)
+                throw error.CustomException(`There is already a priority subject in ${sectionId}.`, error.ALREADY_EXISTS)
             return repo.updateSubject(sectionId, subject)
         })
 /**

@@ -60,7 +60,7 @@ function answerTicketAction (sectionId) {
 function setSubEntities(sections){
     const subEntities = []
     sections.forEach(element => {
-        const id = element._id.replace(' ', '-')
+        const id = element._id
         subEntities.push(
             new siren.EmbeddedEntity(
                 ['/rel/section'],
