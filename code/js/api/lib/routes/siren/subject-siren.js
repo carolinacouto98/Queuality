@@ -71,14 +71,14 @@ function setSubEntities(sectionId, subjects){
             new siren.EmbeddedEntity(
                 ['/rel/subject'],
                 [
-                    siren.selfLink(`${siren.BASENAME}/sections/${sectionId}/subjects/${element._id}`)
+                    siren.selfLink(`${siren.BASENAME}/sections/${sectionId}/subjects/${element.name}`)
                 ],
                 element,
                 ['Subject'],
                 [
-                    updateSubjectAction(sectionId, element._id),
-                    deleteSubjectAction(sectionId, element._id),
-                    removeTicketAction(sectionId, element._id)
+                    updateSubjectAction(sectionId, element.name),
+                    deleteSubjectAction(sectionId, element.name),
+                    removeTicketAction(sectionId, element.name)
                 ],
                 'Get Subject'
             )        

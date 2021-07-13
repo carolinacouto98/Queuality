@@ -18,7 +18,7 @@ const appointmentWorkingHoursSchema = {
 /**
  * @typedef {Object} Subject
  * @property {String} name Name of the subject is unique.
- * @property {String} subject Subject
+ * @property {String} description Subject
  * @property {Boolean} priority Priority of the subject
  * @property {Number} currentTicket The number of the ticket that is being answered
  * @property {Number} totalTickets The number of the tickets that have been taken
@@ -27,7 +27,7 @@ const appointmentWorkingHoursSchema = {
  */
 const subjectSchema = {
     name: Joi.string().required(),
-    subject: Joi.string().required(),
+    description: Joi.string().required(),
     priority: Joi.boolean().required(),
     currentTicket: Joi.number().required(),
     totalTickets: Joi.number().required(),
@@ -75,7 +75,7 @@ const roles = [
 const employee = Joi.object({
     _id: Joi.string().required(),
     name: Joi.string().required(),
-    roles: Joi.array().items(Joi.valid(roles)).required(),
+    roles: Joi.array().items(Joi.valid(...roles)).required(),
     sections: Joi.array().items(Joi.string()).required(),
     desk: Joi.string()
 })
@@ -130,7 +130,7 @@ const employeeInputModel = Joi.object({
 const employeeUpdateInputModel = Joi.object({ 
     _id: Joi.string().required(),
     name: Joi.string(),
-    roles: Joi.array().items(Joi.valid(roles)),
+    roles: Joi.array().items(Joi.valid(...roles)),
     sections: Joi.array().items(Joi.string()),
     desk: Joi.string()
 })
@@ -158,12 +158,12 @@ const sectionUpdateInputModel = Joi.object({
 /**
  * @typedef {Object} SubjectInputModel
  * @property {String} name Name of the subject is unique.
- * @property {String} subject Subject
+ * @property {String} description Subject
  * @property {Boolean} priority Priority of the subject
  */
 const subjectInputModel = Joi.object({
     name: Joi.string().required(),
-    subject: Joi.string().required(),
+    description: Joi.string().required(),
     priority: Joi.boolean().required(),
     desks: Joi.array().items(Joi.string().required()),
     currentTicket: Joi.number().default(0),
@@ -173,13 +173,13 @@ const subjectInputModel = Joi.object({
 /**
  * @typedef {Object} SubjectUpdateInputModel
  * @property {String} name Name of the subject is unique.
- * @property {String} subject Subject
+ * @property {String} description Subject
  * @property {Boolean} priority Priority of the subject
  * @property {Array<String>} desks
  */
 const subjectUpdateInputModel = Joi.object({
     name: Joi.string().required(),
-    subject: Joi.string(),
+    description: Joi.string(),
     priority: Joi.boolean(),
     desks: Joi.array().items(Joi.string().required())
 })

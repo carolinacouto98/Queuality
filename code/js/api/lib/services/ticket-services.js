@@ -14,6 +14,9 @@ const addTicket = (sectionId, subjectId) =>
     getSubject(sectionId, subjectId)
         .then(async subject => {
             if(subject.date !== getDate()) {
+                subject.date = getDate()
+                subject.totalTickets = 0
+                subject.currentTicket = 0
                 await updateSubject(sectionId, subject)
             }
             const nrTicket = await repo.incrementTotalTickets(sectionId, subjectId)
