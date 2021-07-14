@@ -18,7 +18,7 @@ function PageRouter() {
         <Route exact path='/queuality/sections'>
           <SectionsPage service={getSectionsService()}/>
         </Route>
-        <Route exact path='/queuality/sections/:sectionId/subjects'>
+        <Route exact path='/queuality/sections/:sectionId'>
           <SectionPage sectionsService={getSectionsService()} subjectsService={getSubjectsService()}/>
         </Route>
         <Route exact path='/tickets'>

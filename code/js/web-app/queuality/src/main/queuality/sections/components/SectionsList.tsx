@@ -1,6 +1,6 @@
 import { useReducer } from 'react'
 import { Icon, List, Modal, Button } from 'semantic-ui-react'
-import { Section, SECTION_SUBJECT_RELATION } from '../../../common/model/SectionModel'
+import { Section, SECTION_SUBJECT_RELATION, SELF } from '../../../common/model/SectionModel'
 import * as Siren from '../../../common/Siren'
 import { Link } from 'react-router-dom'
 
@@ -22,7 +22,7 @@ type ListProps = {
 }
 
 function getSectionLink(entities: Siren.EmbeddedEntity<Section>[], id: string): string | undefined {
-  return entities.find(entity => entity.properties?._id === id)?.links?.find(link => link.rel.includes(SECTION_SUBJECT_RELATION))?.href.replace('/api','')
+  return entities.find(entity => entity.properties?._id === id)?.links?.find(link => link.rel.includes(SELF))?.href.replace('/api','')
 }
 
 export default function SectionList(props: ListProps) {

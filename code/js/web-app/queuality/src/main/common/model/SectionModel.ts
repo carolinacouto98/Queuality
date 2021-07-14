@@ -1,8 +1,10 @@
 import { Subject } from './SubjectModel'
 
+export const SELF = 'self'
 export const SECTION_SUBJECT_RELATION = '/rel/subjects'
 export const ADD_SECTION_ACTION = 'add-section'
 export const DELETE_SECTION_ACTION = 'delete-section'
+
 export type SectionsDto = {
     sections: Section[]
 }

@@ -1,5 +1,5 @@
 export class Subject {
-    readonly id: string
+    readonly name: string
     readonly description: string
     readonly priority: boolean
     readonly currentTicket: number
@@ -7,7 +7,7 @@ export class Subject {
     readonly date: Date
     readonly desks: string[]
 
-    constructor(id: string, 
+    constructor(name: string, 
                 description: string, 
                 priority: boolean, 
                 currentTicket: number, 
@@ -15,7 +15,7 @@ export class Subject {
                 date: Date, 
                 desks: string[]) 
     {
-        this.id = id,
+        this.name = name,
         this.description = description,
         this.priority = priority,
         this.currentTicket = currentTicket,

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { SectionsService } from './../common/services/SectionsService'
+import { SectionsService } from '../../common/services/SectionsService'
 import { SubjectsService } from '../../common/services/SubjectsService'
 import { SubjectsList } from './components/SubjectsList'
 import * as API from '../../common/FetchUtils'
@@ -11,6 +11,10 @@ import { useParams } from 'react-router-dom'
 type SectionPageProps = {
     sectionsService: SectionsService
     subjectsService: SubjectsService
+}
+
+type Param = {
+    sectionId: string
 }
 
 type SubjectsInfo = API.FetchInfo<Siren.Entity<void, SubjectsModel.Subject>>
@@ -26,7 +30,7 @@ function getSubjectsEntities(subjects?: SubjectsInfo): Siren.EmbeddedEntity<Subj
 }
 
 export default function SectionPage(props: SectionPageProps) {
-    const { sectionId } = useParams()
+    const { sectionId }  = useParams<Param>()
     const [subjectsList, setSubjects] = useState<SubjectsInfo>()    
     const [subjectsUpdate, setSubjectsUpdate] = useState<SubjectsUpdate>(props.subjectsService.getSubjects(sectionId))
 
@@ -48,7 +52,7 @@ export default function SectionPage(props: SectionPageProps) {
                     setSubjects({status: API.FetchState.ERROR})
             }
         }
-        sendSubjectsRequest(props.subjectsService.getSubjects())
+        sendSubjectsRequest(props.subjectsService.getSubjects(sectionId))
     }, [props.subjectsService, subjectsUpdate])
 
     const subjects = getSubjectsValue(subjectsList)

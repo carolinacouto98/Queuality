@@ -8,7 +8,6 @@ type SectionsHeaderProps = {
 
 export default function SectionsHeader(props: SectionsHeaderProps) {
     const [open, setOpen] = useState(false)
-    const [disabledState, setDisabedState] = useState(true)
     const [errorMessage, setErrorMessage] = useState(true)
     const [duration, setDuration] = useState<number>()
     const sectionNameRef = useRef<HTMLInputElement>(null)
@@ -60,10 +59,10 @@ export default function SectionsHeader(props: SectionsHeaderProps) {
                         <label htmlFor="time">Open Time:</label>
                         <input style={{margin:'1%'}} ref={openTimeRef} type='time' />
                         <br/>
-                        <label htmlFor="time">End Time:</label>
+                        <label htmlFor="time">Close Time:</label>
                         <input style={{margin:'1%'}} ref={endTimeRef} type='time' />
                         <br/>
-                        <label>Duration (minutes):</label>
+                        <label>Appointment Duration (minutes):</label>
                         <input style={{margin:'1%'}} type='number' placeholder='Ex: 30' onChange={handleDurationOnChange}/>                       
                     </Modal.Description>
                 </Modal.Content>

@@ -82,22 +82,18 @@ export default function SectionsPage(props: SectionsPageProps) {
     const sections = getSectionsValue(sectionsList)
     const entities = getSectionsEntities(sectionsList)
 
-    return (
-        <>
-            {
-                sections && sections?.length && entities ?
-                    <Container>
-                        <SectionsHeader handleAddSection={handleAddSection}/>
-                        <Divider hidden />
-                        <br/>
-                        <SectionsList
-                            sections = {sections} 
-                            entities = {entities}
-                            handleDeleteSection={handleDeleteSection}/>
-                    </Container>
-                :
-                    <Header>There are no sections yet.</Header>
+    return (                
+        <Container>
+            <SectionsHeader handleAddSection={handleAddSection}/>
+            <Divider hidden />
+            <br/>
+            { sections && sections?.length && entities ?
+                <SectionsList
+                    sections = {sections} 
+                    entities = {entities}
+                    handleDeleteSection={handleDeleteSection}/>
+                : <Header>There are no sections yet.</Header>
             }
-        </>        
+        </Container>     
     )
 }
