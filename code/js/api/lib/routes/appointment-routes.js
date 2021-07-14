@@ -99,7 +99,7 @@ router.delete('/appointments/:appointmentId', (req, res, next) => {
             new Entity(
                 'Delete an Appointment',
                 ['Appointment'],
-                appointmentSiren.deleteAppointmentLinks(appointment.section.replace(' ', '-'), appointment.desk)
+                appointmentSiren.deleteAppointmentLinks(appointment.section, appointment.desk)
             )))
         .catch(next)
 })

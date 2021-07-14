@@ -3,7 +3,8 @@
 const Router = require('express').Router
 const router = Router()
 
-router.get('/callback', (req, res, next) => {
-    console.log(req.oidc)
-    res.redirect('/')
+module.exports = router
+
+router.get('/login', (req, res, next) => {
+    res.json({ message: 'hello' })
 })

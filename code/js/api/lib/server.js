@@ -8,7 +8,6 @@ require('dotenv').config()
 
 const app = express()
 const cors = require('cors')
-const { default: jwtDecode } = require('jwt-decode')
 
 
 function run(port, url, dbName) {
@@ -30,10 +29,14 @@ function run(port, url, dbName) {
                     baseURL: process.env.BASE_URL,                           // eslint-disable-line no-undef
                     clientID: process.env[`${issuer}_CLIENT_ID`],            // eslint-disable-line no-undef
                     secret: process.env[`${issuer}_SECRET`],                 // eslint-disable-line no-undef
+                    clientSecret: process.env[`${issuer}_CLIENT_SECRET`],                 // eslint-disable-line no-undef
                     authRequired: false,
                     authorizationParams: {
                         response_type: 'code',
                         scope: 'openid profile email',
+                    },
+                    routes: {
+                        login: false
                     }
                 })
             )
@@ -71,6 +74,7 @@ function run(port, url, dbName) {
     app.use('/queuality/api', require('./routes/employee-routes.js'))
     app.use('/queuality/api', require('./routes/subject-routes.js'))
     app.use('/queuality/api', require('./routes/section-routes.js'))
+    app.use('/queuality/api', require('./routes/auth-routes.js'))
  
     app.use((err, req, res, next) => {
         if (!err.status) err = error.CustomError(err, error.SERVER_ERROR)

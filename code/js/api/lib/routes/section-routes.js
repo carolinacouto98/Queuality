@@ -33,7 +33,7 @@ router.get('/sections', (req, res, next) => {
         .catch(next)
 })
 
-router.get('/sections/:sectionId', (req, res, next) => {
+router.get('/sections/:sectionId', auth.optional(), (req, res, next) => {
     const _id = req.params.sectionId
     const actions = []
     if (req.employee?.roles.includes('Manage Section') && req.employee?.sections.includes(_id)) {
@@ -57,27 +57,27 @@ router.get('/sections/:sectionId', (req, res, next) => {
         .catch(next)
 })
 
-router.post('/sections', (req, res, next) => {
+router.post('/sections', auth.requested(), (req, res, next) => {
     if (!req.employee?.roles.includes('Manage Sections'))
         next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     const _id = req.body._id
     const workingHours = req.body.workingHours
     if(!_id && !workingHours)
         throw error.CustomException('Missing Required Parameters', error.BAD_REQUEST)
-    model.sectionInputModel.validateAsync({ _id, workingHours})
+    model.sectionInputModel.validateAsync({ _id, workingHours })
         .then(section => 
             service.addSection(section)
                 .then(section => res.status(201).send(
                     new Entity(
                         'Add a Section',
                         ['Section'],
-                        sectionSiren.addSectionLinks(_id.replace(' ', '-')),
+                        sectionSiren.addSectionLinks(_id),
                         section
                     ))))
         .catch(next)
 })
 
-router.patch('/sections/:sectionId', auth('Manage Sections'), (req, res, next) => {
+router.patch('/sections/:sectionId', auth.requested(), (req, res, next) => {
     const _id = req.params.sectionId
     if (!req.employee?.roles.includes('Manage Section') || !req.employee?.sections.includes(_id))
         next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
@@ -90,13 +90,13 @@ router.patch('/sections/:sectionId', auth('Manage Sections'), (req, res, next) =
                 .then(section => res.send(
                     new Entity(
                         'Update a Section', 
-                        sectionSiren.updateSectionLinks(section._id.replace(' ', '-')),
+                        sectionSiren.updateSectionLinks(section._id),
                         section
                     )))
                 .catch(next)
         )})
 
-router.delete('/sections/:sectionId', (req, res, next) => {
+router.delete('/sections/:sectionId', auth.requested(), (req, res, next) => {
     const _id = req.params.sectionId
     if (!req.employee?.roles.includes('Manage Sections') 
         && (!req.employee?.roles.includes('Manage Section') || !req.employee?.sections.includes(_id)))
@@ -111,7 +111,7 @@ router.delete('/sections/:sectionId', (req, res, next) => {
         .catch(next)
 })
 
-router.post('/sections/:sectionId/queue', (req, res, next) => {
+router.post('/sections/:sectionId/queue', auth.requested(), (req, res, next) => {
     const _id = req.params.sectionId
     const subjectName = req.body.subject
     ticketService.addTicket(_id, subjectName)
@@ -119,13 +119,13 @@ router.post('/sections/:sectionId/queue', (req, res, next) => {
             new Entity(
                 'Add a Ticket',
                 ['Tickets'],
-                sectionSiren.addTicketLinks(_id.replace(' ', '-')),
+                sectionSiren.addTicketLinks(_id),
                 ticket
             )))
         .catch(next)
 })
 
-router.get('/sections/:sectionId/queue', (req, res, next) => {
+router.get('/sections/:sectionId/queue', auth.optional(), (req, res, next) => {
     const _id = req.params.sectionId
     const nextTicket = req.query.next
     const subject = req.query.subject
@@ -137,7 +137,7 @@ router.get('/sections/:sectionId/queue', (req, res, next) => {
                 new Entity(
                     'Next Ticket',
                     ['Tickets'],
-                    sectionSiren.getNextTicketLinks(_id.replace(' ', '-'), subject),
+                    sectionSiren.getNextTicketLinks(_id, subject),
                     ticket
                 )))
             .catch(next)
@@ -148,7 +148,7 @@ router.get('/sections/:sectionId/queue', (req, res, next) => {
                 new Entity(
                     'Get Tickets',
                     ['Tickets'],
-                    sectionSiren.getQueueTicketsLinks(_id.replace(' ', '-')),
+                    sectionSiren.getQueueTicketsLinks(_id),
                     tickets
                 )
             ))
