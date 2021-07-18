@@ -37,7 +37,7 @@ export function QueueRow(props: QueueDisplayProps) {
                     props.priority ?
                     <Icon name='check square outline' />
                     :
-                    <Icon name='minus square outline' />
+                    <Icon name='times circle outline' />
                 }
                
             </Table.Cell>

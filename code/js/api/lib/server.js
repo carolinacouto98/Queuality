@@ -20,7 +20,7 @@ function run(port, url, dbName) {
         'http://localhost:8100'
     ]
     
-    process.env.ISSUERS
+    /*process.env.ISSUERS
         .split(';')
         .forEach(issuer => {
             app.use(
@@ -40,7 +40,7 @@ function run(port, url, dbName) {
                     }
                 })
             )
-        })
+        })*/
 
     app.use((req, res, next) => {
         res.append('Access-Control-Allow-Origin', ['*'])

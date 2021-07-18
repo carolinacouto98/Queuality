@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Grid, Icon, List, Transition } from 'semantic-ui-react'
+import { Card, Divider, Grid, Header, Icon, Item, List, Transition } from 'semantic-ui-react'
 import { Subject } from '../../../common/model/SubjectModel'
 import * as Siren from '../../../common/Siren'
 
@@ -16,34 +16,47 @@ export type VisibleList = {
 export function SubjectsList(props: SubjectsListProps) {
     const [invisibleList, setInvisibleList] = useState<string>()
     return(
-        <List floated='left' size='large' style={{textAlign: 'left'}} divided>
-            {props.entities.map(entity => {
-                return(
-                    <List.Item key={entity.properties?.name}>
-                        <Grid columns='2'>
-                            <Grid.Row as='a' onClick={() =>
-                                    setInvisibleList(entity.properties?.name)
-                                }>
-                                <Icon name='triangle right'></Icon>                    
-                                <List.Header>{entity.properties?.name}. {entity.properties?.description}</List.Header>
+        <Card.Group centered>
+        {props.entities.map(entity => {
+            return(
+                <Card fluid>
+                    <Card.Content>
+                        <Grid>
+                            <Grid.Row columns='2'>
+                                <Grid.Column width='1' style={{paddingLeft:'0px', paddingRight:'0px'}}>
+                                    <Icon name='chevron right' link></Icon>
+                                </Grid.Column>
+                                <Grid.Column width='15' textAlign='left' style={{paddingLeft:'0px'}}>
+                                    <Header>{`${entity.properties?.name}. ${entity.properties?.description}`}</Header>
+                                </Grid.Column>
+                            </Grid.Row>
+                            <Grid.Row textAlign='left' style={{marginLeft:'5%'}}>
+                                <Grid.Column>
+                                    <Grid.Row>
+                                        Priority: 
+                                        {entity.properties?.priority ?
+                                        <Icon style={{margin:'5px'}} name='check circle outline'/>
+                                        : <Icon name='times circle outline'/>
+                                        }
+                                    </Grid.Row>
+                                    <Divider hidden style={{margin:'7px'}}/>
+                                    <p>Desks:</p>                                    
+                                    <List bulleted>
+                                        {entity.properties?.desks.map(desk => {
+                                            return(
+                                                    <List.Item style={{marginLeft:'2%'}}>{desk}</List.Item>
+                                                
+                                            )
+                                        })}
+                                    </List>
+                                </Grid.Column>
                             </Grid.Row>
                         </Grid>
-                            <Transition visible={invisibleList === entity.properties?.name} animation='scale' duration={500}>
-                                <List.List>
-                                    <List.Item>
-                                        <List.Item>
-                                            <List.Header>Priority: {entity.properties?.priority.toString()}</List.Header>
-                                        </List.Item>
-                                        <List.Content>
-                                            <List.Header>Appointment Desks:</List.Header>
-                                            {entity.properties?.desks.map((desk, index) => <List.Description key={index} style={{textIndent:'10%'}} bulleted >{desk}</List.Description>)}
-                                        </List.Content>
-                                    </List.Item>
-                                </List.List>
-                            </Transition>
-                    </List.Item>  
-                )
-            })}
-        </List>
+                    </Card.Content>
+                </Card>
+                
+            )
+        })}   
+        </Card.Group>
     )
 }
