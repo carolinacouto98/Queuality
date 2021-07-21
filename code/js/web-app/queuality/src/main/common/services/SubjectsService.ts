@@ -4,7 +4,7 @@ import * as Siren from '../Siren'
 import { API_BASE_URL } from '../../App'
 
 export interface SubjectsService {
-   getSubjects: (sectionId: string) => Fetch.Request<Siren.Entity<void, Model.Subject>>
+   getSubjects: (sectionId: string) => Fetch.Request<Siren.Entity<string, Model.Subject>>
    addSubject: (sectionId: string, subject: Model.Subject) => Fetch.Request<Siren.Entity<Model.Subject, void>>
    updateSubject: (sectionId: string, subjectId: string, update: Model.Subject) => Fetch.Request<Siren.Entity<Model.Subject, void>>
    deleteSubject: (sectionId: string, subjectId: string) => Fetch.Request<Siren.Entity<void, void>>
@@ -15,7 +15,7 @@ export function getSubjectsService(): SubjectsService {
     headers.append('Content-type', 'application/json')
     headers.append('Accept', 'application/json')
     return {
-        getSubjects: (sectionId: string): Fetch.Request<Siren.Entity<void, Model.Subject>> =>
+        getSubjects: (sectionId: string): Fetch.Request<Siren.Entity<string, Model.Subject>> =>
             Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections/${sectionId}/subjects`), {headers: headers})
         ,
         addSubject: (sectionId: string, subject: Model.Subject): Fetch.Request<Siren.Entity<Model.Subject, void>> =>

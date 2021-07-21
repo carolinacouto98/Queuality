@@ -1,3 +1,9 @@
+export const DELETE_SUBJECT_ACTION = 'delete-subject'
+
+export type SectionsDto = {
+    sections: Subject[]
+}
+
 export class Subject {
     readonly name: string
     readonly description: string
