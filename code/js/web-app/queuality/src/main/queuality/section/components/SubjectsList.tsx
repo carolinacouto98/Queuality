@@ -1,19 +1,18 @@
-import { useReducer, useState } from 'react'
-import { Button, Card, Grid, Header, Icon, List, Modal, Transition } from 'semantic-ui-react'
+import { useState } from 'react'
+import { Card, Grid, Header, Icon, Input, List, Transition } from 'semantic-ui-react'
 import { Subject } from '../../../common/model/SubjectModel'
-import * as Siren from '../../../common/Siren'
 import DeleteModal from './DeleteModal'
 
 type SubjectsListProps = {
-    //projectName: void 
     subjects: Subject[]
-    //entities: Siren.EmbeddedEntity<Subject>[]
     handleDeleteSubject(subjectId: string): void
+    handleEditSubject(subjectId: string, subject: Subject): void
 }
 
 export class VisibleDetails {
     idx?: string
     visible?: boolean = false
+    editName?: boolean = false
 }
 
 export function SubjectsList(props: SubjectsListProps) {
@@ -28,8 +27,18 @@ export function SubjectsList(props: SubjectsListProps) {
         setRotated((detailsHidden?.visible) ? undefined : 'clockwise')    
        
     }
+
     function setVisible(id: string) {
         return detailsHidden?.idx === id && detailsHidden?.visible
+    }
+
+    function editSubjectDescription(subjectId: string, subjectDescription: string) {
+        if(detailsHidden?.idx !== subjectId)
+            setDetailsHidden({idx:subjectId, visible: false, editName: true})
+        else 
+            setDetailsHidden({idx:subjectId, visible: false, editName: !detailsHidden?.editName})
+        /*if(props.handleEditSubject)        
+            props.handleEditSubject(subjectId, new Subject(undefined, subjectDescription))*/
     }
     return(
         <Card.Group centered>
@@ -40,16 +49,30 @@ export function SubjectsList(props: SubjectsListProps) {
                             <Grid>
                                 <Grid.Row columns='3'>
                                     <Grid.Column width='1' style={{paddingLeft:'0px', paddingRight:'0px'}}>
-                                        <Icon rotated={rotated} onClick={() => showSubjectDetails(subject.name)} name='chevron right' link></Icon>
+                                        <Icon rotated={rotated} onClick={() => showSubjectDetails(subject.name!!)} name='chevron right' link></Icon>
                                     </Grid.Column>
                                     <Grid.Column width='9' textAlign='left' style={{paddingLeft:'0px'}}>
-                                        <Header>{`${subject.name}. ${subject.description}`}</Header>
+                                        <Grid.Row>
+                                            <h4>
+                                                {`${subject.name}. `}
+                                                {subject.name === detailsHidden?.idx && detailsHidden?.editName ?
+                                                    <Input 
+                                                        autoFocus                                                   
+                                                        placeholder='Subject Description'
+                                                        defaultValue={subject.description} 
+                                                    /> :
+                                                    subject.description}
+                                            </h4>
+                                        </Grid.Row>  
+                                        <Grid.Row>
+                                            <Icon onClick={() => editSubjectDescription(subject.name!!, '')} name = 'edit outline' link/>
+                                        </Grid.Row>    
                                     </Grid.Column>
                                     <Grid.Column textAlign='right'>
-                                        <DeleteModal subjectName={subject.name} handleDeleteSubject={props.handleDeleteSubject} />
+                                        <DeleteModal subjectName={subject.name!!} handleDeleteSubject={props.handleDeleteSubject} />
                                     </Grid.Column>
                                 </Grid.Row>
-                                <Transition visible={setVisible(subject.name)} animation='scale' duration={500}>
+                                <Transition visible={setVisible(subject.name!!)} animation='scale' duration={500}>
                                     <div style={{padding:'0px',  marginLeft:'6%', marginBottom:'14px'}}>
                                         <Grid.Row textAlign='left'>                                    
                                             <Header  as='h5'>                                            
@@ -63,9 +86,9 @@ export function SubjectsList(props: SubjectsListProps) {
                                         <Grid.Row textAlign='left'>                                       
                                             <Header as='h5'>Desks:</Header>                                    
                                             <List bulleted>
-                                                {subject.desks.map(desk => {
+                                                {subject.desks!!.map(desk => {
                                                     return(
-                                                        <List.Item>{desk}</List.Item>                                                    
+                                                        <List.Item key={desk}>{desk}</List.Item>                                                    
                                                     )
                                                 })}
                                             </List>
