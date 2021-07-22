@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import { Card, Grid, Header, Icon, Input, List, Transition } from 'semantic-ui-react'
+import { Button, Card, Grid, Header, Icon, Input, List, Transition } from 'semantic-ui-react'
 import { Subject } from '../../../common/model/SubjectModel'
 import DeleteModal from './DeleteModal'
+import '../../sections/components/timeInput.css'
+import EditModal from './EditModal'
 
 type SubjectsListProps = {
     subjects: Subject[]
@@ -12,7 +14,6 @@ type SubjectsListProps = {
 export class VisibleDetails {
     idx?: string
     visible?: boolean = false
-    editName?: boolean = false
 }
 
 export function SubjectsList(props: SubjectsListProps) {
@@ -31,15 +32,8 @@ export function SubjectsList(props: SubjectsListProps) {
     function setVisible(id: string) {
         return detailsHidden?.idx === id && detailsHidden?.visible
     }
-
-    function editSubjectDescription(subjectId: string, subjectDescription: string) {
-        if(detailsHidden?.idx !== subjectId)
-            setDetailsHidden({idx:subjectId, visible: false, editName: true})
-        else 
-            setDetailsHidden({idx:subjectId, visible: false, editName: !detailsHidden?.editName})
         /*if(props.handleEditSubject)        
             props.handleEditSubject(subjectId, new Subject(undefined, subjectDescription))*/
-    }
     return(
         <Card.Group centered>
             {props.subjects.map(subject => {
@@ -47,28 +41,16 @@ export function SubjectsList(props: SubjectsListProps) {
                     <Card fluid key={subject.name}>
                         <Card.Content>
                             <Grid>
-                                <Grid.Row columns='3'>
+                                <Grid.Row columns='equal'>
                                     <Grid.Column width='1' style={{paddingLeft:'0px', paddingRight:'0px'}}>
                                         <Icon rotated={rotated} onClick={() => showSubjectDetails(subject.name!!)} name='chevron right' link></Icon>
                                     </Grid.Column>
-                                    <Grid.Column width='9' textAlign='left' style={{paddingLeft:'0px'}}>
-                                        <Grid.Row>
-                                            <h4>
-                                                {`${subject.name}. `}
-                                                {subject.name === detailsHidden?.idx && detailsHidden?.editName ?
-                                                    <Input 
-                                                        autoFocus                                                   
-                                                        placeholder='Subject Description'
-                                                        defaultValue={subject.description} 
-                                                    /> :
-                                                    subject.description}
-                                            </h4>
-                                        </Grid.Row>  
-                                        <Grid.Row>
-                                            <Icon onClick={() => editSubjectDescription(subject.name!!, '')} name = 'edit outline' link/>
-                                        </Grid.Row>    
+                                    <Grid.Column textAlign='left' style={{paddingLeft:'0px'}}>
+                                            <Header size='small'>
+                                                {`${subject.name}. ${subject.description}`}
+                                            </Header>  
                                     </Grid.Column>
-                                    <Grid.Column textAlign='right'>
+                                    <Grid.Column width='2' textAlign='right'>
                                         <DeleteModal subjectName={subject.name!!} handleDeleteSubject={props.handleDeleteSubject} />
                                     </Grid.Column>
                                 </Grid.Row>
@@ -92,6 +74,7 @@ export function SubjectsList(props: SubjectsListProps) {
                                                     )
                                                 })}
                                             </List>
+                                            <EditModal subject={subject} handleEditSubject={props.handleDeleteSubject}></EditModal>
                                         </Grid.Row>
                                     </div>
                                 </Transition>
