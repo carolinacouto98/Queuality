@@ -1,5 +1,5 @@
 export const DELETE_SUBJECT_ACTION = 'delete-subject'
-export const EDIT_SUBJECT_ACTION = 'edit-subject'
+export const EDIT_SUBJECT_ACTION = 'update-subject'
 
 export type SectionsDto = {
     sections: Subject[]

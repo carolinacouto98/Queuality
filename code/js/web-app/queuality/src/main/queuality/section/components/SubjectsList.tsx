@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Card, Grid, Header, Icon, Input, List, Transition } from 'semantic-ui-react'
+import { Card, Grid, Header, Icon, List, Transition } from 'semantic-ui-react'
 import { Subject } from '../../../common/model/SubjectModel'
 import DeleteModal from './DeleteModal'
 import '../../sections/components/timeInput.css'
@@ -32,8 +32,10 @@ export function SubjectsList(props: SubjectsListProps) {
     function setVisible(id: string) {
         return detailsHidden?.idx === id && detailsHidden?.visible
     }
-        /*if(props.handleEditSubject)        
-            props.handleEditSubject(subjectId, new Subject(undefined, subjectDescription))*/
+
+    function checkPriority() {
+        return (props.subjects.find(subject => subject.priority)) ? true : false
+    }
     return(
         <Card.Group centered>
             {props.subjects.map(subject => {
@@ -65,16 +67,20 @@ export function SubjectsList(props: SubjectsListProps) {
                                                 }   
                                             </Header>  
                                         </Grid.Row>
-                                        <Grid.Row textAlign='left'>                                       
-                                            <Header as='h5'>Desks:</Header>                                    
-                                            <List bulleted>
-                                                {subject.desks!!.map(desk => {
-                                                    return(
-                                                        <List.Item key={desk}>{desk}</List.Item>                                                    
-                                                    )
-                                                })}
-                                            </List>
-                                            <EditModal subject={subject} handleEditSubject={props.handleDeleteSubject}></EditModal>
+                                        <Grid.Row stretched textAlign='left' columns='2'>   
+                                            <Grid.Column>                                    
+                                                <Header as='h5'>Desks:</Header>                                    
+                                                <List bulleted>
+                                                    {subject.desks!!.map(desk => {
+                                                        return(
+                                                            <List.Item key={desk}>{desk}</List.Item>                                                    
+                                                        )
+                                                    })}
+                                                </List>
+                                            </Grid.Column>
+                                            <Grid.Column>
+                                                <EditModal priority={checkPriority()} subject={subject} handleEditSubject={props.handleEditSubject}></EditModal>
+                                            </Grid.Column>
                                         </Grid.Row>
                                     </div>
                                 </Transition>

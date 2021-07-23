@@ -4,6 +4,7 @@ export const SELF = 'self'
 export const SECTION_SUBJECT_RELATION = '/rel/subjects'
 export const ADD_SECTION_ACTION = 'add-section'
 export const DELETE_SECTION_ACTION = 'delete-section'
+export const EDIT_SECTION_ACTION = 'update-section'
 
 export type SectionsDto = {
     sections: Section[]
@@ -33,11 +34,11 @@ export class CreateSection  {
     }
 }
 export class WorkingHours {
-    begin?: string
-    end?: string
-    duration?: number
+    begin?: string | undefined
+    end?: string | undefined
+    duration?: number | undefined
     static MINDURATION: number = 0
-    constructor(begin: string, end: string, duration: number) {
+    constructor(begin: string | undefined, end: string | undefined, duration: number | undefined) {
         this.begin = begin
         this.end = end
         this.duration = duration

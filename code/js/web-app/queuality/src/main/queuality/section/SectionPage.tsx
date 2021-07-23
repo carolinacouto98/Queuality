@@ -6,7 +6,7 @@ import * as API from '../../common/FetchUtils'
 import * as Siren from '../../common/Siren'
 import * as SubjectModel from '../../common/model/SubjectModel'
 import * as SectionModel from '../../common/model/SectionModel'
-import { Container, Header } from 'semantic-ui-react'
+import { Container, Header, Icon } from 'semantic-ui-react'
 import { useParams } from 'react-router-dom'
 import SectionDetails from './components/SectionDetails'
 
@@ -106,7 +106,7 @@ export default function SectionPage(props: SectionPageProps) {
         if(sectionsEntities) {
             const editSubjectAction = sectionsEntities
             .find(entity => entity.properties?.name === subjectId)?.actions
-            .find(action => action.name === 'update-subject')
+            .find(action => action.name === SubjectModel.EDIT_SUBJECT_ACTION)
         if(editSubjectAction) {
             const result = await props.subjectsService.updateSubject(sectionId, subjectId, subject).send()
             setSubjectsUpdate(props.subjectsService.getSubjects(sectionId!!))
@@ -117,9 +117,26 @@ export default function SectionPage(props: SectionPageProps) {
         }
     }
 
+    async function handleEditSection(workingHours: SectionModel.WorkingHours) {
+        const editSectionAction = sectionDetails?.result?.body?.actions
+            .find(action => action.name === SectionModel.EDIT_SECTION_ACTION)
+        if(editSectionAction) {
+            const result = await props.sectionsService.updateSection(sectionId, workingHours).send()
+            setSectionUpdate(props.sectionsService.getSection(sectionId))
+            if(!result.header.ok)
+                return
+        }
+    }
+
     return(
         <>
-        <SectionDetails section={section!!}/>
+        <Container>
+            <Header size='large' style={{marginTop:'1%', marginBottom:'2%'}}textAlign='left'>
+                <Icon name='chevron circle right' />
+                <Header.Content>{sectionId}</Header.Content>
+            </Header>
+        </Container>
+        {section ? <SectionDetails section={section!!} handleEditSection = {handleEditSection}/> : null}
         {subjects && subjects.length ?  
             <Container>
                 <SubjectsList subjects={subjects} handleDeleteSubject={handleDeleteSubject} handleEditSubject={handleEditSubject}/>
