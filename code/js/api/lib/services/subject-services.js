@@ -29,7 +29,7 @@ const addSubject = (section, subject) =>
         .then(async subjects => {
             if (subject.priority && subjects.find(subject => subject.priority))
                 throw new error.CustomException(`There is already a priority subject in ${section}.`, error.ALREADY_EXISTS)
-            repo.insertSubject(section, subject)
+            return repo.insertSubject(section, subject)
         })
 
 /**

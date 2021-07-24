@@ -36,7 +36,8 @@ function run(port, url, dbName) {
                         scope: 'openid profile email',
                     },
                     routes: {
-                        login: false
+                        login: `/queuality/api/auth/${issuer.toLowerCase()}/login`,
+                        logout: `/queuality/api/auth/${issuer.toLowerCase()}/logout`
                     }
                 })
             )
@@ -74,7 +75,7 @@ function run(port, url, dbName) {
     app.use('/queuality/api', require('./routes/employee-routes.js'))
     app.use('/queuality/api', require('./routes/subject-routes.js'))
     app.use('/queuality/api', require('./routes/section-routes.js'))
-    app.use('/queuality/api', require('./routes/auth-routes.js'))
+    app.use('/queuality/api/auth', require('./routes/auth-routes.js'))
  
     app.use((err, req, res, next) => {
         if (!err.status) err = error.CustomError(err, error.SERVER_ERROR)
