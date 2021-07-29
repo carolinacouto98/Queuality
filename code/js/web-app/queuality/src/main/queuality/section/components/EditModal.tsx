@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Button, Checkbox, CheckboxProps, List, Modal, Popup } from 'semantic-ui-react'
+import { Button, Checkbox, CheckboxProps, Modal, Popup } from 'semantic-ui-react'
 import { Subject } from '../../../common/model/SubjectModel'
 import AddDesksDropdown from './AddDesksDropdown'
 
@@ -19,6 +19,16 @@ export default function EditModal(props: EditModalProps) {
     const updatedDesks = (desks: string[]) => setDesks(desks)
 
     const checkbox = <Checkbox defaultChecked={props.subject.priority} disabled = {checkboxPriority} onChange={(event:  React.FormEvent<HTMLInputElement>, data: CheckboxProps) => setPriority(data.checked)} />
+
+    function editSubject() {
+        const description = (nameRef.current?.value ? nameRef.current?.value.trim() : props.subject.description)
+        const desksInput = (desks?.length ? desks : undefined)  
+        setOpen(false)
+        if(props.handleEditSubject)
+            props.handleEditSubject(
+                props.subject.name!!, 
+                new Subject(undefined, description, priority, undefined, undefined, undefined, desksInput))
+    }
     
     return(        
         <Modal
@@ -27,7 +37,7 @@ export default function EditModal(props: EditModalProps) {
             onOpen={() => setOpen(true)}
             trigger={<Button>Update</Button>}
         >
-            <Modal.Header>Update Subject</Modal.Header>
+            <Modal.Header>Update Subject {props.subject.name}</Modal.Header>
             <Modal.Content>
                 <label>Name: </label>
                 <div className='ui input fluid' style={{marginLeft:'1%'}}>
@@ -53,10 +63,7 @@ export default function EditModal(props: EditModalProps) {
                 }}>
                 Cancel
                 </Button>
-                <Button positive onClick={() => {
-                    setOpen(false)
-                    props.handleEditSubject(props.subject.name!!, new Subject(undefined, (nameRef.current?.value.trim() === '') ? undefined : nameRef.current?.value.trim(), priority, undefined, undefined, undefined, desks))
-                }}>
+                <Button positive onClick={editSubject}>
                 Update
                 </Button>
             </Modal.Actions>

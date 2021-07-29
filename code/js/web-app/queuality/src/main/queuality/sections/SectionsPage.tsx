@@ -7,6 +7,7 @@ import SectionsList from './components/SectionsList'
 import { Container, Divider, Header } from 'semantic-ui-react'
 import SectionsHeader from './components/SectionsHeader'
 import './components/timeInput.css'
+
 type SectionsPageProps = {
     service: SectionsService
 }

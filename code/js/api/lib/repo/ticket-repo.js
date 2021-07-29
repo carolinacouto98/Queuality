@@ -82,9 +82,10 @@ const getQueueTickets = (section) => sectionRepo.getSection(section).then(s => s
  * @returns {Promise<Void>}
  */
 const removeTicket = (section) => sectionRepo.getSection(section)
-    .then(sect => {
-        sect.queue.splice(0, 1)
-        return sectionRepo.updateSection(sect)
+    .then(async sect => {
+        const removedTicket = sect.queue.splice(0, 1)
+        await sectionRepo.updateSection(sect)
+        return removedTicket
     })
 
 /**

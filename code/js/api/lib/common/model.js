@@ -165,7 +165,7 @@ const subjectInputModel = Joi.object({
     name: Joi.string().required(),
     description: Joi.string().required(),
     priority: Joi.boolean().required(),
-    desks: Joi.array().items(Joi.string().required()),
+    desks: Joi.array().items(Joi.string().required()).default([]),
     currentTicket: Joi.number().default(0),
     totalTickets: Joi.number().default(0),
     date: Joi.date().default(new Date())

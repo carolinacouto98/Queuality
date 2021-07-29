@@ -6,9 +6,9 @@ import * as API from '../../common/FetchUtils'
 import * as Siren from '../../common/Siren'
 import * as SubjectModel from '../../common/model/SubjectModel'
 import * as SectionModel from '../../common/model/SectionModel'
-import { Container, Header, Icon } from 'semantic-ui-react'
+import { Container, Header } from 'semantic-ui-react'
 import { useParams } from 'react-router-dom'
-import SectionDetails from './components/SectionDetails'
+import SectionHeader from './components/SectionHeader'
 
 type SectionPageProps = {
     sectionsService: SectionsService
@@ -128,15 +128,24 @@ export default function SectionPage(props: SectionPageProps) {
         }
     }
 
+    async function handleAddSubject(subject: SubjectModel.Subject) {
+        const addSubjectAction = subjectsList?.result?.body?.actions
+            .find(action => action.name === SubjectModel.ADD_SUBJECT_ACTION)
+        if(addSubjectAction) {
+            const result = await props.subjectsService.addSubject(sectionId, subject).send()
+            setSubjectsUpdate(props.subjectsService.getSubjects(sectionId))
+            if(!result.header.ok)
+                return
+        }
+    }
+
+    const checkPriority = () => subjects?.find(subject => subject.priority) ? true : false
+
     return(
         <>
-        <Container>
-            <Header size='large' style={{marginTop:'1%', marginBottom:'2%'}}textAlign='left'>
-                <Icon name='chevron circle right' />
-                <Header.Content>{sectionId}</Header.Content>
-            </Header>
-        </Container>
-        {section ? <SectionDetails section={section!!} handleEditSection = {handleEditSection}/> : null}
+        {section ? 
+            <SectionHeader priority={checkPriority()} section={section} handleEditSection={handleEditSection} handleAddSubject={handleAddSubject}/> 
+        : null }
         {subjects && subjects.length ?  
             <Container>
                 <SubjectsList subjects={subjects} handleDeleteSubject={handleDeleteSubject} handleEditSubject={handleEditSubject}/>

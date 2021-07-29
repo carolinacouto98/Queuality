@@ -1,26 +1,19 @@
-import React, { useContext } from "react";
-import { Card, Statistic } from 'semantic-ui-react';
-import { QueueTicket } from './../ticketsModel'
-import { TicketsControl } from './../TicketsControlPage'
+import { Card, Statistic } from 'semantic-ui-react'
 
 export interface CurrentTicketCardProps {
-    ticket: QueueTicket
-    showTicket: boolean
+    ticket?: string | undefined
+    //showTicket: boolean
 }
 
 export function CurrentTicketCard(props: CurrentTicketCardProps) {
-    const context = useContext(TicketsControl.showTicketContext)
+    //const context = useContext(TicketsControl.showTicketContext)
 
     return (
-        <Card centered style ={{ backgroundColor: '#AFE5D1'}}>
+        <Card color='blue' centered>
                 <Statistic style={{marginTop: '15%', marginBottom: '15%'}}> 
-                {context.showTicket ?
                     <>                    
-                        <Statistic.Value>{props.ticket ? props.ticket.ticketNumber : '--'}</Statistic.Value>
-                        <Statistic.Label>{props.ticket.subject}</Statistic.Label>
+                        <Statistic.Value>{props.ticket ? props.ticket : '--'}</Statistic.Value>
                     </>
-                :
-                    <Statistic.Value>--</Statistic.Value>}
                 </Statistic>
         </Card>
     )

@@ -1,19 +1,19 @@
-import React, { useContext } from "react";
-import { Button } from "semantic-ui-react";
-import { TicketsControl } from './../TicketsControlPage'
+import { Button } from 'semantic-ui-react'
 
 interface NextTicketButtonProps {
-    nextTicket?: () => void
+    hasNextTicket: boolean 
+    handleNextTicket?: () => void
 }
 
 export function NextTicketButton(props: NextTicketButtonProps) {
-    const context = useContext(TicketsControl.showTicketContext)
+    //const context = useContext(TicketsControl.showTicketContext)
+
+    function nextTicket() {
+        if(props.handleNextTicket)
+            props.handleNextTicket()
+    }
     return(
-        <Button onClick={() => {
-            context.setShowTicket()
-            if(props.nextTicket)
-                props.nextTicket()
-        }}>
+        <Button disabled={!props.hasNextTicket} onClick={nextTicket}>
             Next
         </Button>
     )

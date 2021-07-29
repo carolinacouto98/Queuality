@@ -14,18 +14,18 @@ type SubjectsListProps = {
 export class VisibleDetails {
     idx?: string
     visible?: boolean = false
+    rotated?: 'clockwise' | 'counterclockwise' | undefined
 }
 
 export function SubjectsList(props: SubjectsListProps) {
     const [detailsHidden, setDetailsHidden] = useState<VisibleDetails | undefined>()
-    const [rotated, setRotated] = useState<'clockwise' | 'counterclockwise' | undefined>()
 
     function showSubjectDetails(id: string) {
         if(detailsHidden?.idx !== id)
-            setDetailsHidden({idx:id, visible: true})
-        else 
-            setDetailsHidden({idx: id, visible: !detailsHidden?.visible})   
-        setRotated((detailsHidden?.visible) ? undefined : 'clockwise')    
+            setDetailsHidden({idx:id, visible: true, rotated: 'clockwise'})
+        else {
+            setDetailsHidden({idx: id, visible: !detailsHidden?.visible, rotated: (detailsHidden.visible ? undefined : 'clockwise')})
+        }
        
     }
 
@@ -45,7 +45,7 @@ export function SubjectsList(props: SubjectsListProps) {
                             <Grid>
                                 <Grid.Row columns='equal'>
                                     <Grid.Column width='1' style={{paddingLeft:'0px', paddingRight:'0px'}}>
-                                        <Icon rotated={rotated} onClick={() => showSubjectDetails(subject.name!!)} name='chevron right' link></Icon>
+                                        <Icon rotated={(detailsHidden?.idx === subject.name) ? detailsHidden?.rotated : undefined} onClick={() => showSubjectDetails(subject.name!!)} name='chevron right' link></Icon>
                                     </Grid.Column>
                                     <Grid.Column textAlign='left' style={{paddingLeft:'0px'}}>
                                             <Header size='small'>
@@ -67,18 +67,18 @@ export function SubjectsList(props: SubjectsListProps) {
                                                 }   
                                             </Header>  
                                         </Grid.Row>
-                                        <Grid.Row stretched textAlign='left' columns='2'>   
+                                        <Grid.Row textAlign='left' columns='2'>   
                                             <Grid.Column>                                    
                                                 <Header as='h5'>Desks:</Header>                                    
                                                 <List bulleted>
-                                                    {subject.desks!!.map(desk => {
+                                                    {subject.desks?.map(desk => {
                                                         return(
                                                             <List.Item key={desk}>{desk}</List.Item>                                                    
                                                         )
                                                     })}
                                                 </List>
                                             </Grid.Column>
-                                            <Grid.Column>
+                                            <Grid.Column style={{marginLeft:'1000%'}}>
                                                 <EditModal priority={checkPriority()} subject={subject} handleEditSubject={props.handleEditSubject}></EditModal>
                                             </Grid.Column>
                                         </Grid.Row>

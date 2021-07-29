@@ -4,8 +4,8 @@ import './App.css'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import SectionsPage from './queuality/sections/SectionsPage'
 import SectionPage from './queuality/section/SectionPage'
-import { TicketsControl } from './queuality/tickets/TicketsControlPage'
-import { getTicketsService } from './queuality/tickets/TicketsService'
+import QueuePage from './queuality/tickets/QueuePage'
+import { getQueueService } from './common/services/QueueService'
 import { getSectionsService } from './common/services/SectionsService'
 import { getSubjectsService } from './common/services/SubjectsService'
 
@@ -21,11 +21,8 @@ function PageRouter() {
         <Route exact path='/queuality/sections/:sectionId'>
           <SectionPage sectionsService={getSectionsService()} subjectsService={getSubjectsService()}/>
         </Route>
-        <Route exact path='/tickets'>
-          <TicketsControl.Page ticketsService = {getTicketsService()}/>
-        </Route>
-        <Route exact path='/employess'>
-          <TicketsControl.Page ticketsService = {getTicketsService()}/>
+        <Route exact path='/queuality/sections/:sectionId/tickets'>
+          <QueuePage queueService = {getQueueService()} subjectsService = {getSubjectsService()}/>
         </Route>
       </Switch>
     </Router>

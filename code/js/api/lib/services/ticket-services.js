@@ -52,12 +52,12 @@ const getQueueTickets = (sectionId) => repo.getQueueTickets(sectionId)
  * @param {String} subjectId 
  * @returns {String}
  */
-const getNextTicket = (sectionId, subjectId) => {
-    const sectionPromise = getSection(sectionId)
-        .then(() => repo.removeTicket(sectionId)) //isto aqui é para remover o bilhete que estiver no inicio da lista queue
-    const subjectPromise = getSubject(sectionId, subjectId)
-        .then(() => repo.incrementCurrentTicket(sectionId, subjectId)) //método que irá incrementar o campo current-ticket do subject
-    return Promise.all([sectionPromise, subjectPromise]).then(values => values[0])
+const getNextTicket = async (sectionId, subjectId) => {
+    const removedTicket = await  getSection(sectionId)
+            .then(() => repo.removeTicket(sectionId)) 
+        await getSubject(sectionId, subjectId)
+            .then(() => repo.incrementCurrentTicket(sectionId, subjectId))
+    return removedTicket[0]
 }
 
 module.exports = {
