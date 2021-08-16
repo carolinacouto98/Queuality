@@ -4,10 +4,12 @@ import './App.css'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import SectionsPage from './queuality/sections/SectionsPage'
 import SectionPage from './queuality/section/SectionPage'
+import EmployeesPage from './queuality/employees/EmployeesPage'
 import { TicketsControl } from './queuality/tickets/TicketsControlPage'
 import { getTicketsService } from './queuality/tickets/TicketsService'
 import { getSectionsService } from './common/services/SectionsService'
 import { getSubjectsService } from './common/services/SubjectsService'
+import { getEmployeesService } from './common/services/EmployeesService'
 
 export const API_BASE_URL = 'http://localhost:5000/queuality'
 
@@ -24,8 +26,8 @@ function PageRouter() {
         <Route exact path='/tickets'>
           <TicketsControl.Page ticketsService = {getTicketsService()}/>
         </Route>
-        <Route exact path='/employess'>
-          <TicketsControl.Page ticketsService = {getTicketsService()}/>
+        <Route exact path='/employees'>
+          <EmployeesPage service = {getEmployeesService()}/>
         </Route>
       </Switch>
     </Router>
