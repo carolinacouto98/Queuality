@@ -1,32 +1,34 @@
 import { ChangeEvent, useRef, useState } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
-import * as Model from '../../../common/model/SectionModel'
+import { WorkingHours } from '../../../common/model/SectionModel'
 
 type UpdateHoursModalProps = {
-    handleEditSection(workingHours: Model.WorkingHours): void
+    workingHours: WorkingHours
+    handleEditSection(workingHours: WorkingHours): void
 }
 
 export default function UpdateHoursModal(props: UpdateHoursModalProps) {
     const [open, setOpen] = useState<boolean>(false)
-    const [duration, setDuration] = useState<number | undefined>()
+    const [duration, setDuration] = useState<number>()
     const openTimeRef = useRef<HTMLInputElement>(null)
     const endTimeRef = useRef<HTMLInputElement>(null)
 
     function handleDurationOnChange(evt: ChangeEvent<HTMLInputElement>) {
         const value: number = +evt.target.value
-        if(value >= Model.WorkingHours.MINDURATION)
+        if(value >= WorkingHours.MINDURATION)
             setDuration(value)
         else evt.preventDefault()
     }
 
     function editWorkingHours() {
-        const openTime = openTimeRef.current?.value
-        const endTime = endTimeRef.current?.value
+        const openTime = (openTimeRef.current?.value ? openTimeRef.current?.value : props.workingHours.begin) 
+        const endTime = (endTimeRef.current?.value ? endTimeRef.current?.value : props.workingHours.end) 
+        const durationInput = (duration ? duration : props.workingHours.duration)
         if(props.handleEditSection) 
-            props.handleEditSection(new Model.WorkingHours(
+            props.handleEditSection(new WorkingHours(
                 openTime, 
                 endTime, 
-                duration))
+                durationInput))
     }
 
     return(        
@@ -42,10 +44,10 @@ export default function UpdateHoursModal(props: UpdateHoursModalProps) {
                 <input style={{margin:'1%'}} ref={openTimeRef} type='time' />
                 <br/>
                 <label htmlFor="time">Close Time:</label>
-                <input style={{margin:'1%'}} ref={endTimeRef} type='time' />
+                <input style={{margin:'1%'}} ref={endTimeRef} type='time'/>
                 <br/>
                 <label>Appointment Duration (minutes):</label>
-                <input style={{margin:'1%'}} type='number' placeholder='Ex: 30' onChange={handleDurationOnChange}/>
+                <input style={{margin:'1%'}} type='number' placeholder='Ex: 30' onChange={handleDurationOnChange} />
             </Modal.Content>
             <Modal.Actions>
                 <Button negative onClick={() => {

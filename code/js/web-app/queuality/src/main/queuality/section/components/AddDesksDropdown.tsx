@@ -1,10 +1,9 @@
-import { openStdin } from 'process'
-import React, { Component, useState } from 'react'
+import { useState } from 'react'
 import { useEffect } from 'react'
-import { Dropdown, DropdownItemProps, DropdownProps } from 'semantic-ui-react'
+import { Dropdown, DropdownProps } from 'semantic-ui-react'
 
 type AddDesksDropdownProps = {
-    desks: string[]
+    desks: string[] 
     handleUpdatedDesks(desks: string[]): void
 }
 
@@ -28,7 +27,7 @@ export default function AddDesksDropdown(props: AddDesksDropdownProps) {
 
     useEffect(() =>
         props.handleUpdatedDesks(currentValues)
-    , [currentValues])
+    , [props, currentValues])
 
 
     return (

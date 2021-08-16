@@ -7,6 +7,8 @@ import SectionPage from './queuality/section/SectionPage'
 import EmployeesPage from './queuality/employees/EmployeesPage'
 import { TicketsControl } from './queuality/tickets/TicketsControlPage'
 import { getTicketsService } from './queuality/tickets/TicketsService'
+import QueuePage from './queuality/tickets/QueuePage'
+import { getQueueService } from './common/services/QueueService'
 import { getSectionsService } from './common/services/SectionsService'
 import { getSubjectsService } from './common/services/SubjectsService'
 import { getEmployeesService } from './common/services/EmployeesService'
@@ -28,6 +30,9 @@ function PageRouter() {
         </Route>
         <Route exact path='/employees'>
           <EmployeesPage service = {getEmployeesService()}/>
+        </Route>
+        <Route exact path='/queuality/sections/:sectionId/tickets'>
+          <QueuePage queueService = {getQueueService()} subjectsService = {getSubjectsService()}/>
         </Route>
       </Switch>
     </Router>

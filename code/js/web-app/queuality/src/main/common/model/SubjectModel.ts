@@ -1,9 +1,6 @@
 export const DELETE_SUBJECT_ACTION = 'delete-subject'
 export const EDIT_SUBJECT_ACTION = 'update-subject'
-
-export type SectionsDto = {
-    sections: Subject[]
-}
+export const ADD_SUBJECT_ACTION = 'add-subject'
 
 export class Subject {
     readonly name?: string | undefined

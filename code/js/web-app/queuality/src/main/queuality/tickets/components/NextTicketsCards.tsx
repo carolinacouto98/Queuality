@@ -1,17 +1,14 @@
-import React from "react";
-import { Card } from "semantic-ui-react";
-import { QueueTicket } from "../ticketsModel";
+import { Card, Header } from 'semantic-ui-react'
 
 interface NextTicketsCardsProps {
-    ticket: QueueTicket
+    ticket: string
 }
 
 export function NextTicketsCard(props: NextTicketsCardsProps) {
     return (
         <Card>
-            <Card.Content>
-                <Card.Header>{props.ticket.ticketNumber}</Card.Header>
-                <Card.Meta>{props.ticket.subject}</Card.Meta>
+            <Card.Content style={{margin:'18%'}}>
+                <Header size='huge'>{props.ticket}</Header>
             </Card.Content>
         </Card>
     )

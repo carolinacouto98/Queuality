@@ -21,7 +21,7 @@ export function getSectionsService(): SectionsService {
             Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections`), {headers: headers})
         ,
         getSection: (sectionId: string): Fetch.Request<Siren.Entity<Model.Section, void>> =>
-            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections/${sectionId}`))
+            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections/${sectionId}`), {headers: headers})
         ,
         addSection: (section: Model.Section): Fetch.Request<Siren.Entity<Model.CreateSection, void>> => {            
             const body = {

@@ -7,7 +7,14 @@ type DeleteModalProps = {
 }
 
 export default function DeleteModal(props: DeleteModalProps) {
-    const [open, setOpen] = useState<boolean>(false)
+    const [open, setOpen] = useState<boolean>(false)    
+
+    function deleteSubject() {
+        if(props.handleDeleteSubject) {
+            setOpen(false)
+            props.handleDeleteSubject(props.subjectName)
+        }
+    }
 
     return(
         <Modal
@@ -27,10 +34,7 @@ export default function DeleteModal(props: DeleteModalProps) {
                 }}>
                 No
                 </Button>
-                <Button positive onClick={() => {
-                    setOpen(false)
-                    props.handleDeleteSubject(props.subjectName)
-                }}>
+                <Button positive onClick={deleteSubject}>
                 Yes
                 </Button>
             </Modal.Actions>

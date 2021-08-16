@@ -16,7 +16,7 @@ export default function SectionDetails(props: SectionDetailsProps) {
                     <Header style={{marginTop:'0%', marginBottom: '1%'}} textAlign='left'>Appointments Duration: {props.section.workingHours?.duration} mins</Header>
                 </Grid.Column>
                 <Grid.Column textAlign='left'>
-                    <UpdateHoursModal handleEditSection={props.handleEditSection} />
+                    <UpdateHoursModal workingHours = {props.section.workingHours!!} handleEditSection={props.handleEditSection} />
                 </Grid.Column>
             </Grid>
         </Container>
