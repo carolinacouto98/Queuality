@@ -20,7 +20,7 @@ const addTicket = (sectionId, subjectId) =>
                 await updateSubject(sectionId, subject)
             }
             const nrTicket = await repo.incrementTotalTickets(sectionId, subjectId)
-            await repo.insertTicket(sectionId, subjectId.concat(nrTicket), subject.priority)
+            await repo.insertTicket(sectionId, subjectId, subjectId.concat(nrTicket), subject.priority)
             return nrTicket
         })
 

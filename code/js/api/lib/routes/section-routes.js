@@ -38,7 +38,6 @@ router.get('/sections/:sectionId', auth.optional(), (req, res, next) => {
     const actions = []
     //if (req.employee?.roles.includes('Manage Section') && req.employee?.sections.includes(_id)) {
         actions.push(sectionSiren.updateSectionAction(_id))
-        actions.push(sectionSiren.deleteSectionAction(_id))
     //}
     //if (req.employee.roles.includes('Answer Ticket') && req.employee.sections.includes(_id))
         actions.push(sectionSiren.answerTicketAction(_id))

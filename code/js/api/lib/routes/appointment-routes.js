@@ -11,20 +11,21 @@ const router = Router()
 
 module.exports = router
 
-router.get('/appointments', (req, res, next) => {
-    const section = req.query.section
+router.get('/sections/:sectionId/appointments', (req, res, next) => {
+    const section = req.params.sectionId
+    const subject = req.query.subject
     const desk = req.query.desk
     if (!req.employee?.roles.includes('Manage Section\'s Appointments') || !req.employee.sections.includes(section))
         next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     
-    if(section && desk) 
-        service.getAppointments(section, desk)
+    if(subject && desk) 
+        service.getAppointments(section, subject, desk)
             .then(appointments => res.send(
                 new Entity(
                     'Get Appointments',
                     ['Appointments'],
                     appointmentSiren.getAppointmentsLinks(section, desk),
-                    appointments,
+                    undefined,
                     [appointmentSiren.addAppointmentAction()],
                     appointmentSiren.setSubEntities(appointments)
                     
@@ -35,7 +36,7 @@ router.get('/appointments', (req, res, next) => {
     
 })
 
-router.get('/appointments/:appointmentId', (req, res, next) => {
+router.get('/sections/:sectionId/appointments/:appointmentId', (req, res, next) => {
     const id = req.params.appointmentId
     service.getAppointment(id)
         .then(appointment => res.send(
@@ -53,7 +54,7 @@ router.get('/appointments/:appointmentId', (req, res, next) => {
         .catch(next)
 })
 //mobile-app
-router.patch('/appointments/:appointmentId', (req, res, next) => {
+router.patch('/sections/:sectionId/appointments/:appointmentId', (req, res, next) => {
     const id = req.params.appointmentId
     const date = req.body.date
     if(!date)
@@ -70,7 +71,7 @@ router.patch('/appointments/:appointmentId', (req, res, next) => {
         .catch(next)
 })
 //mobile-app
-router.post('/appointments', (req, res, next) => {
+router.post('/sections/:sectionId/appointments', (req, res, next) => {
     const section = req.body.section
     const date = req.body.date
     const subject = req.body.subject
@@ -92,7 +93,7 @@ router.post('/appointments', (req, res, next) => {
 })
 
 //mobile-app
-router.delete('/appointments/:appointmentId', (req, res, next) => {
+router.delete('/sections/:sectionId/appointments/:appointmentId', (req, res, next) => {
     const id = req.params.appointmentId
     service.removeAppointment(id)
         .then(appointment => res.send(
