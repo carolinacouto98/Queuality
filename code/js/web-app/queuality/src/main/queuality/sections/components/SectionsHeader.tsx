@@ -41,7 +41,7 @@ export default function SectionsHeader(props: SectionsHeaderProps) {
                     setErrorMessage(true)
                 }}
                 open={open}
-                trigger={<Button color='instagram' floated='right'>Add Section</Button>}
+                trigger={<Button style={{backgroundColor: '#33BEFF', color: '#FFFFFF'}} floated='right'>Add Section</Button>}
                 >
                 <Modal.Header>Add a section</Modal.Header>
                 <Modal.Content>

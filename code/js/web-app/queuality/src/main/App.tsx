@@ -8,6 +8,8 @@ import QueuePage from './queuality/tickets/QueuePage'
 import { getQueueService } from './common/services/QueueService'
 import { getSectionsService } from './common/services/SectionsService'
 import { getSubjectsService } from './common/services/SubjectsService'
+import AppointmentsPage from './queuality/appointments/AppointmentsPage'
+import { getAppointmentsService } from './common/services/AppointmentsService'
 
 export const API_BASE_URL = 'http://localhost:5000/queuality'
 
@@ -23,6 +25,9 @@ function PageRouter() {
         </Route>
         <Route exact path='/queuality/sections/:sectionId/tickets'>
           <QueuePage queueService = {getQueueService()} subjectsService = {getSubjectsService()}/>
+        </Route>
+        <Route exact path='/queuality/sections/:sectionId/appointments'>
+          <AppointmentsPage service = {getAppointmentsService()} subject='Test Subject 3' desk='Desk1'/>
         </Route>
       </Switch>
     </Router>

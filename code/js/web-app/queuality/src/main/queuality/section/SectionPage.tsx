@@ -37,12 +37,12 @@ function getSectionProperties(section?: SectionInfo) : SectionModel.Section | un
 export default function SectionPage(props: SectionPageProps) {
     const { sectionId }  = useParams<Param>()
     const [subjectsList, setSubjects] = useState<SubjectsInfo>()    
-    const [subjectsUpdate, setSubjectsUpdate] = useState<SubjectsUpdate>(props.subjectsService.getSubjects(sectionId))
+    //const [subjectsUpdate, setSubjectsUpdate] = useState<SubjectsUpdate>(props.subjectsService.getSubjects(sectionId))
     const [sectionDetails, setSection] = useState<SectionInfo>()
     const [sectionUpdate, setSectionUpdate] = useState<SectionUpdate>(props.sectionsService.getSection(sectionId))
 
 
-    useEffect(() => {
+    /*useEffect(() => {
         async function sendSubjectsRequest(request: SubjectsUpdate) {
             try { 
                 setSubjects({ status: API.FetchState.NOT_READY })
@@ -59,8 +59,8 @@ export default function SectionPage(props: SectionPageProps) {
                     setSubjects({status: API.FetchState.ERROR})
             }
         }
-        sendSubjectsRequest(props.subjectsService.getSubjects(sectionId))
-    }, [props.subjectsService, subjectsUpdate, sectionId])    
+        //sendSubjectsRequest(props.subjectsService.getSubjects(sectionId))
+    }, [props.subjectsService, subjectsUpdate, sectionId])*/    
 
     useEffect(() => {
         async function sendSectionRequest(request: SectionUpdate) {
@@ -93,7 +93,7 @@ export default function SectionPage(props: SectionPageProps) {
                 .find(action => action.name === SubjectModel.DELETE_SUBJECT_ACTION)
             if(deleteSubjectAction) {
                 const result = await props.subjectsService.deleteSubject(sectionId!!, subjectId).send()
-                setSubjectsUpdate(props.subjectsService.getSubjects(sectionId!!))
+                //setSubjectsUpdate(props.subjectsService.getSubjects(sectionId!!))
                 if(!result.header.ok) {
                     return
                 }
@@ -109,7 +109,7 @@ export default function SectionPage(props: SectionPageProps) {
             .find(action => action.name === SubjectModel.EDIT_SUBJECT_ACTION)
         if(editSubjectAction) {
             const result = await props.subjectsService.updateSubject(sectionId, subjectId, subject).send()
-            setSubjectsUpdate(props.subjectsService.getSubjects(sectionId!!))
+            //setSubjectsUpdate(props.subjectsService.getSubjects(sectionId!!))
             if(!result.header.ok) {
                 return
             }
@@ -133,7 +133,7 @@ export default function SectionPage(props: SectionPageProps) {
             .find(action => action.name === SubjectModel.ADD_SUBJECT_ACTION)
         if(addSubjectAction) {
             const result = await props.subjectsService.addSubject(sectionId, subject).send()
-            setSubjectsUpdate(props.subjectsService.getSubjects(sectionId))
+            //setSubjectsUpdate(props.subjectsService.getSubjects(sectionId))
             if(!result.header.ok)
                 return
         }
