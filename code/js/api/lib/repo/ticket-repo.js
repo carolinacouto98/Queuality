@@ -27,11 +27,14 @@ const incrementTotalTickets = (section, subject) => subjectRepo.getSubject(secti
  * @param {Boolean} priority Priority of the subject
  * @returns {Promise<Void>}
  */
-const insertTicket = (section, ticket, priority) => sectionRepo.getSection(section)
+const insertTicket = (section, subject, ticket, priority) => sectionRepo.getSection(section)
     .then(async sect => {
         if (sect.queue.find(t => t === ticket))
             throw Error.CustomException(`The ticket ${ticket} is already in the queue`, Error.ALREADY_EXISTS)
-        if (priority) sect.queue = [ticket, ...sect.queue]
+        if (priority) {
+            const idx = sect.queue.findIndex(t => !t.includes(subject))
+            sect.queue.splice(idx, 0, ticket)
+        }
         else sect.queue.push(ticket)
         await sectionRepo.updateSection(sect)
     })

@@ -28,8 +28,11 @@ const getEmployee = (id) => db.get(collection, id)
  * @param {EmployeeInputModel} employee Employee to be inserted
  * @returns {Promise<Employee>}
  */
-const insertEmployee = (employee) => 
-    db.insert(collection, employee)
+const insertEmployee = (employee) => db.get(collection, employee._id)
+    .then(empl => {
+        if (empl) throw Error.CustomException(`The given employee is already in the database`, Error.ALREADY_EXISTS)
+        return db.insert(collection, employee)
+    })
 
 /**
  * Updates an existing employee in the database.
