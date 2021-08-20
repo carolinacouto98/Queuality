@@ -131,8 +131,8 @@ const employeeUpdateInputModel = Joi.object({
     _id: Joi.string().required(),
     name: Joi.string(),
     roles: Joi.array().items(Joi.valid(...roles)),
-    sections: Joi.array().items(Joi.string()),
-    desk: Joi.string()
+    sections: Joi.array().items(Joi.string().allow('')),
+    desk: Joi.string().allow('')
 })
 /**
  * @typedef {Object} SectionInputModel

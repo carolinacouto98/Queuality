@@ -59,7 +59,7 @@ router.patch('/sections/:sectionId/appointments/:appointmentId', (req, res, next
     const date = req.body.date
     if(!date)
         throw error.CustomException('Missing Parameters', error.BAD_REQUEST)
-    service.updateAppointment(id, date)
+    service.updateAppointment(id, new Date(date))
         .then(appointment => res.send(
             new Entity(
                 'Update an Appointment',
