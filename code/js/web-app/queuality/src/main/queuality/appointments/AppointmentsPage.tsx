@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { AppointmentsService } from '../../common/services/AppointmentsService'
 
 import FullCalendar, { EventClickArg, EventDropArg } from "@fullcalendar/react"
@@ -33,7 +33,8 @@ function getAppointmentsValue(appointment?: AppointmentsInfo) : Model.Appointmen
 }
 
 export default function AppointmentsPage(props: AppointmentsPageProps) {
-
+    const [desk, setDesk] = useState<string>()
+    const [subject, setSubject] = useState<string>()
     //const [events, setEvents] = useState<any>([])
     const { sectionId } = useParams<Param>()    
     const [eventClickedDetails, setEventClickedDetails] = useState({id: '', title: '', start: ''})
@@ -43,6 +44,12 @@ export default function AppointmentsPage(props: AppointmentsPageProps) {
     const [appointments, setAppointments] = useState<AppointmentsInfo>()
     const [appointmentsUpdate, setAppoinmentsUpdate] = useState<AppointmentsUpdate>(props.service.getAppointments(sectionId, props.subject, props.desk))
 
+    const location = useLocation()
+    useEffect(() => {
+        const query = new URLSearchParams(location.search)
+        setDesk(query.get('desk') as string)
+        setSubject(query.get('subject') as string)
+    }, [location.search])
 
     useEffect(() => {
         async function sendSectionsRequest(request: AppointmentsUpdate) {
@@ -61,8 +68,8 @@ export default function AppointmentsPage(props: AppointmentsPageProps) {
                     setAppointments({status: API.FetchState.ERROR})
             }
         }
-        sendSectionsRequest(props.service.getAppointments(sectionId, props.subject, props.desk))
-    }, [props.service, appointmentsUpdate])
+        sendSectionsRequest(props.service.getAppointments(sectionId, subject!!, desk!!))
+    }, [props.service, appointmentsUpdate, subject, desk, sectionId])
 
     const handleEventClick = (info: EventClickArg) => { 
         setEventClickedDetails(prevState => ({
@@ -70,7 +77,7 @@ export default function AppointmentsPage(props: AppointmentsPageProps) {
             id: info.event.id,
             title: info.event.title,
             start: info.event.startStr
-         }))
+        }))
         setOpen(true)
     }
 
