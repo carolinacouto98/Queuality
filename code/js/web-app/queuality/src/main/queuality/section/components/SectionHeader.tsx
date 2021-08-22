@@ -15,7 +15,7 @@ export default function SectionHeader(props: SectionHeaderProps) {
     return(
         <Container>
             <Header size='large' style={{marginTop:'1%', marginBottom:'2%'}} textAlign='left'>
-                    <Icon name='chevron circle right' />
+                    <Icon style={{color: '#33BEFF'}} name='chevron circle right' />
                     <Header.Content>{props.section._id}</Header.Content>
             </Header>
             <SectionDetails section={props.section!!} handleEditSection = {props.handleEditSection} />

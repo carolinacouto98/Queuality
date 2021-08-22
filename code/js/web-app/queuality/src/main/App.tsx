@@ -5,12 +5,12 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import SectionsPage from './queuality/sections/SectionsPage'
 import SectionPage from './queuality/section/SectionPage'
 import EmployeesPage from './queuality/employees/EmployeesPage'
-// import { TicketsControl } from './queuality/tickets/TicketsControlPage'
-// import { getTicketsService } from './queuality/tickets/TicketsService'
 import QueuePage from './queuality/tickets/QueuePage'
 import { getQueueService } from './common/services/QueueService'
 import { getSectionsService } from './common/services/SectionsService'
 import { getSubjectsService } from './common/services/SubjectsService'
+import AppointmentsPage from './queuality/appointments/AppointmentsPage'
+import { getAppointmentsService } from './common/services/AppointmentsService'
 import { getEmployeesService } from './common/services/EmployeesService'
 import Navbar from './queuality/navbar/Navbar'
 
@@ -27,14 +27,17 @@ function PageRouter() {
         <Route exact path='/queuality/sections/:sectionId'>
           <SectionPage sectionsService={getSectionsService()} subjectsService={getSubjectsService()}/>
         </Route>
-        {/* <Route exact path='/tickets'>
-          <TicketsControl.Page ticketsService = {getTicketsService()}/>
-        </Route> */}
+        <Route exact path='/tickets'>
+          <QueuePage queueService = {getQueueService()} subjectsService = {getSubjectsService()}/>
+        </Route>
         <Route exact path='/queuality/employees'>
           <EmployeesPage service = {getEmployeesService()} sectionsService={getSectionsService()}/>
         </Route>
         <Route exact path='/queuality/sections/:sectionId/tickets'>
           <QueuePage queueService = {getQueueService()} subjectsService = {getSubjectsService()}/>
+        </Route>
+        <Route exact path='/queuality/sections/:sectionId/appointments'>
+          <AppointmentsPage service = {getAppointmentsService()} subject='Test Subject 3' desk='Desk1'/>
         </Route>
       </Switch>
     </Router>
