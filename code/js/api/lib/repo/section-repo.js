@@ -32,7 +32,7 @@ const getSection = (id) => db.get(collection, id)
 const insertSection = (section) => db.get(collection, section._id)
 .then(sect => {
     if (sect) throw Error.CustomException(`The given section is already in the database`, Error.ALREADY_EXISTS)
-    return db.insert(collection, employee)
+    return db.insert(collection, section)
 })
 
 

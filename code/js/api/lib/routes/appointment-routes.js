@@ -72,10 +72,10 @@ router.patch('/sections/:sectionId/appointments/:appointmentId', (req, res, next
 })
 //mobile-app
 router.post('/sections/:sectionId/appointments', (req, res, next) => {
-    const section = req.body.section
+    const section = req.params.sectionId
     const date = req.body.date
     const subject = req.body.subject
-    if(!section && !date && !desk && !subject)
+    if(!date && !subject)
         throw error.CustomException('Missing required Parameters', error.BAD_REQUEST)
     else    
         model.appointmentInputModel.validateAsync({subject, date, section})

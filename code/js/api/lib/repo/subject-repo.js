@@ -32,13 +32,13 @@ const getSubject = (section, subject) => sectionRepo.getSection(section)
  * @param {String} subject Subject subject
  * @returns {Promise<Array<String>>} Subject
  */
- const getSubjectDesks = (section, subject) => sectionRepo.getSection(section)
- .then(s => s.subjects.find(sub => sub.description === subject))
- .then(sub => {
-     if (!sub)
-         throw Error.CustomException(`The subject ${subject} does not exists`, Error.NOT_FOUND)
-     return sub.desks
- })
+const getSubjectDesks = (section, subject) => sectionRepo.getSection(section)
+    .then(s => s.subjects.find(sub => sub.description === subject))
+    .then(sub => {
+        if (!sub)
+            throw Error.CustomException(`The subject ${subject} does not exists`, Error.NOT_FOUND)
+        return sub.desks
+    })
 
 /**
  * Adds a subject to a section.
