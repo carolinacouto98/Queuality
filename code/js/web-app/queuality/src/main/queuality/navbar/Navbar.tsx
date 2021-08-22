@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
 import { Button, Icon, Menu, Modal } from "semantic-ui-react"
 
@@ -9,6 +9,8 @@ type Param = {
 export default function Navbar() {
     const location = useLocation()
     const [openModal, setOpenModal] = useState<boolean>(false)
+    const desk = useRef<HTMLInputElement>(null)
+    const subject = useRef<HTMLInputElement>(null)
 
     return <>
         <Menu style={{backgroundColor:'#33BEFF', fontColor:'#FFFFFF' }} borderless pointing secondary textAlign='left'>
@@ -50,12 +52,13 @@ export default function Navbar() {
         >
             <Modal.Header>Appointments</Modal.Header>
             <Modal.Content>
-
+                <label>Subject Name:</label>
+                <input style={{margin:'1%'}} ref={subject} type='text' placeholder='Subject Name'/>
             </Modal.Content>
             <Modal.Actions>
                 <Button content='Cancel' onClick={() => setOpenModal(false)}/>
                 <Button content='Ok' onClick={() => setOpenModal(false)} 
-                    as={ Link } to={'/' + location.pathname.split('/').slice(0, 3).join('/')}/>
+                    as={ Link } to={`/${location.pathname.split('/').slice(0, 3).join('/')}?subject=${subject.current?.value}&desk=${desk.current?.value}`}/>
             </Modal.Actions>
         </Modal>
     </>
