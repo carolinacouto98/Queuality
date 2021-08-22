@@ -5,19 +5,21 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import SectionsPage from './queuality/sections/SectionsPage'
 import SectionPage from './queuality/section/SectionPage'
 import EmployeesPage from './queuality/employees/EmployeesPage'
-import { TicketsControl } from './queuality/tickets/TicketsControlPage'
-import { getTicketsService } from './queuality/tickets/TicketsService'
+// import { TicketsControl } from './queuality/tickets/TicketsControlPage'
+// import { getTicketsService } from './queuality/tickets/TicketsService'
 import QueuePage from './queuality/tickets/QueuePage'
 import { getQueueService } from './common/services/QueueService'
 import { getSectionsService } from './common/services/SectionsService'
 import { getSubjectsService } from './common/services/SubjectsService'
 import { getEmployeesService } from './common/services/EmployeesService'
+import Navbar from './queuality/navbar/Navbar'
 
 export const API_BASE_URL = 'http://localhost:5000/queuality'
 
 function PageRouter() {
   return (
     <Router>
+      <Navbar/>
       <Switch>
         <Route exact path='/queuality/sections'>
           <SectionsPage service={getSectionsService()}/>
@@ -25,11 +27,11 @@ function PageRouter() {
         <Route exact path='/queuality/sections/:sectionId'>
           <SectionPage sectionsService={getSectionsService()} subjectsService={getSubjectsService()}/>
         </Route>
-        <Route exact path='/tickets'>
+        {/* <Route exact path='/tickets'>
           <TicketsControl.Page ticketsService = {getTicketsService()}/>
-        </Route>
-        <Route exact path='/employees'>
-          <EmployeesPage service = {getEmployeesService()}/>
+        </Route> */}
+        <Route exact path='/queuality/employees'>
+          <EmployeesPage service = {getEmployeesService()} sectionsService={getSectionsService()}/>
         </Route>
         <Route exact path='/queuality/sections/:sectionId/tickets'>
           <QueuePage queueService = {getQueueService()} subjectsService = {getSubjectsService()}/>

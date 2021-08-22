@@ -1,18 +1,20 @@
 import { useRef, useState } from "react";
 import { Card, Image, Icon, Button } from "semantic-ui-react";
-import DeleteModal from "../../../common/components/DeleteModal";
 import { Employee } from "../../../common/model/EmployeeModel";
+import DropDown from "./DropDown";
 
 type EmployeeCardProps = {
     employee: Employee,
+    sections?: string[],
     update: boolean,
     remove: boolean,
+    setOpenModal: (open: boolean) => void,
     handleUpdateEmployee: (employee: Employee) => void,
     handleDeleteEmployee: (employeeId: string) => void,
 }
 export default function EmployeeCard (props: EmployeeCardProps) {
     const [update, setUpdate] = useState<boolean>(false)
-    const sectionRef = useRef<HTMLInputElement>(null)
+    const [sections, setSections] = useState<string[]>(props.employee.sections)
     const deskRef = useRef<HTMLInputElement>(null)
     const roles = props.employee.roles.toString()
     return (
@@ -20,15 +22,22 @@ export default function EmployeeCard (props: EmployeeCardProps) {
             {
                 props.employee.picture ?
                 <Image centered src={props.employee.picture} wrapped/> :
-                <Icon fitted size='massive' name='user' wrapped/>
+                <Icon fitted size='massive' name='user'/>
             }
             <Card.Content>
                 <Card.Header>{props.employee.name}</Card.Header>
                 <Card.Meta>
                     <p>
-                        Section: {update 
-                            ? <div className='ui input'><input ref={sectionRef} defaultValue={props.employee.section}/></div> 
-                            : props.employee.section
+                        Section: {
+                            update 
+                            ? <DropDown 
+                                property='sections' 
+                                values={props.sections || []}  
+                                employee={props.employee} 
+                                onChange={setSections}
+                                fluid
+                            />
+                            : props.employee.sections.toString()
                         }
                     </p>
                     <p>
@@ -50,18 +59,19 @@ export default function EmployeeCard (props: EmployeeCardProps) {
                     hidden={!props.update}
                     onClick={() => {
                         if (update) {
-                            props.employee.section = sectionRef.current?.value!!
+                            props.employee.sections = sections
                             props.employee.desk = deskRef.current?.value!!
                             props.handleUpdateEmployee(props.employee)
                         }
                         setUpdate(!update)
                     }}
                 />
-                <DeleteModal 
-                    title="Delete Employee"
-                    content={`Are you sure you want to delete employee ${props.employee.name}`}
-                    onConfirm={() => props.handleDeleteEmployee(props.employee._id)}
-                    trigger={<Button color='red' content='Remove' icon='close' hidden={!props.remove}/>}
+                <Button 
+                    color='red'
+                    content='Remove' 
+                    icon='close'
+                    hidden={!props.remove}
+                    onClick={() => props.setOpenModal(true)}
                 />
             </Card.Content>
         </Card>
