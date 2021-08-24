@@ -11,24 +11,26 @@ const router = Router()
 module.exports = router
 
 router.get('/employees', auth.requested(), (req, res, next) => {
-    if (!req.employee?.roles.includes('Manage Employees'))
-        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
+    //if (!req.employee?.roles.includes('Manage Employees'))
+    //    next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     service.getEmployees()
         .then(employees => res.send(
             new Entity(
                 'Get Employees',
                 ['Employees'],
                 employeeSiren.getEmployeesLinks,
-                employees,
-                [employeeSiren.addEmployeeAction()],
+                undefined,
+                [employeeSiren.addEmployeeAction(),
+                employeeSiren.updateEmployeeAction(),
+                employeeSiren.deleteEmployeeAction()],
                 employeeSiren.setSubEntities(employees)
             )))
         .catch(next)
 })
 
 router.post('/employees', auth.requested(), (req, res, next) => {
-    if (!req.employee?.roles.includes('Manage Employees'))
-        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
+    //if (!req.employee?.roles.includes('Manage Employees'))
+    //    next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     const name = req.body.name
     const _id = req.body._id
     if(!name || !_id)
@@ -49,8 +51,8 @@ router.post('/employees', auth.requested(), (req, res, next) => {
 })
 
 router.patch('/employees/:employeeId', auth.requested(), (req, res, next) => {
-    if (!req.employee?.roles.includes('Manage Employees'))
-        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
+    //if (!req.employee?.roles.includes('Manage Employees'))
+    //    next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     const _id = req.params.employeeId
     const name = req.body.name
     const roles = req.body.roles
@@ -73,8 +75,8 @@ router.patch('/employees/:employeeId', auth.requested(), (req, res, next) => {
 })
     
 router.delete('/employees/:employeeId', auth.requested(), (req, res, next) => {
-    if (!req.employee?.roles.includes('Manage Employees'))
-        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
+    //if (!req.employee?.roles.includes('Manage Employees'))
+    //    next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     const id = req.params.employeeId
     service.removeEmployee(id)
         .then(() => res.send(

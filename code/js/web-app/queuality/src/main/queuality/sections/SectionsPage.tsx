@@ -6,6 +6,7 @@ import * as Model from '../../common/model/SectionModel'
 import SectionsList from './components/SectionsList'
 import { Container, Divider, Header } from 'semantic-ui-react'
 import SectionsHeader from './components/SectionsHeader'
+import './components/timeInput.css'
 
 type SectionsPageProps = {
     service: SectionsService
@@ -87,7 +88,7 @@ export default function SectionsPage(props: SectionsPageProps) {
             <SectionsHeader handleAddSection={handleAddSection}/>
             <Divider hidden />
             <br/>
-            { sections && sections?.length && entities ?
+            { sections && sections.length && entities ?
                 <SectionsList
                     sections = {sections} 
                     entities = {entities}
