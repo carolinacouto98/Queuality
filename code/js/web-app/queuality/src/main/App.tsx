@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import logo from './logo.svg'
 import './App.css'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 import SectionsPage from './queuality/sections/SectionsPage'
 import SectionPage from './queuality/section/SectionPage'
 import EmployeesPage from './queuality/employees/EmployeesPage'
@@ -21,6 +21,7 @@ function PageRouter() {
     <Router>
       <Navbar/>
       <Switch>
+        <Redirect exact from="/" to="/queuality" />
         <Route exact path='/queuality/sections'>
           <SectionsPage service={getSectionsService()}/>
         </Route>
