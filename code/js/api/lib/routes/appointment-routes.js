@@ -15,8 +15,8 @@ router.get('/sections/:sectionId/appointments', (req, res, next) => {
     const section = req.params.sectionId
     const subject = req.query.subject
     const desk = req.query.desk
-    if (!req.employee?.roles.includes('Manage Section\'s Appointments') || !req.employee.sections.includes(section))
-        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
+    // if (!req.employee?.roles.includes('Manage Section\'s Appointments') || !req.employee.sections.includes(section))
+    //     next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     
     if(subject && desk) 
         service.getAppointments(section, subject, desk)
@@ -54,7 +54,7 @@ router.get('/sections/:sectionId/appointments/:appointmentId', (req, res, next) 
         .catch(next)
 })
 //mobile-app
-router.patch('/sections/:sectionId/appointments/:appointmentId', (req, res, next) => {
+router.patch('/appointments/:appointmentId', (req, res, next) => {
     const id = req.params.appointmentId
     const date = req.body.date
     if(!date)
@@ -93,7 +93,7 @@ router.post('/sections/:sectionId/appointments', (req, res, next) => {
 })
 
 //mobile-app
-router.delete('/sections/:sectionId/appointments/:appointmentId', (req, res, next) => {
+router.delete('/appointments/:appointmentId', (req, res, next) => {
     const id = req.params.appointmentId
     service.removeAppointment(id)
         .then(appointment => res.send(
