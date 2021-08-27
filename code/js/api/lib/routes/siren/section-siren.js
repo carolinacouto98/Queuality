@@ -8,7 +8,7 @@ const updateSectionLinks = (sectionId) => [siren.selfLink(`${siren.BASENAME}/sec
     new siren.SirenLink(['/rel/sections'],`${siren.BASENAME}/sections`)]
 const deleteSectionLinks = [new siren.SirenLink(['/rel/sections'],`${siren.BASENAME}/sections`)]
 const getQueueTicketsLinks = (sectionId) => [siren.selfLink(`${siren.BASENAME}/sections/${sectionId}/queue`)]
-const getNextTicketLinks = (sectionId, subjectId) => [siren.selfLink(`${siren.BASENAME}/sections/${sectionId}/queue?next=true&subject=${subjectId}`)]
+const getNextTicketLinks = (sectionId, subjectId, desk) => [siren.selfLink(`${siren.BASENAME}/sections/${sectionId}/queue?next=true&subject=${subjectId}&desk=${desk}`)]
 const addTicketLinks = (sectionId) => [
     siren.selfLink(`${siren.BASENAME}/sections/${sectionId}/queue`),
     new siren.SirenLink(['/rel/section'], `${siren.BASENAME}/sections/${sectionId}`)

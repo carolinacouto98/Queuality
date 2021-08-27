@@ -103,6 +103,12 @@ const incrementCurrentTicket = (section, subject) => subjectRepo.getSubject(sect
         return subjectRepo.updateSubject(section, sub)
     })
 
+    const updateCallingDesk = (section, subject, desk) => subjectRepo.getSubject(section, subject)
+    .then(sub => {
+        sub.callingDesk = desk
+        return subjectRepo.updateSubject(section, sub)
+    })
+
 module.exports = {
     incrementTotalTickets,
     insertTicket,
@@ -110,5 +116,6 @@ module.exports = {
     deleteTicket,
     getQueueTickets,
     removeTicket,
-    incrementCurrentTicket
+    incrementCurrentTicket,
+    updateCallingDesk
 }

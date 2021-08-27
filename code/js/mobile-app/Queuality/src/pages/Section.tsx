@@ -3,11 +3,11 @@
 /* eslint-disable @typescript-eslint/no-extra-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/prop-types */
+/*eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain*/
 import { IonButton, IonButtons, IonContent,IonFooter,IonHeader,IonIcon,IonItem,IonPage, IonTitle, IonToolbar } from '@ionic/react'
 import React, { useContext, useEffect, useState } from 'react'
 import SubjectComponent from '../components/subjects/SubjectComponent'
 import * as Model from '../model/SubjectModel'
-import * as API from '../common/FetchUtils' 
 import * as Siren from '../common/Siren' 
 import { accessibilityOutline } from 'ionicons/icons'
 import { AppContext } from '../App'
@@ -15,39 +15,30 @@ import { RouteComponentProps } from 'react-router'
 import { setTicket } from '../services/TicketsStorage'
 import { TicketDetails } from '../model/TicketsModel'
 
-type SubjectsRequest = API.Request<Siren.Entity<Model.SubjectsDto, Model.Subject>> 
-type SubjectsInfo = API.FetchInfo<Siren.Entity<Model.SubjectsDto, Model.Subject>> 
+type SubjectsInfo = Siren.Entity<void, Model.Subject>
+
+type RouteProps  = RouteComponentProps <{sectionId: string}>
 
 
-type Props = RouteComponentProps<{
-    sectionName: string
-}>
-const Section: React.FC<Props> = ({match, history}) => {
-    const {sectionName} = match.params
-    const service = useContext(AppContext).subjectService
-    const [subjectsInfo, setSubjects ] = useState<SubjectsInfo>()
+const Section: React.FC<RouteProps>  = ({match}) => {
+    const {sectionId} = match.params
+    const sectionName = sectionId.replace('-', ' ')
+    const [subjectsInfo, setSubjects] = useState<SubjectsInfo>()
+    const context = useContext(AppContext)
+
+    function fetchData(){
+        return context.subjectService.getSubjects(sectionName)
+    }
     useEffect( () => {
-        async function sendSubjectsRequest(request: SubjectsRequest) {
-            try {
-                setSubjects({ status: API.FetchState.NOT_READY })
-                const result: API.Result<Siren.Entity<Model.SubjectsDto,Model.Subject>> = await request.send()
-                setSubjects({ 
-                    status: result.header.ok && result.body ? API.FetchState.SUCCESS : API.FetchState.ERROR,
-                    result
-                })
-            }
-            catch(reason) {
-                if(reason.name !== 'AbortError')
-                    setSubjects({ status: API.FetchState.ERROR })
-            }
-        }
-        sendSubjectsRequest(service.getSubjects(sectionName))
-    
-    },[service])
+        fetchData()
+            .then(result => 
+                setSubjects(result)
+            )  
+    },[fetchData, sectionId])
     
     async function addTicketHandler(subjectName: string) {
-        const ticket = getAddTicketValue(await service.addNewTicket(sectionName, subjectName).send())!!
-        const waiting = getQueueLength(await service.getQueue(sectionName).send())!!
+        const ticket = subjectName+getAddTicketValue(await context.subjectService.addNewTicket(sectionName, subjectName))!!
+        const waiting = getQueueIndex(ticket, await context.subjectService.getQueue(sectionName))!!
         const subject = getSubjectValue(subjectName, subjectsInfo)!!
         setTicket(new TicketDetails(ticket, waiting, subject, sectionName))
     }
@@ -83,18 +74,18 @@ const Section: React.FC<Props> = ({match, history}) => {
 
 export default Section
 
-function getAddTicketValue(ticketInfo? : API.Result<Siren.Entity<string, void>>) : string | undefined {
-    return ticketInfo?.body?.properties
+function getAddTicketValue(ticketInfo? : Siren.Entity<string, void>) : string | undefined {
+    return ticketInfo?.properties
 }
 
 function getSubjectValue(subjectName: string, subjectsInfo? : SubjectsInfo) : Model.Subject | undefined {
-    return subjectsInfo?.result?.body?.entities?.find(entity => entity.properties?.name === subjectName)?.properties
+    return subjectsInfo?.entities?.find(entity => entity.properties?.name === subjectName)?.properties
 }
 
-function getQueueLength(queueInfo? : API.Result<Siren.Entity<string[], void>>) : number | undefined {
-    return queueInfo?.body?.properties?.length
+function getQueueIndex(ticket : string, queueInfo? : Siren.Entity<string[], void>) : number | undefined {
+    return queueInfo?.properties?.findIndex(tick => tick === ticket)
 }
 
 function getSubjectsValue(subjectsInfo? : SubjectsInfo) : Model.Subject[] | undefined {
-    return subjectsInfo?.result?.body?.properties?.subjects
+    return subjectsInfo?.entities?.map(entity => entity.properties!!)
 }

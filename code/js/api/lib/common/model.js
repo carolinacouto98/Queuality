@@ -24,6 +24,7 @@ const appointmentWorkingHoursSchema = {
  * @property {Number} totalTickets The number of the tickets that have been taken
  * @property {Date} date The current day 
  * @property {Array<String>} desks
+ * @property {String} callingDesk
  */
 const subjectSchema = {
     name: Joi.string().required(),
@@ -32,7 +33,8 @@ const subjectSchema = {
     currentTicket: Joi.number().required(),
     totalTickets: Joi.number().required(),
     date: Joi.date(),//.format('DD/MM/YYYY HH:mm').required(),
-    desks: Joi.array().items(Joi.string()).required()
+    desks: Joi.array().items(Joi.string()).required(),
+    callingDesk: Joi.string().required()
 }
 const subject = Joi.object(subjectSchema)
 
@@ -169,6 +171,7 @@ const subjectInputModel = Joi.object({
     currentTicket: Joi.number().default(0),
     totalTickets: Joi.number().default(0),
     date: Joi.date(),//.format('DD/MM/YYYY HH:mm').default(new Date())
+    callingDesk: Joi.string().required().default('')
 })
 /**
  * @typedef {Object} SubjectUpdateInputModel

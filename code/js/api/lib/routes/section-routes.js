@@ -127,16 +127,17 @@ router.post('/sections/:sectionId/queue', auth.requested(), (req, res, next) => 
 router.get('/sections/:sectionId/queue', auth.optional(), (req, res, next) => {
     const _id = req.params.sectionId
     const nextTicket = req.query.next
+    const desk = req.query.desk
     const subject = req.query.subject
-    if(nextTicket) {
+    if(nextTicket && desk && subject) {
         //if (!req.employee?.roles.includes('Answer Ticket') || !req.employee?.sections.includes(_id))
           //  next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
-        ticketService.getNextTicket(_id, subject)
+        ticketService.getNextTicket(_id, subject, desk)
             .then(ticket => res.send(
                 new Entity(
                     'Next Ticket',
                     ['Tickets'],
-                    sectionSiren.getNextTicketLinks(_id, subject),
+                    sectionSiren.getNextTicketLinks(_id, subject, desk),
                     ticket
                 )))
             .catch(next)

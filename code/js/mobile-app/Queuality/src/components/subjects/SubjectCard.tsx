@@ -22,7 +22,7 @@ const SubjectCard: React.FC<Props> = ({subject, ticketHandler})=> {
     return(
         <IonCard disabled={isDisabled} className='SubjectCard' id ={subject.name} button onClick={() => {
             alert({
-                message: `Are you sure you want to get a ticket to ${subject.subject}?`,
+                message: `Are you sure you want to get a ticket to ${subject.description}?`,
                 buttons: [
                     {
                         text: 'Cancel',
@@ -57,7 +57,7 @@ const SubjectCard: React.FC<Props> = ({subject, ticketHandler})=> {
                 </IonCardTitle>  
             </IonCardHeader>
             <IonCardContent>
-                {subject.subject}
+                {subject.description}
             </IonCardContent> 
         </IonCard>
     )
