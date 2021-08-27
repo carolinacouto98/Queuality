@@ -52,11 +52,14 @@ const getQueueTickets = (sectionId) => repo.getQueueTickets(sectionId)
  * @param {String} subjectId 
  * @returns {String}
  */
-const getNextTicket = async (sectionId, subjectId) => {
+const getNextTicket = async (sectionId, subjectId, desk) => {
     const removedTicket = await  getSection(sectionId)
             .then(() => repo.removeTicket(sectionId)) 
         await getSubject(sectionId, subjectId)
-            .then(() => repo.incrementCurrentTicket(sectionId, subjectId))
+            .then(() => {
+                repo.incrementCurrentTicket(sectionId, subjectId)
+                repo.updateCallingDesk(sectionId, subjectId, desk)
+            })
     return removedTicket[0]
 }
 

@@ -12,7 +12,7 @@ export enum FetchState { NOT_READY = 'NOT_READY', ERROR = 'ERROR', SUCCESS = 'SU
   * @property result - The request result, if a response was actually obtained.
   */
 export type FetchInfo<T> = {
-   status: FetchState,
+   status?: FetchState,
    result?: Result<T>
  }
  
