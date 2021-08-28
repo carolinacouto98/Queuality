@@ -35,8 +35,8 @@ export default function QueuePage(props: QueuePageProps) {
     }, [fetchQueue])
 
     async function handleNextTicket() { 
-        const res = await props.subjectsService.getSubjects(sectionId)
-        const subject = res.entities.find(subject => queue!![0].includes(subject.properties?.name!!))
+        const res = await props.subjectsService.getSubjects(sectionId).send()
+        const subject = res.body!!.entities.find(subject => queue!![0].includes(subject.properties?.name!!))
         props.queueService.getNextTicket(sectionId, subject?.properties?.name!!)
             .then(res => setTicket(res.properties))
     }  
