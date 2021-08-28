@@ -13,31 +13,39 @@ import AppointmentsPage from './queuality/appointments/AppointmentsPage'
 import { getAppointmentsService } from './common/services/AppointmentsService'
 import { getEmployeesService } from './common/services/EmployeesService'
 import Navbar from './queuality/navbar/Navbar'
+import HomePage from './queuality/home/HomePage'
+import { useState } from 'react'
 
 export const API_BASE_URL = 'http://localhost:5000/queuality'
 
 function PageRouter() {
+  const [fixed, setFixed] = useState<boolean>(false)
   return (
     <Router>
-      <Navbar/>
       <Switch>
-        <Redirect exact from="/" to="/queuality" />
+        <Redirect exact from='/' to='/queuality' />
+        <Route exact path='/queuality'>
+          <Navbar fixed={fixed} noMargin/>
+          <HomePage setFixed={setFixed}/>
+        </Route>
         <Route exact path='/queuality/sections'>
+          <Navbar />
           <SectionsPage service={getSectionsService()}/>
         </Route>
         <Route exact path='/queuality/sections/:sectionId'>
+          <Navbar />
           <SectionPage sectionsService={getSectionsService()} subjectsService={getSubjectsService()}/>
         </Route>
-        <Route exact path='/tickets'>
-          <QueuePage queueService = {getQueueService()} subjectsService = {getSubjectsService()}/>
-        </Route>
         <Route exact path='/queuality/employees'>
+          <Navbar />
           <EmployeesPage service = {getEmployeesService()} sectionsService={getSectionsService()}/>
         </Route>
         <Route exact path='/queuality/sections/:sectionId/tickets'>
+          <Navbar />
           <QueuePage queueService = {getQueueService()} subjectsService = {getSubjectsService()}/>
         </Route>
         <Route exact path='/queuality/sections/:sectionId/appointments'>
+          <Navbar />
           <AppointmentsPage service = {getAppointmentsService()} subject='Test Subject 3' desk='Desk1'/>
         </Route>
       </Switch>

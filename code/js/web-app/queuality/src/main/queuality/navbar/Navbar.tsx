@@ -1,8 +1,13 @@
 import { useRef, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { Button, Icon, Menu, Message, Modal } from "semantic-ui-react"
+import { Button, Container, Icon, Menu, Message, Modal } from "semantic-ui-react"
 
-export default function Navbar() {
+type NavbarProps = {
+    fixed?: boolean,
+    noMargin?: boolean
+}
+
+export default function Navbar({ fixed, noMargin }: NavbarProps) {
     const location = useLocation()
     const [openModal, setOpenModal] = useState<boolean>(false)
     const [deskMessage, setDeskMessage] = useState<boolean>(false)
@@ -11,15 +16,33 @@ export default function Navbar() {
     const subject = useRef<HTMLInputElement>(null)
 
     return <>
-        <Menu style={{backgroundColor:'#33BEFF', fontColor:'#FFFFFF' }} borderless pointing secondary textAlign='left'>
+        <Menu
+            fixed={fixed ? 'top' : undefined}
+            style={{
+                backgroundColor:'#33BEFF', 
+                marginBottom: noMargin ? '0' : undefined
+            }} 
+            borderless 
+            pointing 
+            secondary 
+            textAlign='left'
+        >
+            <Container>
             <Menu.Item 
                 active={location.pathname === '/queuality'}
-                as={ Link } to='/queuality'>
-                    <Icon name='home'/>
-                    Home
+                as={ Link } to='/queuality'
+                style={{
+                    fontFamily:'Beon',
+                    fontWeight: 'bold'
+                }}>
+                    Queuality
             </Menu.Item>
             <Menu.Item 
-                active={location.pathname.includes('/queuality/sections') && !location.pathname.includes('/appointments')}
+                active={
+                    location.pathname.includes('/queuality/sections') 
+                    && !location.pathname.includes('/appointments')
+                    && !location.pathname.includes('/tickets')
+                }
                 as={ Link } to='/queuality/sections'>
                     <Icon name='building'/>
                     Sections
@@ -31,17 +54,28 @@ export default function Navbar() {
                     Employees
             </Menu.Item>
             {
-                location.pathname.match('/queuality/sections/.') ?
-                <Menu.Item
-                    active={ location.pathname.includes('/appointments') }
-                    onClick={() => setOpenModal(true)}
-                    link
-                >
-                    <Icon name='calendar alternate'/>
-                    Appointments
-                </Menu.Item>
+                location.pathname.match('/queuality/sections/.*') ?
+                <>
+                    <Menu.Item
+                        active={ location.pathname.includes('/tickets') }
+                        as={ Link } to={location.pathname.split('/').slice(0, 4).join('/').concat('/tickets') }
+                        link
+                    >
+                        <Icon name='ticket'/>
+                        Tickets
+                    </Menu.Item>
+                    <Menu.Item
+                        active={ location.pathname.includes('/appointments') }
+                        onClick={() => setOpenModal(true)}
+                        link
+                    >
+                        <Icon name='calendar alternate'/>
+                        Appointments
+                    </Menu.Item>
+                </>
                 :<></>
             }
+            </Container>
         </Menu>
         <Modal
             open={openModal}
@@ -67,7 +101,7 @@ export default function Navbar() {
                     else setDeskMessage(false)
 
                     if (subject.current?.value && desk.current?.value) {
-                        const url = `${window.location.href.replace(/\/$/g, '')}/appointments?subject=${subject.current?.value}&desk=${desk.current?.value}`
+                        const url = `${location.pathname.split('/').slice(0, 4).join('/')}/appointments?subject=${subject.current?.value}&desk=${desk.current?.value}`
                         window.location.replace(url)
                     }
                 }} 
