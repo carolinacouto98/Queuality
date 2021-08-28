@@ -7,7 +7,7 @@ import Section from './pages/Section'
 import Appoitments from './pages/Appointments'
 import Tickets from './pages/Tickets'
 import { getSectionService, SectionService } from './services/SectionService'
-import {getTicketsService, TicketsService} from './services/TicketServices'
+import {getTicketsService, TicketsService} from './services/TicketService'
 import './App.css'
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css'
@@ -25,26 +25,50 @@ import '@ionic/react/css/text-transformation.css'
 import '@ionic/react/css/flex-utils.css'
 import '@ionic/react/css/display.css'
 
+import { PushNotificationSchema, PushNotifications, Token, ActionPerformed } from '@capacitor/push-notifications'
 /* Theme variables */
 import './theme/variables.css'
 import { peopleOutline, ticketOutline, calendarOutline } from 'ionicons/icons'
-import React, { createContext } from 'react'
+import React, { createContext, useEffect } from 'react'
 import Ticket from './pages/Ticket'
 import Sections from './pages/Sections'
-import { getSectionsService } from './services/SectionsService'
+import { getSectionsService, SectionsService } from './services/SectionsService'
+import AddAppointment from './pages/AddAppointment'
+import { AppointmentsService, getAppointmentService } from './services/AppointmentsService'
+import Appointment from './pages/Appointment'
 
-export const NGROK_PATH = 'https://7edc6b229736.ngrok.io'
+export const NGROK_PATH = 'https://0e28-2001-8a0-6d15-6500-fd98-af14-a96c-37a7.ngrok.io'
 export const API_BASE_URL = '/queuality/api'
 
 export const AppContext = createContext({
     subjectService: {} as SectionService,
     ticketService: {} as TicketsService,
+    sectionService: {} as SectionsService,
+    appointmentService: {} as AppointmentsService
 })
 const App: React.FC = () => { 
     const appContextValues = {
         subjectService: getSectionService(),
         ticketService: getTicketsService(),
+        sectionService: getSectionsService(),
+        appointmentService: getAppointmentService()
     }
+
+    useEffect(()=>{
+        PushNotifications.checkPermissions().then((res) => {
+            if (res.receive !== 'granted') {
+                PushNotifications.requestPermissions().then((res) => {
+                    if (res.receive !== 'denied') {
+                        PushNotifications.register()
+                    }
+                })
+            }
+            else {
+                PushNotifications.register()
+            }
+        })
+    },[])
+
     return (
         <IonApp className='App'>
             <AppContext.Provider value={appContextValues}>
@@ -60,13 +84,13 @@ const AppRouter: React.FC = () => {
             <IonTabs>
                 <IonRouterOutlet>
                     <Redirect exact from='/' to='/sections' />
-                    <Route exact path='/sections'> 
-                        <Sections service = {getSectionsService()} />
-                    </Route>
-                    <Route exact path='sections/:sectionId' component={Section} />
+                    <Route exact path='/sections' component={Sections}/>
+                    <Route exact path='/sections/:sectionId' component={Section} />
                     <Route exact path='/tickets'  component={Tickets} />
                     <Route path='/tickets/:ticket' component={Ticket} />
                     <Route exact path='/appointments' component={Appoitments}/>  
+                    <Route exact path='/appointments/:appointment' component={Appointment} />
+                    <Route exact path='/add-appointment' component={AddAppointment} />
                 </IonRouterOutlet>
                 <IonTabBar slot='top'>
                     <IonTabButton tab='queues' href = '/sections'>

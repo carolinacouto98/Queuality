@@ -31,7 +31,7 @@ function addAppointmentAction(){
     )
 }
 
-function updateAppointmentAction (id) {
+function updateAppointmentAction(id) {
     return new siren.SirenAction(
         'update-appointment',
         'Update an Appointment',
@@ -43,7 +43,7 @@ function updateAppointmentAction (id) {
     )
 } 
 
-function deleteAppointmentAction (id) {
+function deleteAppointmentAction(id) {
     return new siren.SirenAction(
         'delete-appointment',
         'Delete an Appointment',
@@ -60,7 +60,9 @@ function setSubEntities(appointments){
                 ['/rel/appointment'],
                 [siren.selfLink(`${siren.BASENAME}/appointments/${element._id}`)],
                 element,
-                ['Appointment']
+                ['Appointment'],
+                [updateAppointmentAction(element._id),
+                deleteAppointmentAction(element._id)]
             )        
         )
     })

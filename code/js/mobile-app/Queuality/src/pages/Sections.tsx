@@ -2,51 +2,42 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react/prop-types */
-import { IonContent, IonPage} from '@ionic/react'
-import { useEffect, useState } from 'react'
-import { SectionsService } from '../services/SectionsService'
-import *  as API from '../common/FetchUtils'
+import { IonContent, IonGrid, IonPage, IonRow, IonTitle, IonToolbar, useIonViewWillEnter} from '@ionic/react'
+import { useContext, useState } from 'react'
 import * as Siren from '../common/Siren'
-import* as Model from '../model/SectionsModel'
+import * as Model from '../model/SectionsModel'
 import SectionCard from '../components/sections/SectionCard'
+import { API_BASE_URL, AppContext } from '../App'
 
-type SectionsRequest = API.Request<Siren.Entity<Model.SectionsDto, Model.Section>> 
-type SectionsInfo = API.FetchInfo<Siren.Entity<Model.SectionsDto, Model.Section>> 
+type SectionsInfo = Siren.Entity<void, Model.Section> 
 
-type Props = {
-    service: SectionsService
-}
-const Sections: React.FC<Props> = ({service}) => {
+const Sections: React.FC = () => {
+    const context = useContext(AppContext)
     const [sectionsInfo, setSections ] = useState<SectionsInfo>()
-    useEffect(() => {
-        async function sendSectionsRequest(request: SectionsRequest) {
-            try {
-                setSections({ status: API.FetchState.NOT_READY })
-                const result: API.Result<Siren.Entity<Model.SectionsDto,Model.Section>> = await request.send()
-                setSections({ 
-                    status: result.header.ok && result.body ? API.FetchState.SUCCESS : API.FetchState.ERROR,
-                    result
-                })
-            }
-            catch(reason) {
-                if(reason.name !== 'AbortError')
-                    setSections({ status: API.FetchState.ERROR })
-            }
-        }
-        sendSectionsRequest(service.getSections())
-    
-    },[service])
+
+    useIonViewWillEnter(() => {
+        context.sectionService.getSections()
+            .then(result => 
+                setSections(result))   
+    })
+
     const sections = getSectionsValue(sectionsInfo)
     return (
         <IonPage>
+            <IonToolbar>
+                <IonTitle>Sections</IonTitle>  
+            </IonToolbar>
             <IonContent>
                 {sectionsInfo && sections && sections.length?
-                    sections.map(section => {
-                        <SectionCard section={section} link={getSectionLink(section.name, sectionsInfo)!!}/>
-                    })
+                    <IonGrid>
+                        {sections.map(section => (
+                            <IonRow key={section._id}> 
+                                <SectionCard key={section._id} section={section} link={getSectionLink(section._id, sectionsInfo)!!}/>
+                            </IonRow>
+                        ))}
+                    </IonGrid>
                     : null
-                }
-                
+                } 
             </IonContent>
         </IonPage>
     )
@@ -55,9 +46,9 @@ const Sections: React.FC<Props> = ({service}) => {
 export default Sections
 
 function getSectionsValue(sectionsInfo?: SectionsInfo): Array<Model.Section>| undefined {
-    return sectionsInfo && sectionsInfo.result && sectionsInfo.result?.body?.properties?.sections
+    return sectionsInfo && sectionsInfo.entities!!.map(entity => entity.properties!!)
 }
 
 function getSectionLink(sectionName: string, sectionsInfo?: SectionsInfo): string | undefined {
-    return sectionsInfo?.result?.body?.entities?.find(entity => entity.properties?.name===sectionName)?.links?.find(link => link.rel.includes(Siren.SELF_RELATION))?.href
+    return sectionsInfo?.entities?.find(entity => entity.properties?._id===sectionName)?.links?.find(link => link.rel.includes(Siren.SELF_RELATION))?.href.replace(API_BASE_URL,'')
 }

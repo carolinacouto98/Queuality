@@ -14,7 +14,7 @@ const collection = 'appointment'
  * @param {String} desk Desk name
  * @returns {Promise<Array<Appointment>>} 
  */
-const getAppointments = (section, desk) => db.getAll(collection, { section, desk }, {})
+const getAppointments = (section, subject, desk) => db.getAll(collection, { section, subject, desk }, {})
 
 /**
  * Gets an appointment
@@ -42,7 +42,12 @@ const getAppointmentsByDate = (section, subject, date) => db.getAll(collection, 
  * @param {AppointmentInputModel} appointment Appointment to be inserted
  * @returns {Promise<Appointment>}
  */
-const insertAppointment = (appointment) => db.insert(collection, appointment)
+const insertAppointment = (appointment) => getAppointmentsByDate(appointment.section, appointment.subject, appointment.date)
+    .then(appointments => {
+        if (appointments.find(appoint => appoint.desk === appointment.desk))
+            throw Error.CustomException(`The desk ${appointment.desk} already has an appointment at that time`, Error.ALREADY_EXISTS)
+        return db.insert(collection, appointment)
+    })
 
 /**
  * Updates an appointment, to be the same as the given, with the same ID has the given appointment

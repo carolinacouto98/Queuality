@@ -10,8 +10,8 @@ const Error = require('../common/error.js')
  * @param {ObjectId} deskId Desk Id
  * @returns {Promise<Array<model.Appointment>>}
  */
-const getAppointments = (sectionId, deskId) => 
-    repo.getAppointments(sectionId, deskId) //vai buscar os appointments que estão na secção e deskId do funcionário
+const getAppointments = (sectionId, subject, deskId) => 
+    repo.getAppointments(sectionId, subject, deskId) //vai buscar os appointments que estão na secção e deskId do funcionário
 
 
 /**

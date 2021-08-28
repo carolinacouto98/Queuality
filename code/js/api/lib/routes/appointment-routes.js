@@ -11,20 +11,21 @@ const router = Router()
 
 module.exports = router
 
-router.get('/appointments', (req, res, next) => {
-    const section = req.query.section
+router.get('/sections/:sectionId/appointments', (req, res, next) => {
+    const section = req.params.sectionId
+    const subject = req.query.subject
     const desk = req.query.desk
-    if (!req.employee?.roles.includes('Manage Section\'s Appointments') || !req.employee.sections.includes(section))
-        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
+    // if (!req.employee?.roles.includes('Manage Section\'s Appointments') || !req.employee.sections.includes(section))
+    //     next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     
-    if(section && desk) 
-        service.getAppointments(section, desk)
+    if(subject && desk) 
+        service.getAppointments(section, subject, desk)
             .then(appointments => res.send(
                 new Entity(
                     'Get Appointments',
                     ['Appointments'],
                     appointmentSiren.getAppointmentsLinks(section, desk),
-                    appointments,
+                    undefined,
                     [appointmentSiren.addAppointmentAction()],
                     appointmentSiren.setSubEntities(appointments)
                     
@@ -35,7 +36,7 @@ router.get('/appointments', (req, res, next) => {
     
 })
 
-router.get('/appointments/:appointmentId', (req, res, next) => {
+router.get('/sections/:sectionId/appointments/:appointmentId', (req, res, next) => {
     const id = req.params.appointmentId
     service.getAppointment(id)
         .then(appointment => res.send(
@@ -58,7 +59,7 @@ router.patch('/appointments/:appointmentId', (req, res, next) => {
     const date = req.body.date
     if(!date)
         throw error.CustomException('Missing Parameters', error.BAD_REQUEST)
-    service.updateAppointment(id, date)
+    service.updateAppointment(id, new Date(date))
         .then(appointment => res.send(
             new Entity(
                 'Update an Appointment',
@@ -70,11 +71,11 @@ router.patch('/appointments/:appointmentId', (req, res, next) => {
         .catch(next)
 })
 //mobile-app
-router.post('/appointments', (req, res, next) => {
-    const section = req.body.section
+router.post('/sections/:sectionId/appointments', (req, res, next) => {
+    const section = req.params.sectionId
     const date = req.body.date
     const subject = req.body.subject
-    if(!section && !date && !desk && !subject)
+    if(!date && !subject)
         throw error.CustomException('Missing required Parameters', error.BAD_REQUEST)
     else    
         model.appointmentInputModel.validateAsync({subject, date, section})

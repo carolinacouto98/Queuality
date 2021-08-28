@@ -1,34 +1,52 @@
 // eslint-disable-next-line
 import logo from './logo.svg'
 import './App.css'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import LoginPage from './queuality/login/LoginPage'
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 import SectionsPage from './queuality/sections/SectionsPage'
-import SubjectsPage from './queuality/subjects/SubjectsPage'
-import { TicketsControl } from './queuality/tickets/TicketsControlPage'
-import { getTicketsService } from './queuality/tickets/TicketsService'
-import { getSectionsService } from './queuality/sections/SectionsService'
-import { getSubjectsService } from './queuality/subjects/SubjectsService'
-import { getLoginService } from './queuality/login/LoginService'
+import SectionPage from './queuality/section/SectionPage'
+import EmployeesPage from './queuality/employees/EmployeesPage'
+import QueuePage from './queuality/tickets/QueuePage'
+import { getQueueService } from './common/services/QueueService'
+import { getSectionsService } from './common/services/SectionsService'
+import { getSubjectsService } from './common/services/SubjectsService'
+import AppointmentsPage from './queuality/appointments/AppointmentsPage'
+import { getAppointmentsService } from './common/services/AppointmentsService'
+import { getEmployeesService } from './common/services/EmployeesService'
+import Navbar from './queuality/navbar/Navbar'
+import HomePage from './queuality/home/HomePage'
+import { useState } from 'react'
+
+export const API_BASE_URL = 'http://localhost:5000/queuality'
 
 function PageRouter() {
+  const [fixed, setFixed] = useState<boolean>(false)
   return (
     <Router>
       <Switch>
+        <Redirect exact from='/' to='/queuality' />
+        <Route exact path='/queuality'>
+          <Navbar fixed={fixed} noMargin/>
+          <HomePage setFixed={setFixed}/>
+        </Route>
         <Route exact path='/queuality/sections'>
+          <Navbar />
           <SectionsPage service={getSectionsService()}/>
         </Route>
-        <Route exact path='/queuality/sections/:sectionId/subjects'>
-          <SubjectsPage service={getSubjectsService()}/>
+        <Route exact path='/queuality/sections/:sectionId'>
+          <Navbar />
+          <SectionPage sectionsService={getSectionsService()} subjectsService={getSubjectsService()}/>
         </Route>
-        <Route exact path='/queuality/login'>
-          <LoginPage service={getLoginService()}/>
+        <Route exact path='/queuality/employees'>
+          <Navbar />
+          <EmployeesPage service = {getEmployeesService()} sectionsService={getSectionsService()}/>
         </Route>
-        <Route exact path='/tickets'>
-          <TicketsControl.Page ticketsService = {getTicketsService()}/>
+        <Route exact path='/queuality/sections/:sectionId/tickets'>
+          <Navbar />
+          <QueuePage queueService = {getQueueService()} subjectsService = {getSubjectsService()}/>
         </Route>
-        <Route exact path='/employess'>
-          <TicketsControl.Page ticketsService = {getTicketsService()}/>
+        <Route exact path='/queuality/sections/:sectionId/appointments'>
+          <Navbar />
+          <AppointmentsPage service = {getAppointmentsService()} subject='Test Subject 3' desk='Desk1'/>
         </Route>
       </Switch>
     </Router>

@@ -1,12 +1,14 @@
-import { IonCard, IonCardTitle, IonCol, IonGrid, IonIcon, IonItem, IonRow } from '@ionic/react'
-import { arrowBackOutline } from 'ionicons/icons'
-import React, { useContext } from 'react'
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react/prop-types */
+import { IonCard, IonCardContent, IonCardTitle, IonCol, IonGrid, IonIcon, IonItem, IonRow } from '@ionic/react'
+import { arrowBackOutline, closeOutline } from 'ionicons/icons'
+import React from 'react'
 import { TicketDetails } from '../../model/TicketsModel'
-import { TicketsContext } from '../../pages/Tickets'
 
-const TicketsComponent: React.FC = () => {
-    const tickets = useContext(TicketsContext).tickets
-    
+type Props = {
+    tickets: TicketDetails[]
+}
+const TicketsComponent: React.FC<Props> = ({tickets}) => {
     return(
         tickets.length?
             <IonGrid>
@@ -14,10 +16,11 @@ const TicketsComponent: React.FC = () => {
                     {tickets.map((ticket: TicketDetails) => ( 
                         <IonCard routerLink={`/tickets/${ticket.ticket}`} key={ticket.ticket}>
                             <IonItem>
-                                <IonCardTitle style={{marginTop:'5%', marginBottom:'5%'}}>{ticket.ticket}</IonCardTitle>
-                                <b slot='end'>{ticket.waitingTickets}</b>
-                                <b>{ticket.sectionName}</b>
+                                <IonCardTitle>{ticket.sectionName}</IonCardTitle>
+                                <IonCardTitle slot='end' style={{marginTop:'5%', marginBottom:'5%'}}>{ticket.ticket}</IonCardTitle>
+                                
                             </IonItem>
+                           
                         </IonCard>   
                     ))}  
                 </IonRow> 

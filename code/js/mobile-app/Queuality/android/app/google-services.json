@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "479164889490",
+    "project_id": "queuality-1e351",
+    "storage_bucket": "queuality-1e351.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479164889490:android:deaf77bee3efaf9024e94b",
+        "android_client_info": {
+          "package_name": "com.isel.queuality"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "479164889490-tts6fc94pb8fadl98ahlh73rdb4h7l07.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDvARMngIjVwLeb58Qx941CWjVfdnNqFE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "479164889490-tts6fc94pb8fadl98ahlh73rdb4h7l07.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

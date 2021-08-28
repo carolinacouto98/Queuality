@@ -1,9 +1,5 @@
 import { Subject } from './SubjectModel'
 
-export type SectionsDto= {
-    sections: Array<Section>
-}
-
 export class workingHours {
     begin : string
     end : string
@@ -16,14 +12,14 @@ export class workingHours {
 }
 
 export class Section {
-    readonly name : string 
+    readonly _id : string 
     employees : string[]
     workingHours : workingHours
     queue : string[]
-    subjects : Subject[]
+    subjects : Array<Subject>
 
-    constructor(name : string, employess : string[], workingHours: workingHours, queue: string[], subjects: Subject[]) {
-        this.name= name
+    constructor(_id : string, employess : string[], workingHours: workingHours, queue: string[], subjects: Subject[]) {
+        this._id= _id
         this.employees = employess
         this.workingHours = workingHours
         this.queue = queue

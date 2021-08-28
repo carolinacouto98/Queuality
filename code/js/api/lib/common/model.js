@@ -24,6 +24,7 @@ const appointmentWorkingHoursSchema = {
  * @property {Number} totalTickets The number of the tickets that have been taken
  * @property {Date} date The current day 
  * @property {Array<String>} desks
+ * @property {String} callingDesk
  */
 const subjectSchema = {
     name: Joi.string().required(),
@@ -31,8 +32,9 @@ const subjectSchema = {
     priority: Joi.boolean().required(),
     currentTicket: Joi.number().required(),
     totalTickets: Joi.number().required(),
-    date: Joi.date().required(),
-    desks: Joi.array().items(Joi.string()).required()
+    date: Joi.date(),//.format('DD/MM/YYYY HH:mm').required(),
+    desks: Joi.array().items(Joi.string()).required(),
+    callingDesk: Joi.string().required()
 }
 const subject = Joi.object(subjectSchema)
 
@@ -89,10 +91,10 @@ const employee = Joi.object({
  */
 const appointment = Joi.object({
     _id: Joi.object().required(),
-    subject: Joi.string().required,
-    desk: Joi.string().required,
-    date: Joi.date().required,
-    section: Joi.string().required
+    subject: Joi.string().required(),
+    desk: Joi.string().required(),
+    date: Joi.date(),//.format('DD/MM/YYYY HH:mm').required(),
+    section: Joi.string().required()
 })
 
 /**
@@ -104,7 +106,7 @@ const appointment = Joi.object({
  */
 const appointmentInputModel = Joi.object({
     subject: Joi.string().required(),
-    date: Joi.date().required(),
+    date: Joi.date().required(),//.format('DD/MM/YYYY HH:mm'),
     section: Joi.string().required()
 })
 /**
@@ -131,8 +133,8 @@ const employeeUpdateInputModel = Joi.object({
     _id: Joi.string().required(),
     name: Joi.string(),
     roles: Joi.array().items(Joi.valid(...roles)),
-    sections: Joi.array().items(Joi.string()),
-    desk: Joi.string()
+    sections: Joi.array().items(Joi.string().allow('')),
+    desk: Joi.string().allow('')
 })
 /**
  * @typedef {Object} SectionInputModel
@@ -165,10 +167,11 @@ const subjectInputModel = Joi.object({
     name: Joi.string().required(),
     description: Joi.string().required(),
     priority: Joi.boolean().required(),
-    desks: Joi.array().items(Joi.string().required()),
+    desks: Joi.array().items(Joi.string().required()).default([]),
     currentTicket: Joi.number().default(0),
     totalTickets: Joi.number().default(0),
-    date: Joi.date().default(new Date())
+    date: Joi.date(),//.format('DD/MM/YYYY HH:mm').default(new Date())
+    callingDesk: Joi.string().required().default('')
 })
 /**
  * @typedef {Object} SubjectUpdateInputModel
