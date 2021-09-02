@@ -10,6 +10,18 @@ const auth = require('../common/auth.js')
 const router = Router()
 module.exports = router
 
+router.get('/employees/logged', auth.optional(), (req, res, next) => {
+    console.log(req.employee)
+    res.send(
+        new Entity(
+            'Get Employee Logged in',
+            ['Employee'],
+            undefined,
+            req.employee,
+            []
+    ))
+})
+
 router.get('/employees', auth.requested(), (req, res, next) => {
     //if (!req.employee?.roles.includes('Manage Employees'))
     //    next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
@@ -38,6 +50,7 @@ router.post('/employees', auth.requested(), (req, res, next) => {
     const roles = req.body.roles
     const sections = req.body.sections
     const desk = req.body.desk
+    const picture = req.body.picture
     model.employeeInputModel.validateAsync({_id, name})
         .then(employee => service.addEmployee(employee)
             .then(employee => res.status(201).send(

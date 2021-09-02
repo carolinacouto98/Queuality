@@ -15,8 +15,6 @@ import * as Model from '../../common/model/AppointmentModel'
 
 type AppointmentsPageProps = {
     service: AppointmentsService
-    subject: string,
-    desk: string
 }
 
 
@@ -42,7 +40,7 @@ export default function AppointmentsPage(props: AppointmentsPageProps) {
     //const [events, setEvents] = useState({id: '',})
 
     const [appointments, setAppointments] = useState<AppointmentsInfo>()
-    const [appointmentsUpdate, setAppoinmentsUpdate] = useState<AppointmentsUpdate>(props.service.getAppointments(sectionId, props.subject, props.desk))
+    const [appointmentsUpdate, setAppoinmentsUpdate] = useState<AppointmentsUpdate>(props.service.getAppointments(sectionId, subject!!, desk!!))
 
     const location = useLocation()
     useEffect(() => {
@@ -93,7 +91,7 @@ export default function AppointmentsPage(props: AppointmentsPageProps) {
                 .find(action => action.name === Model.DELETE_APPOINTMENT_ACTION)
             if(deleteAppointmentAction) {
                 const result = await props.service.deleteAppointment(appointmentId).send()
-                setAppoinmentsUpdate(props.service.getAppointments(sectionId, props.subject, props.desk))
+                setAppoinmentsUpdate(props.service.getAppointments(sectionId, subject!!, desk!!))
                 if(!result.header.ok) {
                     return
                 }
@@ -109,7 +107,7 @@ export default function AppointmentsPage(props: AppointmentsPageProps) {
                 .find(action => action.name === Model.UPDATE_APPOINTMENT_ACTION)
             if(updateAppointmentAction) {
                 const result = await props.service.updateAppointment(appointmentId, date).send()
-                setAppoinmentsUpdate(props.service.getAppointments(sectionId, props.subject, props.desk))
+                setAppoinmentsUpdate(props.service.getAppointments(sectionId, subject!!, desk!!))
                 if(!result.header.ok) {
                     return
                 }

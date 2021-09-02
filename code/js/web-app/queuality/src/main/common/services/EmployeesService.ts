@@ -6,8 +6,7 @@ import { API_BASE_URL } from '../../App'
 
 export interface EmployeesService {
     getEmployees: () => Fetch.Request<Siren.Entity<void, Model.Employee>>
-    getEmployee: (employeeId: string) => Fetch.Request<Siren.Entity<Model.Employee, void>>
-    //addSection: (section: Model.Employee) => Fetch.Request<Siren.Entity<Model.Employee, void>>
+    getEmployeeLoggedIn: () => Fetch.Request<Siren.Entity<Model.Employee, void>>
     updateEmployee: (employee: Model.Employee) => Fetch.Request<Siren.Entity<Model.Employee, void>>
     deleteEmployee: (employeeId: string) => Fetch.Request<Siren.Entity<void, void>>
 }
@@ -20,8 +19,8 @@ export function getEmployeesService() : EmployeesService {
         getEmployees: (): Fetch.Request<Siren.Entity<void, Model.Employee>> =>
             Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/employees`), {headers: headers})
         ,
-        getEmployee: (employeeId: string): Fetch.Request<Siren.Entity<Model.Employee, void>> =>
-            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/employees/${employeeId}`))
+        getEmployeeLoggedIn: (): Fetch.Request<Siren.Entity<Model.Employee, void>> =>
+            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/employees/logged`))
         ,
         updateEmployee: (employee: Model.Employee): Fetch.Request<Siren.Entity<Model.Employee, void>> => 
             Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/employees/${employee._id}`), { 
