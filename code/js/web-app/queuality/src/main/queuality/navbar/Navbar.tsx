@@ -1,20 +1,50 @@
+import { useEffect } from "react"
 import { useRef, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { Button, Container, Icon, Menu, Message, Modal } from "semantic-ui-react"
+import { Button, Container, Icon, Menu, Message, Modal, Image } from "semantic-ui-react"
+import { EmployeesService } from "../../common/services/EmployeesService"
+import * as Siren from '../../common/Siren'
+import * as Model from '../../common/model/EmployeeModel'
+import * as API from '../../common/FetchUtils'
 
 type NavbarProps = {
     fixed?: boolean,
-    noMargin?: boolean
+    noMargin?: boolean,
+    service: EmployeesService
 }
 
-export default function Navbar({ fixed, noMargin }: NavbarProps) {
+type EmployeeInfo = API.FetchInfo<Siren.Entity<Model.Employee, void>>
+
+export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
     const location = useLocation()
     const [openModal, setOpenModal] = useState<boolean>(false)
     const [deskMessage, setDeskMessage] = useState<boolean>(false)
     const [subjectMessage, setSubjectMessage] = useState<boolean>(false)
+    const [employeeInfo, setEmployee] = useState<EmployeeInfo>()
     const desk = useRef<HTMLInputElement>(null)
     const subject = useRef<HTMLInputElement>(null)
 
+    useEffect(() => {
+        async function sendEmployeeRequest(request: API.Request<Siren.Entity<Model.Employee, void>>) {
+            try {
+                setEmployee({ status: API.FetchState.NOT_READY })
+                const result : API.Result<Siren.Entity<Model.Employee, void>> = await request.send()
+                if (!result.header.ok) 
+                    return
+                setEmployee({ 
+                    status : result.header.ok && result.body ? API.FetchState.SUCCESS : API.FetchState.ERROR,
+                    result
+                })
+            } catch (reason) {
+                if(reason.name !== 'AbortError')
+                    setEmployee({status: API.FetchState.ERROR})
+            }
+        }
+        sendEmployeeRequest(service.getEmployeeLoggedIn())
+    }, [service])
+
+
+    const employee = employeeInfo?.result?.body?.properties
     return <>
         <Menu
             fixed={fixed ? 'top' : undefined}
@@ -74,6 +104,22 @@ export default function Navbar({ fixed, noMargin }: NavbarProps) {
                     </Menu.Item>
                 </>
                 :<></>
+            }
+            {
+                employee ?
+                <Menu.Item position='right'>
+                    {
+                        employee.picture ?
+                        <Image src={employee.picture} avatar /> : <Icon name='user circle' />
+                    }
+                    <span>{employee.name}</span>
+                </Menu.Item> :
+                <Menu.Item
+                    position='right'
+                    active={location.pathname === '/queuality/login'}
+                    as={ Link } to='/queuality/login'>
+                        Login
+                </Menu.Item>
             }
             </Container>
         </Menu>

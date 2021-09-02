@@ -15,6 +15,8 @@ import { getEmployeesService } from './common/services/EmployeesService'
 import Navbar from './queuality/navbar/Navbar'
 import HomePage from './queuality/home/HomePage'
 import { useState } from 'react'
+import LoginPage from './queuality/login/LoginPage'
+import { getLoginService } from './queuality/login/LoginService'
 
 export const API_BASE_URL = 'http://localhost:5000/queuality'
 
@@ -25,28 +27,32 @@ function PageRouter() {
       <Switch>
         <Redirect exact from='/' to='/queuality' />
         <Route exact path='/queuality'>
-          <Navbar fixed={fixed} noMargin/>
+          <Navbar service={getEmployeesService()} fixed={fixed} noMargin/>
           <HomePage setFixed={setFixed}/>
         </Route>
         <Route exact path='/queuality/sections'>
-          <Navbar />
+          <Navbar service={getEmployeesService()} />
           <SectionsPage service={getSectionsService()}/>
         </Route>
         <Route exact path='/queuality/sections/:sectionId'>
-          <Navbar />
+          <Navbar service={getEmployeesService()} />
           <SectionPage sectionsService={getSectionsService()} subjectsService={getSubjectsService()}/>
         </Route>
         <Route exact path='/queuality/employees'>
-          <Navbar />
+          <Navbar service={getEmployeesService()} />
           <EmployeesPage service = {getEmployeesService()} sectionsService={getSectionsService()}/>
         </Route>
         <Route exact path='/queuality/sections/:sectionId/tickets'>
-          <Navbar />
+          <Navbar service={getEmployeesService()} />
           <QueuePage queueService = {getQueueService()} subjectsService = {getSubjectsService()}/>
         </Route>
         <Route exact path='/queuality/sections/:sectionId/appointments'>
-          <Navbar />
-          <AppointmentsPage service = {getAppointmentsService()} subject='Test Subject 3' desk='Desk1'/>
+          <Navbar service={getEmployeesService()} />
+          <AppointmentsPage service = {getAppointmentsService()}/>
+        </Route>
+        <Route exact path='/queuality/login'>
+          <Navbar service={getEmployeesService()} />
+          <LoginPage service = {getLoginService()}/>
         </Route>
       </Switch>
     </Router>

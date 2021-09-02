@@ -3,6 +3,7 @@ import { Button, Container, Divider, Grid, GridRow, Header, Segment } from 'sema
 import { LoginService } from './LoginService'
 import * as API from '../../common/FetchUtils'
 import * as Siren from '../../common/Siren'
+import { API_BASE_URL } from '../../App'
 import { link } from 'fs'
 import { Link } from 'react-router-dom'
 
@@ -14,7 +15,7 @@ type LoginInfo = API.FetchInfo<Siren.Entity<undefined, undefined>>
 type LoginRequest = API.Request<Siren.Entity<undefined, undefined>>
 
 function getLoginLinks(info? : LoginInfo) : String[] | undefined {
-    return info?.result?.body?.links.map(link => link.href) 
+    return info?.result?.body?.links.map(link => API_BASE_URL.replace('/queuality', '').concat(link.href)) 
 }
 
 export default function LoginPage({ service } : LoginProps) {
@@ -51,7 +52,7 @@ export default function LoginPage({ service } : LoginProps) {
                             <Header content='Login' primary />
                             {
                                 loginLinks?.map(link => 
-                                    <Button as={Link} to={link} content={link.split('/')[4]} style={{marginBottom: '2%'}} />
+                                    <Button as='a' href={link.concat(window.location.search || '?nextURL=http://localhost:3000/queuality')} content={link.split('/')[6]} style={{marginBottom: '2%'}} />
                                 )
                             }
                         </Grid.Column>
