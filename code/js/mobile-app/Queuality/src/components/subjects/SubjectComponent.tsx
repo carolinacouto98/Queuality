@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { IonGrid, IonRow } from '@ionic/react'
+import { IonCol, IonGrid, IonRow } from '@ionic/react'
 import React from 'react'
 import SubjectCard from './SubjectCard'
 import { Subject } from '../../model/SubjectModel'
@@ -12,6 +12,11 @@ type Props = {
 const SubjectComponent: React.FC <Props> = ({subjects, ticketHandler}) => { 
     return (  
         <IonGrid>
+            <IonRow>
+                <IonCol style={{marginLeft: '10%'}}>Subject</IonCol>
+                <IonCol style={{marginLeft: '10%'}}>Ticket</IonCol>
+                <IonCol>Desk</IonCol>
+            </IonRow>
             {subjects.map((subject: Subject) => (
                 <IonRow key={subject.name}>
                     <SubjectCard subject={subject} ticketHandler={ticketHandler} />

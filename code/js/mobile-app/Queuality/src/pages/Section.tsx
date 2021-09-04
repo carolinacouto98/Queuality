@@ -48,14 +48,12 @@ const Section: React.FC<RouteProps>  = ({match}) => {
     return (
         subjects && subjects.length?
             <IonPage>
-                <IonHeader translucent>
-                    <IonToolbar>
-                        <IonTitle>{sectionName}</IonTitle>
-                        <IonButtons slot='end'>
-                            <IonButton routerLink='/sections' >Sections</IonButton>
-                        </IonButtons>
-                    </IonToolbar>
-                </IonHeader>
+                <IonToolbar>
+                    <IonTitle>{sectionName}</IonTitle>
+                    <IonButtons slot='end'>
+                        <IonButton routerLink='/sections' >Sections</IonButton>
+                    </IonButtons>
+                </IonToolbar>
                 <IonContent>
                     <SubjectComponent  subjects={subjects} ticketHandler={addTicketHandler}/> 
                 </IonContent>

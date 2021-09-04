@@ -24,7 +24,7 @@ router.get('/sections/:sectionId/appointments', (req, res, next) => {
                 new Entity(
                     'Get Appointments',
                     ['Appointments'],
-                    appointmentSiren.getAppointmentsLinks(section, desk),
+                    appointmentSiren.getAppointmentsLinks(section, subject, desk),
                     undefined,
                     [appointmentSiren.addAppointmentAction()],
                     appointmentSiren.setSubEntities(appointments)
@@ -38,12 +38,13 @@ router.get('/sections/:sectionId/appointments', (req, res, next) => {
 
 router.get('/sections/:sectionId/appointments/:appointmentId', (req, res, next) => {
     const id = req.params.appointmentId
+    const section = req.params.sectionId
     service.getAppointment(id)
         .then(appointment => res.send(
             new Entity(
                 'Get an Appointment',
                 ['Appointment'],
-                appointmentSiren.getAppointmentLinks(id),
+                appointmentSiren.getAppointmentLinks(section, id),
                 appointment,
                 [
                     appointmentSiren.deleteAppointmentAction(id), 
@@ -52,6 +53,45 @@ router.get('/sections/:sectionId/appointments/:appointmentId', (req, res, next) 
             )
         ))
         .catch(next)
+})
+
+router.get('/sections/:sectionId/availableHours', (req, res, next) => {
+    const id = req.params.sectionId
+    const subject = req.query.subject
+    const day = req.query.day
+    if(subject && day)
+        service.getAvailableHoursByDay(id, subject, day)
+            .then(hours => res.send(
+                new Entity(
+                    'Get Available Hours',
+                    ['Appointment'],
+                    appointmentSiren.getAvailableHoursLinks(id, subject, day),
+                    hours
+                )
+            ))
+            .catch(next)
+        else
+            throw error.CustomException('Invalid Query Parameters', error.BAD_REQUEST)
+        
+})
+
+router.get('/sections/:sectionId/nextAvailableDay', (req, res, next) => {
+    const id = req.params.sectionId
+    const subject = req.query.subject
+    if(subject)
+        service.getNextDayAvailable(id, subject)
+            .then(day => res.send(
+                new Entity(
+                    'Get Available Day',
+                    ['Appointment'],
+                    appointmentSiren.getNextDayAvailableLinks(id, subject),
+                    day
+                )
+            ))
+            .catch(next)
+        else
+            throw error.CustomException('Invalid Query Parameters', error.BAD_REQUEST)
+        
 })
 //mobile-app
 router.patch('/appointments/:appointmentId', (req, res, next) => {
@@ -64,11 +104,12 @@ router.patch('/appointments/:appointmentId', (req, res, next) => {
             new Entity(
                 'Update an Appointment',
                 ['Appointment'],
-                appointmentSiren.updateAppointmentLinks(id, appointment.section, appointment.desk),
+                appointmentSiren.updateAppointmentLinks(id, appointment.section,appointment.subject, appointment.desk),
                 appointment
             )
         ))
         .catch(next)
+    
 })
 //mobile-app
 router.post('/sections/:sectionId/appointments', (req, res, next) => {
@@ -85,7 +126,7 @@ router.post('/sections/:sectionId/appointments', (req, res, next) => {
                         new Entity(
                             'Add an Appointment',
                             ['Appointments'],
-                            appointmentSiren.addAppointmentLinks(appointment? appointment._id: undefined),
+                            appointmentSiren.addAppointmentLinks(section ,appointment? appointment._id: undefined),
                             appointment
                         )))
                     .catch(next)
@@ -100,7 +141,7 @@ router.delete('/appointments/:appointmentId', (req, res, next) => {
             new Entity(
                 'Delete an Appointment',
                 ['Appointment'],
-                appointmentSiren.deleteAppointmentLinks(appointment.section, appointment.desk)
+                appointmentSiren.deleteAppointmentLinks(appointment.section, appointment.subject, appointment.desk)
             )))
         .catch(next)
 })

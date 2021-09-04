@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import { Subject } from '../../model/SubjectModel'
 import { accessibilityOutline } from 'ionicons/icons'
 import './SubjectCard.css'
+import SubjectComponent from './SubjectComponent'
 
 type Props = {
     subject: Subject,
@@ -45,20 +46,20 @@ const SubjectCard: React.FC<Props> = ({subject, ticketHandler})=> {
                         <IonGrid>
                             <IonRow>
                                 <IonCol>
-                                    {subject.name} 
-                                </IonCol>
+                                    {subject.name} {subject.description}
+                                    {subject.priority?
+                                        <IonIcon icon={accessibilityOutline} size='small' style={{marginLeft: '10%'}}/>
+                                        : null}
+                                </IonCol>  
                                 <IonCol>
-                                    {subject.priority? <IonIcon icon={accessibilityOutline} size='small'/>: null}
+                                    <IonBadge color='medium'>{subject.currentTicket}</IonBadge> 
+                                    <IonBadge style={{marginLeft: '50%'}} color='medium'>{subject.callingDesk}</IonBadge> 
                                 </IonCol>
                             </IonRow>
                         </IonGrid>
-                        <IonBadge slot='end' color='medium'>{subject.currentTicket}</IonBadge> 
                     </IonItem> 
                 </IonCardTitle>  
             </IonCardHeader>
-            <IonCardContent>
-                {subject.description}
-            </IonCardContent> 
         </IonCard>
     )
 }

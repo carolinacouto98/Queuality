@@ -24,14 +24,12 @@ const Appointments: React.FC = () => {
     })
     return ( 
         <IonPage>
-            <IonHeader translucent>
-                <IonToolbar>
-                    <IonTitle>My Appointments</IonTitle>
-                    <IonButtons slot='end'>
-                        <IonButton routerLink='/add-appointment'>Add Appointment</IonButton>
-                    </IonButtons>
-                </IonToolbar>
-            </IonHeader>
+            <IonToolbar>
+                <IonTitle>My Appointments</IonTitle>
+                <IonButtons slot='end'>
+                    <IonButton routerLink='/add-appointment'>Add</IonButton>
+                </IonButtons>
+            </IonToolbar>
             <IonContent>
                 {appointments?
                     <AppointmentsComponent appointments={appointments}/>  

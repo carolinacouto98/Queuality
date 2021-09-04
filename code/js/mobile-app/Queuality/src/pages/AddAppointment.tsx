@@ -22,6 +22,7 @@ const AddAppointment: React.FC<RouteComponentProps> = ({history}) => {
     const [subject, setSubject] = useState<string>()
     const [selectedDate, setSelectedDate] = useState<string>('')
     const [selectedHour, setSelectedHour] = useState<string>('')
+    const [message, setMessage] = useState<string>('')
     useEffect(() => {
         async function sendSectionsRequest() {
             try {
@@ -55,6 +56,12 @@ const AddAppointment: React.FC<RouteComponentProps> = ({history}) => {
     }, [section, context.subjectService])
 
     const subjects = getSubjectsValue(subjectsInfo)
+    const [availableDay, setAvailableDay] = useState<string>('')
+    function getMinDay() {
+        context.appointmentService.getNextAvailableDay(section!!, subject!!)
+            .then(result => setAvailableDay(result.properties!!))
+        return availableDay
+    }
 
     function addApointmentHandler() {
         const dateObj = new Date(selectedDate)
@@ -66,62 +73,91 @@ const AddAppointment: React.FC<RouteComponentProps> = ({history}) => {
         const minutes= hoursObj.getMinutes()
         const date =month+'/'+day+'/' +year+ ' '+ hours + ':' + (minutes<10 ? '0'+minutes: minutes)
         context.appointmentService.addAppointment(date, section!!, subject!!)
-            .then(result => 
-                setAppointment(result.properties!!)
-            ) 
-        history.push('/appointments')
+            .then(result => {
+                if(result.properties){
+                    setAppointment(result.properties) 
+                    history.push('/appointments')
+                }
+                else {
+                    context.appointmentService.getAvailableHours(section!!, subject!!,(month+'/'+day+'/' +year))
+                        .then(result => {
+                            if(result.properties?.length)
+                                setMessage(`This time is already booked. The first  available time for this day is ${result.properties[0]}`)
+                            else {
+                                const dayObj = new Date(getMinDay())
+                                const day = dayObj.getDate()+ '/' + (dayObj.getMonth() + 1) +'/' + dayObj.getFullYear()
+                                setMessage(`This day is already booked. The first day available is ${day}`)
+                            }
+                        })
+                }
+            }) 
     }
     return ( 
-        <IonPage>
-            <IonHeader translucent>
-                <IonToolbar>
-                    <IonTitle>Make an Appointment</IonTitle>
-                    <IonButtons slot='end'>
-                        <IonButton routerLink='/appointments'>Close</IonButton>
-                    </IonButtons>
-                </IonToolbar>
-            </IonHeader>
-            {sections?
-                <IonContent>
-                    <IonItem>
-                        <IonLabel>Choose Section</IonLabel>
-                        <IonSelect value={section} placeholder="Select One" onIonChange={e => setSection(e.detail.value)}>
-                            {sections.map(sect => {
-                                return(
-                                    <IonSelectOption key={sect._id} value={sect._id}>{sect._id}</IonSelectOption>
-                                )
-                            })}
-                        </IonSelect>
+        <IonPage> 
+            <IonToolbar>
+                <IonTitle>Make an Appointment</IonTitle>
+                <IonButtons slot='end'>
+                    <IonButton routerLink='/appointments'>Close</IonButton>
+                </IonButtons>
+            </IonToolbar>
+            <IonContent>
+                {message?
+                    <IonItem lines='none'>
+                        <h3>{message}</h3>
                     </IonItem>
-                    {subjects?
-                        <>
-                            <IonItem>
-                                <IonLabel>Choose Subject</IonLabel>
-                                <IonSelect value={subject} placeholder="Select One" onIonChange={e => setSubject(e.detail.value)}>
-                                    {subjects.map(sub => {
-                                        return(
-                                            sub.priority?
-                                                null:
-                                                <IonSelectOption key={sub.description} value={sub.description}>{sub.description}</IonSelectOption>
-                                        )
-                                    })}
-                                </IonSelect>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel>Select a Date</IonLabel>
-                                <IonDatetime pickerFormat='DD MMMM YYYY' placeholder='Select Date' min={new Date().toISOString()} value={selectedDate} onIonChange={e => setSelectedDate(e.detail.value!)}></IonDatetime>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel>Select an Hour</IonLabel>
-                                <IonDatetime displayFormat='HH:mm' minuteValues={getMinuteValues(sections.find(sect=> sect._id=== section)!!)} placeholder='Select Hour' min={hoursConverter(sections.find(sect => sect._id=== section)?.workingHours.begin!!)} max={hoursConverter(sections.find(sect => sect._id=== section)?.workingHours.end!!)} value={selectedHour} onIonChange={e => setSelectedHour(e.detail.value!)}></IonDatetime>
-                            </IonItem>
-                            <IonButton onClick={() => addApointmentHandler()}>Submit</IonButton>
-                        </>
-                        : null
-                    }
-                </IonContent> 
-                : null
-            }
+                    :null
+                }
+                {sections?
+                    <>
+                        <IonItem lines='none'>
+                            <IonLabel>Choose Section</IonLabel>
+                            <IonSelect value={section} placeholder="Select One" onIonChange={e => setSection(e.detail.value)}>
+                                {sections.map(sect => {
+                                    return(
+                                        <IonSelectOption key={sect._id} value={sect._id}>{sect._id}</IonSelectOption>
+                                    )
+                                })}
+                            </IonSelect>
+                        </IonItem>
+                        {subjects?
+                            <>
+                                <IonItem lines='none'>
+                                    <IonLabel>Choose Subject</IonLabel>
+                                    <IonSelect value={subject} placeholder="Select One" onIonChange={e => setSubject(e.detail.value)}>
+                                        {subjects.map(sub => {
+                                            return(
+                                                sub.priority?
+                                                    null:
+                                                    <IonSelectOption key={sub.description} value={sub.description}>{sub.description}</IonSelectOption>
+                                            )
+                                        })}
+                                    </IonSelect>
+                                </IonItem>
+                                {subject?
+
+                                    <IonItem lines='none'>
+                                        <IonLabel>Select a Date</IonLabel>
+                                        <IonDatetime pickerFormat='DD MMMM YYYY' placeholder='Select Date' min={getMinDay()} value={selectedDate} onIonChange={e => setSelectedDate(e.detail.value!)}></IonDatetime>
+                                    </IonItem>
+                                    : null
+                                }
+                                {selectedDate?
+                                    <>
+                                        <IonItem lines ='none'>
+                                            <IonLabel>Select an Hour</IonLabel>
+                                            <IonDatetime displayFormat='HH:mm' minuteValues={getMinuteValues(sections!!.find(sect=> sect._id=== section)!!)} placeholder='Select Hour' min={hoursConverter(sections!!.find(sect => sect._id=== section)?.workingHours.begin!!)} max={hoursConverter(sections!!.find(sect => sect._id=== section)?.workingHours.end!!)} value={selectedHour} onIonChange={e => setSelectedHour(e.detail.value!)}></IonDatetime>
+                                        </IonItem>
+                                        <IonButton onClick={() => addApointmentHandler()}>Submit</IonButton>
+                                    </>
+                                    : null
+                                }
+                            </>
+                            : null
+                        }
+                    </>
+                    : null
+                }
+            </IonContent>      
         </IonPage>
     )
 }

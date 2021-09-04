@@ -7,9 +7,11 @@ import React, { useContext, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router'
 import { API_BASE_URL, AppContext, NGROK_PATH } from '../App'
 import { TicketDetails } from '../model/TicketsModel'
-import {getTicket, removeTicket, updateCurrentTicket, updateWaitingTickets } from '../services/TicketsStorage'
+import {getTicket, removeTicket, updateCallingDesk, updateCurrentTicket, updateWaitingTickets } from '../services/TicketsStorage'
 import * as Siren from '../common/Siren' 
 import { Subject } from '../model/SubjectModel'
+//import { PushNotificationSchema, PushNotifications, Token, ActionPerformed } from '@capacitor/push-notifications'
+
 type TicketDisplayProps = RouteComponentProps<{
     ticket: string
 }>
@@ -19,6 +21,10 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
     const {ticket} = match.params
     const context = useContext(AppContext)
     
+    /* useEffect(() => {
+        PushNotifications.checkPermissions().then((res) => {
+            if (res.receive !== 'denied') 
+    })*/
     useEffect(() => {   
         getTicket(ticket)
             .then(ticket => {
@@ -54,14 +60,23 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
         if(ticketDetails)
             fetchSubjects()
                 .then( subjects => {
-                    const curr = getCurrTicket(ticketDetails!!.subject.description!!, subjects)
-                    console.log(curr)
-                    if(curr!! != ticketDetails!!.subject.currentTicket){
+                    const curr = getCurrTicket(ticketDetails!!.subject.description, subjects)
+                    const desk = getCallingDesk(ticketDetails!!.subject.description, subjects)
+                    if(curr!! !== ticketDetails!!.subject.currentTicket) {
                         updateCurrentTicket(curr!!, ticketDetails!!)
                         setTicketDetails({
                             ...ticketDetails!!,
                             subject: {...ticketDetails?.subject!!,
                                 currentTicket: curr!!
+                            }
+                        })
+                    }
+                    if(desk!! !== ticketDetails!!.subject.callingDesk) {
+                        updateCallingDesk(desk!!, ticketDetails!!)
+                        setTicketDetails({
+                            ...ticketDetails!!,
+                            subject: {...ticketDetails?.subject!!,
+                                callingDesk: desk!!
                             }
                         })
                     }
@@ -71,19 +86,17 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
     return ( 
         ticketDetails && ticketDetails.subject?
             <IonPage>
-                <IonHeader translucent>
-                    <IonToolbar>
-                        <IonTitle>{ticketDetails.ticket}</IonTitle>
-                        <IonButtons slot='end'>
-                            <IonButton routerLink='/tickets'>Close</IonButton>
-                            <IonButton onClick={() => {
-                                removeTicket(ticketDetails.ticket)
-                                context.ticketService.removeTicket(ticketDetails.sectionName,ticketDetails.subject.name, ticketDetails.ticket)
-                                history.goBack()
-                            }} color='danger'>Delete</IonButton>
-                        </IonButtons>
-                    </IonToolbar>
-                </IonHeader>
+                <IonToolbar>
+                    <IonTitle>{ticketDetails.ticket}</IonTitle>
+                    <IonButtons slot='end'>
+                        <IonButton routerLink='/tickets'>Close</IonButton>
+                        <IonButton onClick={() => {
+                            removeTicket(ticketDetails.ticket)
+                            context.ticketService.removeTicket(ticketDetails.sectionName,ticketDetails.subject.name, ticketDetails.ticket)
+                            history.goBack()
+                        }} color='danger'>Delete</IonButton>
+                    </IonButtons>
+                </IonToolbar>
                 <IonContent>
                     <IonItem lines='none'>
                         <IonCol></IonCol>
@@ -117,7 +130,11 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
                     <IonItem lines='none'>
                         <b>Current Ticket</b> 
                         <b slot='end'>{ticketDetails.subject.currentTicket}</b>
-                    </IonItem>         
+                    </IonItem> 
+                    <IonItem lines='none'>
+                        <b>Calling Desk</b> 
+                        <b slot='end'>{ticketDetails.subject.callingDesk}</b>
+                    </IonItem>        
                 </IonContent> 
             </IonPage>
             : null
@@ -130,10 +147,10 @@ function getQueueIndex(ticket : string, queueInfo? : Siren.Entity<string[], void
     return queueInfo?.properties?.findIndex(tick => tick === ticket)
 }
 
-function getCurrTicket(subject: string, subInfo? : Siren.Entity<void, Subject>) : number | undefined {
-    console.log(subject)
-    return subInfo?.entities?.find(sub => {
-        console.log(sub.properties)
-        return sub.properties?.description=== subject
-    })?.properties?.currentTicket
+function getCurrTicket(subject : string, subInfo? : Siren.Entity<void, Subject>) : number | undefined {
+    return subInfo?.entities?.find(sub => sub.properties?.description === subject)?.properties?.currentTicket
+}
+
+function getCallingDesk(subject : string, subInfo? : Siren.Entity<void, Subject>): string | undefined {
+    return subInfo?.entities?.find(sub => sub.properties?.description === subject)?.properties?.callingDesk
 }

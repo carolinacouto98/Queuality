@@ -25,7 +25,7 @@ import '@ionic/react/css/text-transformation.css'
 import '@ionic/react/css/flex-utils.css'
 import '@ionic/react/css/display.css'
 
-import { PushNotificationSchema, PushNotifications, Token, ActionPerformed } from '@capacitor/push-notifications'
+//import { PushNotificationSchema, PushNotifications, Token, ActionPerformed } from '@capacitor/push-notifications'
 /* Theme variables */
 import './theme/variables.css'
 import { peopleOutline, ticketOutline, calendarOutline } from 'ionicons/icons'
@@ -54,7 +54,7 @@ const App: React.FC = () => {
         appointmentService: getAppointmentService()
     }
 
-    useEffect(()=>{
+    /* useEffect(()=>{
         PushNotifications.checkPermissions().then((res) => {
             if (res.receive !== 'granted') {
                 PushNotifications.requestPermissions().then((res) => {
@@ -67,7 +67,7 @@ const App: React.FC = () => {
                 PushNotifications.register()
             }
         })
-    },[])
+    },[])*/
 
     return (
         <IonApp className='App'>

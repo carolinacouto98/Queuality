@@ -1,20 +1,21 @@
 'use strict'
 const siren = require('../../common/siren.js')
 
-const getAvailableHoursLinks = (subject, day) => [siren.selfLink(`${siren.BASENAME}/appointments?subject=${subject}&day=${day}`)]
-const getAppointmentsLinks = (section, desk) => [siren.selfLink(`${siren.BASENAME}/appointments?section=${section}&desk=${desk}`)]
-const getAppointmentLinks = (id) => [siren.selfLink(`${siren.BASENAME}/appointments/${id}`)]
-const updateAppointmentLinks = (id, section, desk) => [
-    siren.selfLink(`${siren.BASENAME}/appointments/${id}`),
-    new siren.SirenLink(['/rel/appointments'],`${siren.BASENAME}/appointments?section=${section}&desk=${desk}`)
+const getAvailableHoursLinks = (section, subject, day) => [siren.selfLink(`${siren.BASENAME}/sections/${section}/availableHours?subject=${subject}&day=${day}`)]
+const getNextDayAvailableLinks = (section, subject) => [siren.selfLink(`${siren.BASENAME}/sections/${section}/nextAvailableDay?subject=${subject}`)]
+const getAppointmentsLinks = (section,subject, desk) => [siren.selfLink(`${siren.BASENAME}/sections/${section}/appointments?subject=${subject}&desk=${desk}`)]
+const getAppointmentLinks = (section, id) => [siren.selfLink(`${siren.BASENAME}/sections/${section}/appointments/${id}`)]
+const updateAppointmentLinks = (id, section, subject, desk) => [
+    siren.selfLink(`${siren.BASENAME}/sections/${section}/appointments/${id}`),
+    new siren.SirenLink(['/rel/appointments'],`${siren.BASENAME}/sections/${section}/appointments?subject=${subject}&desk=${desk}`)
 ]
-const addAppointmentLinks = (id) => {id? [
-    siren.selfLink(`${siren.BASENAME}/appointments`),
-    new siren.SirenLink(['/rel/appointment'],`${siren.BASENAME}/appointments/${id}`)
+const addAppointmentLinks = (section, id) => {id? [
+    siren.selfLink(`${siren.BASENAME}/sections/${section}/appointments`),
+    new siren.SirenLink(['/rel/appointment'],`${siren.BASENAME}/sections/${section}/appointments/${id}`)
 ] :
-[siren.selfLink(`${siren.BASENAME}/appointments`)]
+[siren.selfLink(`${siren.BASENAME}/sections/${section}/appointments`)]
 }
-const deleteAppointmentLinks = (section, desk) => [ new siren.SirenLink(['/rel/appointments'], `${siren.BASENAME}/appointments?section=${section}&desk=${desk}`)]
+const deleteAppointmentLinks = (section,subject, desk) => [ new siren.SirenLink(['/rel/appointments'], `${siren.BASENAME}/sections/${section}/appointments?subject=${subject}&desk=${desk}`)]
 
 function addAppointmentAction(){
     return new siren.SirenAction(
@@ -72,6 +73,7 @@ function setSubEntities(appointments){
 module.exports = {
     getAvailableHoursLinks,
     getAppointmentLinks,
+    getNextDayAvailableLinks,
     getAppointmentsLinks,
     updateAppointmentLinks,
     updateAppointmentAction,
