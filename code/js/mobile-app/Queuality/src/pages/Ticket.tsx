@@ -10,7 +10,6 @@ import { TicketDetails } from '../model/TicketsModel'
 import {getTicket, removeTicket, updateCallingDesk, updateCurrentTicket, updateWaitingTickets } from '../services/TicketsStorage'
 import * as Siren from '../common/Siren' 
 import { Subject } from '../model/SubjectModel'
-//import { PushNotificationSchema, PushNotifications, Token, ActionPerformed } from '@capacitor/push-notifications'
 
 type TicketDisplayProps = RouteComponentProps<{
     ticket: string
@@ -21,10 +20,6 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
     const {ticket} = match.params
     const context = useContext(AppContext)
     
-    /* useEffect(() => {
-        PushNotifications.checkPermissions().then((res) => {
-            if (res.receive !== 'denied') 
-    })*/
     useEffect(() => {   
         getTicket(ticket)
             .then(ticket => {
