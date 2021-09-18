@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain*/
 /* eslint-disable react/prop-types */
-import { IonButton, IonButtons, IonCol, IonContent, IonHeader, IonItem, IonPage, IonTitle, IonToolbar} from '@ionic/react'
+import { IonButton, IonButtons, IonCol, IonContent, IonHeader, IonItem, IonPage, IonText, IonTitle, IonToolbar} from '@ionic/react'
 import React, { useContext, useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router'
 import { API_BASE_URL, AppContext, NGROK_PATH } from '../App'
@@ -82,7 +82,7 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
         ticketDetails && ticketDetails.subject?
             <IonPage>
                 <IonToolbar>
-                    <IonTitle>{ticketDetails.ticket}</IonTitle>
+                    <IonTitle color='primary'>{ticketDetails.ticket}</IonTitle>
                     <IonButtons slot='end'>
                         <IonButton routerLink='/tickets'>Close</IonButton>
                         <IonButton onClick={() => {
@@ -105,8 +105,9 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
                     </IonItem>
                     {ticketDetails.waitingTickets> 0 ?
                         <IonItem lines='none' >
-                            
-                            <b >Tickets Left </b>
+                            <IonText color='primary'>
+                                <b >Tickets Left </b>
+                            </IonText>
                             <b slot='end'>{ticketDetails.waitingTickets}</b> 
                         </IonItem>
                         : ticketDetails.waitingTickets === 0 ?
@@ -123,11 +124,15 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
                             </IonItem>
                     }
                     <IonItem lines='none'>
-                        <b>Current Ticket</b> 
+                        <IonText color='primary'>
+                            <b>Current Ticket</b>
+                        </IonText>
                         <b slot='end'>{ticketDetails.subject.currentTicket}</b>
                     </IonItem> 
                     <IonItem lines='none'>
-                        <b>Calling Desk</b> 
+                        <IonText color='primary'>
+                            <b>Calling Desk</b> 
+                        </IonText>
                         <b slot='end'>{ticketDetails.subject.callingDesk}</b>
                     </IonItem>        
                 </IonContent> 

@@ -15,7 +15,7 @@ const SectionCard: React.FC<Props> = ({section, link}) => {
     return(
         <IonCard id ={section._id} button onClick={() => {history.push(link)}} className='SectionCard'>
             <IonCardHeader>
-                <IonCardTitle>
+                <IonCardTitle color='primary'>
                     {section._id}
                 </IonCardTitle>  
             </IonCardHeader>

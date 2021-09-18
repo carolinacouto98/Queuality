@@ -33,7 +33,7 @@ const Tickets: React.FC = () => {
        
         <IonPage>
             <IonToolbar>
-                <IonTitle>My Tickets</IonTitle>         
+                <IonTitle color='primary'>My Tickets</IonTitle>         
             </IonToolbar>
             <IonContent>
                 {tickets?

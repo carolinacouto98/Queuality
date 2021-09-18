@@ -95,7 +95,7 @@ const AddAppointment: React.FC<RouteComponentProps> = ({history}) => {
     return ( 
         <IonPage> 
             <IonToolbar>
-                <IonTitle>Make an Appointment</IonTitle>
+                <IonTitle color='primary'>Make an Appointment</IonTitle>
                 <IonButtons slot='end'>
                     <IonButton routerLink='/appointments'>Close</IonButton>
                 </IonButtons>
@@ -147,7 +147,7 @@ const AddAppointment: React.FC<RouteComponentProps> = ({history}) => {
                                             <IonLabel>Select an Hour</IonLabel>
                                             <IonDatetime displayFormat='HH:mm' minuteValues={getMinuteValues(sections!!.find(sect=> sect._id=== section)!!)} placeholder='Select Hour' min={hoursConverter(sections!!.find(sect => sect._id=== section)?.workingHours.begin!!)} max={hoursConverter(sections!!.find(sect => sect._id=== section)?.workingHours.end!!)} value={selectedHour} onIonChange={e => setSelectedHour(e.detail.value!)}></IonDatetime>
                                         </IonItem>
-                                        <IonButton onClick={() => addApointmentHandler()}>Submit</IonButton>
+                                        <IonButton style={{marginTop: '20px', marginLeft: '15px'}} onClick={() => addApointmentHandler()}>Submit</IonButton>
                                     </>
                                     : null
                                 }
