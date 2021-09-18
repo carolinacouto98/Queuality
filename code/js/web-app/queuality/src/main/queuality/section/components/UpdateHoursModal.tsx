@@ -55,7 +55,7 @@ export default function UpdateHoursModal(props: UpdateHoursModalProps) {
                 }}>
                 Cancel
                 </Button>
-                <Button positive onClick={() => {
+                <Button style={{backgroundColor:'#33BEFF'}} onClick={() => {
                     setOpen(false)
                     editWorkingHours()
                 }}>

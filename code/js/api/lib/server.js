@@ -20,18 +20,22 @@ function run(port, url, dbName) {
         'ionic://localhost',
         'http://localhost',
         'http://localhost:3000',
+        'http://localhost:5000',
         'http://localhost:8100'
     ]
+
+    const issuersOrigins = process.env.ISSUERS.split(';').map(issuer => process.env[`${issuer}_BASE_URL`])
     
     
      // handles serialization and deserialization of authenticated user
     passport.serializeUser(function(user, done) {
-        console.log('serialization')
         done(null, user)
     })
     passport.deserializeUser(function(userId, done) {
-        database.methods.get('employees', userId)
-            .then(employee => done(null, employee))
+        database.methods.get('employee', userId)
+            .then(employee => {
+                done(null, userId)
+            })
             .catch(error => done(error))
     })
 
@@ -45,14 +49,13 @@ function run(port, url, dbName) {
     
     const corsOptions = {
         origin: (origin, callback) => {
-            if (allowedOrigins.includes(origin) || !origin) {
-                callback(null, true)
-            } else {
-                callback(new Error('Origin not allowed by CORS'))
-            }
-        }
+            if (!origin || origin === 'null') callback(null, '*')
+            else if (allowedOrigins.includes(origin) || issuersOrigins.includes(origin)) callback(null, origin || true)
+            else callback(new Error('Origin not allowed by CORS'))
+        },
+        credentials: true
     }
-    app.use(cors())
+    app.use(cors(corsOptions))
     
     // Enable preflight requests for all routes
     app.options('*', cors(corsOptions))
@@ -64,7 +67,11 @@ function run(port, url, dbName) {
     app.use(express.json())
     app.use(cookieParser())
     app.use(express.urlencoded({extended: false}))
-    app.use(session({ secret: process.env.SECRET }))
+    app.use(session({
+        secret: process.env.SECRET,
+        resave: false,
+        saveUninitialized: false
+    }))
     app.use(passport.initialize())
     app.use(passport.session())
     
@@ -73,6 +80,13 @@ function run(port, url, dbName) {
     app.use('/queuality/api', require('./routes/subject-routes.js'))
     app.use('/queuality/api', require('./routes/section-routes.js'))
     app.use('/queuality/api/auth', require('./routes/auth-routes.js'))
+
+    app.options('*', (req, res, next) => {
+        const origin = req.header('Origin')
+        console.log(origin)
+        if (origin) res.header('Origin', origin)
+        next()
+    })
 
     app.use((err, req, res, next) => {
         if (!err.status) err = error.CustomError(err, error.SERVER_ERROR)

@@ -68,11 +68,11 @@ export default function SectionsHeader(props: SectionsHeaderProps) {
                 </Modal.Content>
                 <Modal.Actions>
                     <Button color='black' onClick={() => setOpen(false)}>
-                    Nope
+                    Cancel
                     </Button>
                     <Button
                     disabled = {false}
-                    color='instagram'
+                    style={{backgroundColor: '#33BEFF'}}
                     content="Submit"
                     labelPosition='right'
                     icon='checkmark'
