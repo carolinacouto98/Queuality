@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { useRef, useState } from "react"
-import { Link, useLocation } from "react-router-dom"
-import { Button, Container, Icon, Menu, Message, Modal, Image } from "semantic-ui-react"
+import { Link, useHistory, useLocation } from "react-router-dom"
+import { Button, Container, Icon, Menu, Message, Modal, Image, Label } from "semantic-ui-react"
 import { EmployeesService } from "../../common/services/EmployeesService"
 import * as Siren from '../../common/Siren'
 import * as Model from '../../common/model/EmployeeModel'
@@ -18,20 +18,24 @@ type EmployeeInfo = API.FetchInfo<Siren.Entity<Model.Employee, void>>
 export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
     const location = useLocation()
     const [openModal, setOpenModal] = useState<boolean>(false)
+    const [openModalTickets, setOpenModalTickets] = useState<boolean>(false)
     const [deskMessage, setDeskMessage] = useState<boolean>(false)
+    const [deskMessageTickets, setDeskMessageTickets] = useState<boolean>(false)
     const [subjectMessage, setSubjectMessage] = useState<boolean>(false)
     const [employeeInfo, setEmployee] = useState<EmployeeInfo>()
     const desk = useRef<HTMLInputElement>(null)
+    const deskTickets = useRef<HTMLInputElement>(null)
     const subject = useRef<HTMLInputElement>(null)
+    const history = useHistory()
 
     useEffect(() => {
         async function sendEmployeeRequest(request: API.Request<Siren.Entity<Model.Employee, void>>) {
             try {
                 setEmployee({ status: API.FetchState.NOT_READY })
                 const result : API.Result<Siren.Entity<Model.Employee, void>> = await request.send()
-                if (!result.header.ok) 
+                if (!result.header.ok)
                     return
-                setEmployee({ 
+                setEmployee({
                     status : result.header.ok && result.body ? API.FetchState.SUCCESS : API.FetchState.ERROR,
                     result
                 })
@@ -49,16 +53,16 @@ export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
         <Menu
             fixed={fixed ? 'top' : undefined}
             style={{
-                backgroundColor:'#33BEFF', 
+                backgroundColor:'#33BEFF',
                 marginBottom: noMargin ? '0' : undefined
-            }} 
-            borderless 
-            pointing 
-            secondary 
+            }}
+            borderless
+            pointing
+            secondary
             textAlign='left'
         >
             <Container>
-            <Menu.Item 
+            <Menu.Item
                 active={location.pathname === '/queuality'}
                 as={ Link } to='/queuality'
                 style={{
@@ -67,9 +71,9 @@ export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
                 }}>
                     Queuality
             </Menu.Item>
-            <Menu.Item 
+            <Menu.Item
                 active={
-                    location.pathname.includes('/queuality/sections') 
+                    location.pathname.includes('/queuality/sections')
                     && !location.pathname.includes('/appointments')
                     && !location.pathname.includes('/tickets')
                 }
@@ -88,7 +92,7 @@ export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
                 <>
                     <Menu.Item
                         active={ location.pathname.includes('/tickets') }
-                        as={ Link } to={location.pathname.split('/').slice(0, 4).join('/').concat('/tickets') }
+                        onClick={() => setOpenModalTickets(true)}
                         link
                     >
                         <Icon name='ticket'/>
@@ -118,6 +122,7 @@ export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
                     position='right'
                     active={location.pathname === '/queuality/login'}
                     as={ Link } to='/queuality/login'>
+                        <Icon name='sign-in'/>
                         Login
                 </Menu.Item>
             }
@@ -147,10 +152,34 @@ export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
                     else setDeskMessage(false)
 
                     if (subject.current?.value && desk.current?.value) {
-                        const url = `${location.pathname.split('/').slice(0, 4).join('/')}/appointments?subject=${subject.current?.value}&desk=${desk.current?.value}`
-                        window.location.replace(url)
+                        setOpenModal(false)
+                        history.push(`${location.pathname.split('/').slice(0,3).join('/')}/appointments?subject=${subject.current?.value}&desk=${desk.current?.value}`)
                     }
-                }} 
+                }}
+                />
+            </Modal.Actions>
+        </Modal>
+        <Modal
+            open={openModalTickets}
+            onOpen={() => setOpenModalTickets(true)}
+            onClose={() => setOpenModalTickets(false)}
+        >
+            <Modal.Header>Tickets</Modal.Header>
+            <Modal.Content>
+                <Label>Desk:</Label>
+                <input style={{margin:'1%'}} ref={deskTickets} type='text' placeholder='Desk'/>
+                <Message error hidden={!deskMessageTickets} icon='error'>Desk is required</Message>
+            </Modal.Content>
+            <Modal.Actions>
+                <Button content='Cancel' onClick={() => setOpenModalTickets(false)}/>
+                <Button content='Ok' onClick={() => {
+                    if (!deskTickets.current?.value) setDeskMessageTickets(true)
+                    else {
+                        setOpenModalTickets(false)
+                        setDeskMessageTickets(false)
+                        history.push(`${location.pathname.split('/').slice(0,3).join('/')}/tickets?desk=${deskTickets.current?.value}`)
+                    }
+                }}
                 />
             </Modal.Actions>
         </Modal>

@@ -11,7 +11,6 @@ const router = Router()
 module.exports = router
 
 router.get('/employees/logged', auth.optional(), (req, res, next) => {
-    console.log(req.employee)
     res.send(
         new Entity(
             'Get Employee Logged in',
@@ -32,10 +31,10 @@ router.get('/employees', auth.requested(), (req, res, next) => {
                 ['Employees'],
                 employeeSiren.getEmployeesLinks,
                 undefined,
-                [employeeSiren.addEmployeeAction(),
-                employeeSiren.updateEmployeeAction(),
-                employeeSiren.deleteEmployeeAction()],
-                employeeSiren.setSubEntities(employees)
+                [employeeSiren.addEmployeeAction()],
+                employeeSiren.setSubEntities(employees, emp => 
+                    [employeeSiren.updateEmployeeAction(emp._id),
+                    employeeSiren.deleteEmployeeAction(emp._id)])
             )))
         .catch(next)
 })
@@ -49,7 +48,6 @@ router.post('/employees', auth.requested(), (req, res, next) => {
         throw error.CustomException('Missing required parameters', error.BAD_REQUEST)
     const roles = req.body.roles
     const sections = req.body.sections
-    const desk = req.body.desk
     const picture = req.body.picture
     model.employeeInputModel.validateAsync({_id, name})
         .then(employee => service.addEmployee(employee)
@@ -70,10 +68,9 @@ router.patch('/employees/:employeeId', auth.requested(), (req, res, next) => {
     const name = req.body.name
     const roles = req.body.roles
     const sections = req.body.sections
-    const desk = req.body.desk
-    if(!name && !roles && !sections && !desk)
+    if(!name && !roles && !sections)
         throw error.CustomException('Missing Parameters', error.BAD_REQUEST)
-    model.employeeUpdateInputModel.validateAsync({_id, name, roles, sections, desk})
+    model.employeeUpdateInputModel.validateAsync({_id, name, roles, sections})
         .then(employee =>
             service.updateEmployee(employee)
                 .then(employee => res.send(

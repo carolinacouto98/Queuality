@@ -15,7 +15,8 @@ export function getAppointmentsService(): AppointmentsService {
     headers.append('Accept', 'application/json')
     return {
         getAppointments: (sectionId: string, subject: string, desk: string): Fetch.Request<Siren.Entity<void, Appointment>> => 
-            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections/${sectionId}/appointments?subject=${subject}&desk=${desk}`), {headers: headers})         
+            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections/${sectionId}/appointments?subject=${subject}&desk=${desk}`), {headers: headers,
+                credentials:'include'})         
         ,
 
         updateAppointment: (appointmentId: string, date: Date): Fetch.Request<Siren.Entity<Appointment, void>> =>
@@ -24,14 +25,16 @@ export function getAppointmentsService(): AppointmentsService {
                 headers: headers,
                 body: JSON.stringify({
                     date
-                })
+                }),
+                credentials:'include'
             })
         ,
         deleteAppointment: (appointmentId: string): Fetch.Request<Siren.Entity<void, void>> =>
             Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/appointments/${appointmentId}`),  
             { 
                 method: 'DELETE',
-                headers: headers
+                headers: headers,
+                credentials:'include'
             })
     }
 }

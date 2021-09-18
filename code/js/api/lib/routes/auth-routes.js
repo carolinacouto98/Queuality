@@ -48,12 +48,10 @@ async function createStrategy(issuer) {
             nonce,
         }
     }, async (tokenset, userinfo, done) => {
-        console.log('start strategy')
         const employees = await service.getEmployees()
         const claims = tokenset.claims()
         if (!employees.find(employee => employee._id === userinfo.email)) {
             const managers = employees.filter(employee => employee.roles.includes('Manage Employees'))
-            console.log(managers)
             managers.forEach(async employee =>
                 await transporter.sendMail({
                     from: `No Reply <${process.env.SMTP_EMAIL}>`,
@@ -75,7 +73,6 @@ async function createStrategy(issuer) {
                 })
             )
         }
-        console.log('end strategy')
         return done(null, claims)
     })
     strategies[issuer] = strategy
@@ -105,7 +102,6 @@ router.get('/signup', (req, res, next) => {
 issuers.forEach(issuer => {
     let nextURL
     router.get(`/${issuer.toLowerCase()}/login`, async (req, res, next) => {
-        console.log('start login')
         try {
             const ok = await transporter.verify()
             if (!ok) throw new Error()
@@ -119,7 +115,6 @@ issuers.forEach(issuer => {
             successRedirect: nextURL ? nextURL : '/queuality/api',
             failureRedirect: `/${issuer.toLowerCase()}/signup`
         }) (req, res, next)
-        console.log('end login')
     })
 
     router.get(`/${issuer.toLowerCase()}/signup`, async (req, res, next) => {
@@ -152,3 +147,4 @@ issuers.forEach(issuer => {
         }) (req, res, next)
     })
 })
+

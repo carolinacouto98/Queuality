@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Header, Icon, Container, Card, Divider } from 'semantic-ui-react'
 import { QueueService } from '../../common/services/QueueService'
 import { SubjectsService } from '../../common/services/SubjectsService'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { CurrentTicketCard } from './components/CurrentTicketCard'
 import { NextTicketButton } from './components/NextTicketButton'
 import { NextTicketsCard } from './components/NextTicketsCards'
@@ -23,11 +23,18 @@ export default function QueuePage(props: QueuePageProps) {
     const { sectionId }  = useParams<Param>()
     const [queue, setQueue] = useState<string[]>()
     const [ticket, setTicket] = useState<string>()
+    const [desk, setDesk] = useState<string>()
 
     const fetchQueue = () => {
         props.queueService.getQueue(sectionId)
             .then(res => setQueue(res.properties))
     }
+
+    const location = useLocation()
+    useEffect(() => {
+        const query = new URLSearchParams(location.search)
+        setDesk(query.get('desk') as string)
+    }, [location.search])
 
     useEffect(() => {
         fetchQueue()
@@ -37,7 +44,7 @@ export default function QueuePage(props: QueuePageProps) {
     async function handleNextTicket() { 
         const res = await props.subjectsService.getSubjects(sectionId).send()
         const subject = res.body!!.entities.find(subject => queue!![0].includes(subject.properties?.name!!))
-        props.queueService.getNextTicket(sectionId, subject?.properties?.name!!)
+        props.queueService.getNextTicket(sectionId, subject?.properties?.name!!, desk!!)
             .then(res => setTicket(res.properties))
     }  
     return (
@@ -87,7 +94,6 @@ function PageBody(props: TicketProps) {
                 </Container>
                 : null
             }
-           
         </>
     )
 }

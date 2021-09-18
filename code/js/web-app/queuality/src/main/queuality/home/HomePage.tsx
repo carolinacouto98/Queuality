@@ -31,7 +31,7 @@ export default function HomePage({ setFixed }: HomePageProps) {
                 </Grid.Row>
                 <Grid.Row columns='2'>
                     <Grid.Column textAlign='justified'>
-                        <Header as='h1' content='Mobile App' textAlign='center' verticalAlign='middle'/>
+                        <Header as='h1' content='Mobile App' textAlign='center'/>
                         Queuality comes with a mobile application that can be used by the costumers to take and manage their tickets
                         without the need to worry about being always checking for the current ticket, since the app will automatically
                         notify the costumer when its ticket is closed to be called. Besides that the app is totally anonymous making it
