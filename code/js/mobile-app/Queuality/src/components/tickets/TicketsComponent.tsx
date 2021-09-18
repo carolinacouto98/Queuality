@@ -14,9 +14,9 @@ const TicketsComponent: React.FC<Props> = ({tickets}) => {
             <IonGrid>
                 <IonRow>
                     {tickets.map((ticket: TicketDetails) => ( 
-                        <IonCard routerLink={`/tickets/${ticket.ticket}`} key={ticket.ticket}>
+                        <IonCard routerLink={`/tickets/${ticket.ticket}`} key={ticket.ticket} >
                             <IonItem>
-                                <IonCardTitle>{ticket.sectionName}</IonCardTitle>
+                                <IonCardTitle color='primary'>{ticket.sectionName}</IonCardTitle>
                                 <IonCardTitle slot='end' style={{marginTop:'5%', marginBottom:'5%'}}>{ticket.ticket}</IonCardTitle>
                                 
                             </IonItem>

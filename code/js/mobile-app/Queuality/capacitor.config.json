@@ -8,9 +8,9 @@
     "SplashScreen": {
       "launchShowDuration": 0
     },
-      "PushNotifications": {
-        "presentationOptions": ["badge", "sound", "alert"]
-      }
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    }
   },
   "cordova": {},
   "server": {

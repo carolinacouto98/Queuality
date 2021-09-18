@@ -22,19 +22,14 @@ const Appointment: React.FC<AppointmentProps> = ({match, history}) => {
     const context = useContext(AppContext)
     console.log(appointment)
     useEffect(() => {
-        async function sendAppointmentRequest() {
-            try {
-                getAppointmentSection(appointment)
-                    .then(section => 
-                        context.appointmentService.getAppointment(section, appointment)
-                            .then(result =>
-                                setAppointmentInfo( result)
-                            ))
-            }
-            catch(reason) {
-                if(reason.name !== 'AbortError')
-                    return
-            }
+        async function sendAppointmentRequest() {  
+            getAppointmentSection(appointment)
+                .then(section => 
+                    context.appointmentService.getAppointment(section, appointment)
+                        .then(result =>
+                            setAppointmentInfo( result)
+                        ))
+            
         }
         sendAppointmentRequest()
     }, [appointment, context.appointmentService])
@@ -44,19 +39,17 @@ const Appointment: React.FC<AppointmentProps> = ({match, history}) => {
     return ( 
         appointmentDetails ?
             <IonPage>
-                <IonHeader translucent>
-                    <IonToolbar>
-                        <IonTitle>{appointmentDetails.subject}</IonTitle>
-                        <IonButtons slot='end'>
-                            <IonButton routerLink='/appointments'>Close</IonButton>
-                            <IonButton onClick={() => {
-                                removeAppointment(appointmentDetails._id)
-                                context.appointmentService.removeAppointment(appointmentDetails.section,appointmentDetails._id)
-                                history.goBack()
-                            }} color='danger'>Delete</IonButton>
-                        </IonButtons>
-                    </IonToolbar>
-                </IonHeader>
+                <IonToolbar>
+                    <IonTitle color='primary'>{appointmentDetails.subject}</IonTitle>
+                    <IonButtons slot='end'>
+                        <IonButton routerLink='/appointments'>Close</IonButton>
+                        <IonButton onClick={() => {
+                            removeAppointment(appointmentDetails._id)
+                            context.appointmentService.removeAppointment(appointmentDetails._id)
+                            history.goBack()
+                        }} color='danger'>Delete</IonButton>
+                    </IonButtons>
+                </IonToolbar> 
                 <IonContent>
                     <IonItem lines='none'>
                         <IonCol></IonCol>

@@ -25,7 +25,6 @@ import '@ionic/react/css/text-transformation.css'
 import '@ionic/react/css/flex-utils.css'
 import '@ionic/react/css/display.css'
 
-import { PushNotificationSchema, PushNotifications, Token, ActionPerformed } from '@capacitor/push-notifications'
 /* Theme variables */
 import './theme/variables.css'
 import { peopleOutline, ticketOutline, calendarOutline } from 'ionicons/icons'
@@ -37,7 +36,7 @@ import AddAppointment from './pages/AddAppointment'
 import { AppointmentsService, getAppointmentService } from './services/AppointmentsService'
 import Appointment from './pages/Appointment'
 
-export const NGROK_PATH = 'https://0e28-2001-8a0-6d15-6500-fd98-af14-a96c-37a7.ngrok.io'
+export const NGROK_PATH = 'https://d73a-2001-8a0-6d15-6500-443e-5651-ea77-e320.ngrok.io'
 export const API_BASE_URL = '/queuality/api'
 
 export const AppContext = createContext({
@@ -53,21 +52,6 @@ const App: React.FC = () => {
         sectionService: getSectionsService(),
         appointmentService: getAppointmentService()
     }
-
-    useEffect(()=>{
-        PushNotifications.checkPermissions().then((res) => {
-            if (res.receive !== 'granted') {
-                PushNotifications.requestPermissions().then((res) => {
-                    if (res.receive !== 'denied') {
-                        PushNotifications.register()
-                    }
-                })
-            }
-            else {
-                PushNotifications.register()
-            }
-        })
-    },[])
 
     return (
         <IonApp className='App'>

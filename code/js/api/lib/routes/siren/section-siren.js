@@ -67,7 +67,7 @@ function setSubEntities(sections){
                 [
                     siren.selfLink(`${siren.BASENAME}/sections/${id}`), 
                     new siren.SirenLink(['/rel/subjects'], `${siren.BASENAME}/sections/${id}/subjects`),
-                    new siren.SirenLink(['/queue'], `${siren.BASENAME}/sections/${id}/queue`)
+                    new siren.SirenLink(['/rel/queue'], `${siren.BASENAME}/sections/${id}/queue`)
                 ],
                 element,
                 ['Section'],
