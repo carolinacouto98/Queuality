@@ -1,9 +1,8 @@
-import { useState } from "react"
-import { Card, Header, Popup, Image, Icon } from "semantic-ui-react"
-import DeleteModal from "../../../common/components/DeleteModal"
-import { Employee } from "../../../common/model/EmployeeModel"
-import DropDown from "./DropDown"
-import EmployeeCard from "./EmployeeCard"
+import { useState } from 'react'
+import { Card, Header, Popup, Image, Icon } from 'semantic-ui-react'
+import DeleteModal from '../../../common/components/DeleteModal'
+import { Employee } from '../../../common/model/EmployeeModel'
+import EmployeeCard from './EmployeeCard'
 
 type EmployeeItemProps = {
     employee: Employee,

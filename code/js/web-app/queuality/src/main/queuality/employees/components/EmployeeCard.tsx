@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
-import { Card, Image, Icon, Button } from "semantic-ui-react";
-import { Employee } from "../../../common/model/EmployeeModel";
-import DropDown from "./DropDown";
+import { useState } from 'react'
+import { Card, Image, Icon, Button } from 'semantic-ui-react'
+import { Employee } from '../../../common/model/EmployeeModel'
+import DropDown from './DropDown'
 
 type EmployeeCardProps = {
     employee: Employee,
