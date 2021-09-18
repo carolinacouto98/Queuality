@@ -49,7 +49,7 @@ const Section: React.FC<RouteProps>  = ({match}) => {
         subjects && subjects.length?
             <IonPage>
                 <IonToolbar>
-                    <IonTitle>{sectionName}</IonTitle>
+                    <IonTitle color='primary'>{sectionName}</IonTitle>
                     <IonButtons slot='end'>
                         <IonButton routerLink='/sections' >Sections</IonButton>
                     </IonButtons>

@@ -40,7 +40,7 @@ const Appointment: React.FC<AppointmentProps> = ({match, history}) => {
         appointmentDetails ?
             <IonPage>
                 <IonToolbar>
-                    <IonTitle>{appointmentDetails.subject}</IonTitle>
+                    <IonTitle color='primary'>{appointmentDetails.subject}</IonTitle>
                     <IonButtons slot='end'>
                         <IonButton routerLink='/appointments'>Close</IonButton>
                         <IonButton onClick={() => {

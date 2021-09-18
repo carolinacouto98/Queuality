@@ -25,7 +25,7 @@ const Appointments: React.FC = () => {
     return ( 
         <IonPage>
             <IonToolbar>
-                <IonTitle>My Appointments</IonTitle>
+                <IonTitle color='primary'>My Appointments</IonTitle>
                 <IonButtons slot='end'>
                     <IonButton routerLink='/add-appointment'>Add</IonButton>
                 </IonButtons>
