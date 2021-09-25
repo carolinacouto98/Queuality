@@ -1,5 +1,4 @@
-import { useState } from "react"
-import { Visibility } from "semantic-ui-react"
+import { Visibility } from 'semantic-ui-react'
 
 type ScrollableProps = {
     children: React.ReactNode,
@@ -7,13 +6,12 @@ type ScrollableProps = {
 }
 
 export default function Scrollable({children, setFixed}: ScrollableProps) {
-    return <>
+    return (
         <Visibility
             once={false}
             onBottomPassed={() => setFixed(true)}
             onBottomPassedReverse={() => setFixed(false)}
-        >
-            {children}
-        </Visibility>
-    </>
+            children={children}
+        />
+    )
 }

@@ -59,7 +59,7 @@ export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
             borderless
             pointing
             secondary
-            textAlign='left'
+            textalign='left'
         >
             <Container>
             <Menu.Item
@@ -135,12 +135,12 @@ export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
         >
             <Modal.Header>Appointments</Modal.Header>
             <Modal.Content>
-                <label>Subject Name:</label>
+                <label>Subject Description:</label>
                 <input style={{margin:'1%'}} ref={subject} type='text' placeholder='Subject Name'/>
-                <Message error hidden={!subjectMessage} icon='error'>Subject Name is required</Message>
+                <Message error hidden={!subjectMessage}>Subject Name is required</Message>
                 <label>Desk:</label>
                 <input style={{margin:'1%'}} ref={desk} type='text' placeholder='Desk'/>
-                <Message error hidden={!deskMessage} icon='error'>Desk is required</Message>
+                <Message error hidden={!deskMessage}>Desk is required</Message>
             </Modal.Content>
             <Modal.Actions>
                 <Button content='Cancel' onClick={() => setOpenModal(false)}/>
@@ -153,7 +153,7 @@ export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
 
                     if (subject.current?.value && desk.current?.value) {
                         setOpenModal(false)
-                        history.push(`${location.pathname.split('/').slice(0,3).join('/')}/appointments?subject=${subject.current?.value}&desk=${desk.current?.value}`)
+                        history.push(`${location.pathname.split('/').slice(0,4).join('/')}/appointments?subject=${subject.current?.value}&desk=${desk.current?.value}`)
                     }
                 }}
                 />
@@ -168,7 +168,7 @@ export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
             <Modal.Content>
                 <Label>Desk:</Label>
                 <input style={{margin:'1%'}} ref={deskTickets} type='text' placeholder='Desk'/>
-                <Message error hidden={!deskMessageTickets} icon='error'>Desk is required</Message>
+                <Message error hidden={!deskMessageTickets}>Desk is required</Message>
             </Modal.Content>
             <Modal.Actions>
                 <Button content='Cancel' onClick={() => setOpenModalTickets(false)}/>
@@ -177,7 +177,7 @@ export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
                     else {
                         setOpenModalTickets(false)
                         setDeskMessageTickets(false)
-                        history.push(`${location.pathname.split('/').slice(0,3).join('/')}/tickets?desk=${deskTickets.current?.value}`)
+                        history.push(`${location.pathname.split('/').slice(0,4).join('/')}/tickets?desk=${deskTickets.current?.value}`)
                     }
                 }}
                 />

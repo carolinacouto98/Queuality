@@ -24,6 +24,7 @@ const Section: React.FC<RouteProps>  = ({match}) => {
     const {sectionId} = match.params
     const sectionName = sectionId.replace('-', ' ')
     const [subjectsInfo, setSubjects] = useState<SubjectsInfo>()
+    const [newRequest, setNewRequest] = useState<boolean>(false)
     const context = useContext(AppContext)
 
     function fetchData(){
@@ -34,7 +35,11 @@ const Section: React.FC<RouteProps>  = ({match}) => {
             .then(result => 
                 setSubjects(result)
             )  
-    },[fetchData, sectionId])
+    },[sectionId, newRequest])
+
+    useEffect(() => {
+        setTimeout(() => {setNewRequest(!newRequest)}, 20000)
+    })
     
     async function addTicketHandler(subjectName: string) {
         const ticket = subjectName+getAddTicketValue(await context.subjectService.addNewTicket(sectionName, subjectName))!!
@@ -48,14 +53,12 @@ const Section: React.FC<RouteProps>  = ({match}) => {
     return (
         subjects && subjects.length?
             <IonPage>
-                <IonHeader translucent>
-                    <IonToolbar>
-                        <IonTitle>{sectionName}</IonTitle>
-                        <IonButtons slot='end'>
-                            <IonButton routerLink='/sections' >Sections</IonButton>
-                        </IonButtons>
-                    </IonToolbar>
-                </IonHeader>
+                <IonToolbar>
+                    <IonTitle color='primary'>{sectionName}</IonTitle>
+                    <IonButtons slot='end'>
+                        <IonButton routerLink='/sections' >Sections</IonButton>
+                    </IonButtons>
+                </IonToolbar>
                 <IonContent>
                     <SubjectComponent  subjects={subjects} ticketHandler={addTicketHandler}/> 
                 </IonContent>

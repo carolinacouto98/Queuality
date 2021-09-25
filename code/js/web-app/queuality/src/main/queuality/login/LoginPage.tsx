@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Button, Container, Divider, Grid, GridRow, Header, Segment } from 'semantic-ui-react'
+import { Button, Divider, Grid, Header, Segment } from 'semantic-ui-react'
 import { LoginService } from './LoginService'
 import * as API from '../../common/FetchUtils'
 import * as Siren from '../../common/Siren'
 import { API_BASE_URL } from '../../App'
-import { link } from 'fs'
-import { Link } from 'react-router-dom'
 
 type LoginProps = {
     service : LoginService

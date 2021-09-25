@@ -11,18 +11,6 @@ type EmployeesListProps = {
     handleDeleteEmployee : (employeeId: string) => void,
 }
 
-const roles = [
-    'Manage Sections',
-    'Manage Section',
-    'Manage Employees',
-    'Manage Section\'s Employees Roles',
-    'Manage Section\'s Appointments',
-    'Manage Employee\'s Appointments',
-    'Manage Desk\'s Subject',
-    'Answer Appointments',
-    'Answer Tickets'
-]
-
 export default function EmployeesList(props: EmployeesListProps) {
     
     const canRemove = true// props.actions?.find(action => action.name === 'Manage Employees') !== null

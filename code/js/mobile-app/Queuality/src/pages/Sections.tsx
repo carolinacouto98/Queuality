@@ -25,7 +25,7 @@ const Sections: React.FC = () => {
     return (
         <IonPage>
             <IonToolbar>
-                <IonTitle>Sections</IonTitle>  
+                <IonTitle color='primary'>Sections</IonTitle>  
             </IonToolbar>
             <IonContent>
                 {sectionsInfo && sections && sections.length?

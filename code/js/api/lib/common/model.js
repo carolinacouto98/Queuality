@@ -171,7 +171,7 @@ const subjectInputModel = Joi.object({
     currentTicket: Joi.number().default(0),
     totalTickets: Joi.number().default(0),
     date: Joi.date(),//.format('DD/MM/YYYY HH:mm').default(new Date())
-    callingDesk: Joi.string().required().default('')
+    callingDesk: Joi.string().default('')
 })
 /**
  * @typedef {Object} SubjectUpdateInputModel

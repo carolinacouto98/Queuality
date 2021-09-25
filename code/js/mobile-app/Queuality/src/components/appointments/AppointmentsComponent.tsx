@@ -25,7 +25,7 @@ const AppointmentsDisplay : React.FC<Props> = (props) => {
                 {props.appointments.map((appt: AppointmentDetails) => ( 
                     <IonCard routerLink={`/appointments/${appt._id}`} key={appt._id}>
                         <IonItem>
-                            <IonCardTitle>{appt.subject}</IonCardTitle>
+                            <IonCardTitle color='primary'>{appt.subject}</IonCardTitle>
                             <IonCardTitle slot='end' style={{marginTop:'5%', marginBottom:'5%'}}>{timestampToDate(appt.date)}</IonCardTitle>    
                         </IonItem>  
                     </IonCard>   

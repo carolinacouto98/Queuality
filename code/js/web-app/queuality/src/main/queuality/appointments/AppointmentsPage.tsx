@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { AppointmentsService } from '../../common/services/AppointmentsService'
 
-import FullCalendar, { EventClickArg, EventDropArg } from "@fullcalendar/react"
-import dayGridPlugin from "@fullcalendar/daygrid"
-import timeGridPlugin from "@fullcalendar/timegrid"
+import FullCalendar, { EventClickArg, EventDropArg } from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
 import listPlugin from '@fullcalendar/list'
-import interactionPlugin from '@fullcalendar/interaction';
+import interactionPlugin from '@fullcalendar/interaction'
 
 import { Button, Container, Modal } from 'semantic-ui-react'
 import * as API from '../../common/FetchUtils'

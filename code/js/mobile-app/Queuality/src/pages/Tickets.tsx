@@ -32,8 +32,8 @@ const Tickets: React.FC = () => {
     return (  
        
         <IonPage>
-            <IonToolbar>
-                <IonTitle>My Tickets</IonTitle>         
+            <IonToolbar >
+                <IonTitle color='primary'>My Tickets</IonTitle>         
             </IonToolbar>
             <IonContent>
                 {tickets?

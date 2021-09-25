@@ -59,3 +59,16 @@ export async function updateCurrentTicket(current: number, ticket: TicketDetails
     
     await store.set(KEY, tickets)
 }
+
+export async function updateCallingDesk(desk: string, ticket: TicketDetails): Promise<void> {
+    const tickets: TicketDetails[] = await store.get(KEY)
+        .then(ticks => 
+            ticks.map((t: TicketDetails) => {
+                if(ticket.ticket ===t.ticket){
+                    t!!.subject.callingDesk = desk
+                }
+                return t
+            }))
+    
+    await store.set(KEY, tickets)
+}
