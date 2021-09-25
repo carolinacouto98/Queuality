@@ -44,9 +44,9 @@ const updateSubject = (sectionId, subject) =>
             if(subject.priority === undefined) subject.priority = subjectInfo.priority
             if(!subject.description) subject.subject = subjectInfo.description
             if(!subject.desks) subject.desks = subjectInfo.desks
-            subject.date = subjectInfo.date
-            subject.currentTicket = subjectInfo.currentTicket
-            subject.totalTickets = subjectInfo.totalTickets
+            if(!subject.date) subject.date = subjectInfo.date
+            if(subject.currentTicket === undefined) subject.currentTicket = subjectInfo.currentTicket
+            if(subject.totalTickets === undefined) subject.totalTickets = subjectInfo.totalTickets
             if(subject.priority && !subjectInfo.priority && subjects.find(s => s.priority)) 
                 throw error.CustomException(`There is already a priority subject in ${sectionId}.`, error.ALREADY_EXISTS)
             return repo.updateSubject(sectionId, subject)

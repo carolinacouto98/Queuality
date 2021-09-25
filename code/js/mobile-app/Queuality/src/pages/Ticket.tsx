@@ -20,7 +20,8 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
     const [sectionName, setSectionName] = useState('')
     const {ticket} = match.params
     const context = useContext(AppContext)
-    
+    const [newRequest, setNewRequest] = useState<boolean>(false)
+
     useEffect(() => {   
         getTicket(ticket)
             .then(ticket => {
@@ -45,7 +46,7 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
                         })
                     }
                 })
-    },[fetchQueue, ticketDetails])
+    },[fetchQueue, ticketDetails, newRequest])
 
     function fetchSubjects() {
         return fetch(`${NGROK_PATH}${API_BASE_URL}/sections/${sectionName}/subjects`)
@@ -78,7 +79,11 @@ const Ticket: React.FC<TicketDisplayProps> = ({match, history}) => {
                     }
                 })
 
-    }, [fetchSubjects, ticketDetails])
+    }, [fetchSubjects, ticketDetails, newRequest])
+
+    useEffect(() => {
+        setTimeout(() => {setNewRequest(!newRequest)}, 20000)
+    })
 
     useEffect(() => {
         if (ticketDetails?.waitingTickets === 5){
