@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Header, Icon, Container, Card, Divider } from 'semantic-ui-react'
+import { Header, Icon, Container, Card, Divider, Button } from 'semantic-ui-react'
 import { QueueService } from '../../common/services/QueueService'
 import { SubjectsService } from '../../common/services/SubjectsService'
 import { useLocation, useParams } from 'react-router-dom'
 import { CurrentTicketCard } from './components/CurrentTicketCard'
-import { NextTicketButton } from './components/NextTicketButton'
 import { NextTicketsCard } from './components/NextTicketsCards'
 
 
@@ -24,11 +23,7 @@ export default function QueuePage(props: QueuePageProps) {
     const [queue, setQueue] = useState<string[]>()
     const [ticket, setTicket] = useState<string>()
     const [desk, setDesk] = useState<string>()
-
-    const fetchQueue = () => {
-        props.queueService.getQueue(sectionId)
-            .then(res => setQueue(res.properties))
-    }
+    const [request, setRequest] = useState<boolean>(false)
 
     const location = useLocation()
     useEffect(() => {
@@ -37,16 +32,23 @@ export default function QueuePage(props: QueuePageProps) {
     }, [location.search])
 
     useEffect(() => {
-        fetchQueue()
-        if(fetchQueue.length) fetchQueue()
-    }, [fetchQueue])
+        props.queueService.getQueue(sectionId)
+            .then(res => setQueue(res.properties))
+    }, [request, props.queueService, sectionId])
 
-    async function handleNextTicket() { 
+    useEffect(() => {
+        setTimeout(() => {setRequest(!request)}, 60000)
+    })
+   
+
+    async function handleNextTicket() {     
         const res = await props.subjectsService.getSubjects(sectionId).send()
         const subject = res.body!!.entities.find(subject => queue!![0].includes(subject.properties?.name!!))
         props.queueService.getNextTicket(sectionId, subject?.properties?.name!!, desk!!)
-            .then(res => setTicket(res.properties))
-    }  
+            .then(res => setTicket(res.properties))  
+            .then(() => setRequest(!request))         
+        }  
+
     return (
         <>
             <PageHeader />
@@ -84,7 +86,12 @@ function PageBody(props: TicketProps) {
             {props.queue ? 
                 <Container>
                     <CurrentTicketCard ticket={props.nextTicket}/>
-                    <NextTicketButton hasNextTicket={!!props.queue.length} handleNextTicket={props.handleNextTicket}/>     
+                    <Button disabled={!props.queue.length} onClick={() => 
+                        { 
+                            if(props.handleNextTicket) 
+                                props.handleNextTicket()                                  
+                        }
+                    }>Next</Button>
                     <Divider hidden></Divider> 
                     <Card.Group itemsPerRow={5}>                   
                         {props.queue.slice(0,5).map((item, index) => 
