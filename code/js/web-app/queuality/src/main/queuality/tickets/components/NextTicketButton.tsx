@@ -6,7 +6,6 @@ interface NextTicketButtonProps {
 }
 
 export function NextTicketButton(props: NextTicketButtonProps) {
-    //const context = useContext(TicketsControl.showTicketContext)
 
     function nextTicket() {
         if(props.handleNextTicket)
