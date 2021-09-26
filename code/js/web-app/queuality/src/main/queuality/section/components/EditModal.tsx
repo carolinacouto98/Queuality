@@ -7,6 +7,7 @@ type EditModalProps = {
     priority: boolean
     subject: Subject
     handleEditSubject(subjectId: string, subject: Subject): void
+    disabled?: boolean
 }
 
 export default function EditModal(props: EditModalProps) {    
@@ -35,7 +36,7 @@ export default function EditModal(props: EditModalProps) {
             open={open}
             onClose={() => setOpen(false)}
             onOpen={() => setOpen(true)}
-            trigger={<Button>Update</Button>}
+            trigger={<Button disabled={props.disabled}>Update</Button>}
         >
             <Modal.Header>Update Subject {props.subject.name}</Modal.Header>
             <Modal.Content>

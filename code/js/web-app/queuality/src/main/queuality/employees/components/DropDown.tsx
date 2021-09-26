@@ -40,9 +40,6 @@ export default function DropDown(props : DropDownProps) {
                 const values = value as string[]
                 setCurrentValues(values)
                 props.onChange(values)
-                // console.log(Object.defineProperty(employee, props.property, { value: values, writable: true}))
-                // console.log(employee)
-                //props.handleUpdateEmployee(employee)
             }}
         />
     )

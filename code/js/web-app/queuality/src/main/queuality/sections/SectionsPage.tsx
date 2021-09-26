@@ -85,7 +85,7 @@ export default function SectionsPage(props: SectionsPageProps) {
 
     return (                
         <Container>
-            <SectionsHeader handleAddSection={handleAddSection}/>
+            <SectionsHeader actions={sectionsList?.result?.body?.actions} handleAddSection={handleAddSection}/>
             <Divider hidden />
             <br/>
             { sections && sections.length && entities ?

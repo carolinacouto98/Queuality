@@ -83,7 +83,6 @@ function run(port, url, dbName) {
 
     app.options('*', (req, res, next) => {
         const origin = req.header('Origin')
-        console.log(origin)
         if (origin) res.header('Origin', origin)
         next()
     })

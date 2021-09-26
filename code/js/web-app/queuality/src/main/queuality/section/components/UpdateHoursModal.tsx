@@ -5,7 +5,7 @@ import { WorkingHours } from '../../../common/model/SectionModel'
 type UpdateHoursModalProps = {
     workingHours: WorkingHours
     handleEditSection(workingHours: WorkingHours): void
-    hidden?: boolean
+    disabled?: boolean
 }
 
 export default function UpdateHoursModal(props: UpdateHoursModalProps) {
@@ -37,7 +37,7 @@ export default function UpdateHoursModal(props: UpdateHoursModalProps) {
             open={open}
             onClose={() => setOpen(false)}
             onOpen={() => setOpen(true)}
-            trigger={<Button hidden={props.hidden}>Update Hours</Button>}
+            trigger={<Button disabled={props.disabled}>Update Hours</Button>}
         >
             <Modal.Header>Update Working Hours</Modal.Header>
             <Modal.Content>

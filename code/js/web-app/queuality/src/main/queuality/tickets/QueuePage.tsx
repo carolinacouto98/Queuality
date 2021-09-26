@@ -5,6 +5,8 @@ import { SubjectsService } from '../../common/services/SubjectsService'
 import { useLocation, useParams } from 'react-router-dom'
 import { CurrentTicketCard } from './components/CurrentTicketCard'
 import { NextTicketsCard } from './components/NextTicketsCards'
+import * as Siren from '../../common/Siren'
+import * as QueueModel from '../../common/model/QueueModel'
 
 
 
@@ -24,6 +26,7 @@ export default function QueuePage(props: QueuePageProps) {
     const [ticket, setTicket] = useState<string>()
     const [desk, setDesk] = useState<string>()
     const [request, setRequest] = useState<boolean>(false)
+    const [actions, setActions] = useState<Siren.Action[]>()
 
     const location = useLocation()
     useEffect(() => {
@@ -33,7 +36,10 @@ export default function QueuePage(props: QueuePageProps) {
 
     useEffect(() => {
         props.queueService.getQueue(sectionId)
-            .then(res => setQueue(res.properties))
+            .then(res => {
+                setQueue(res.properties)
+                setActions(res.actions)
+            })
     }, [request, props.queueService, sectionId])
 
     useEffect(() => {
@@ -53,6 +59,7 @@ export default function QueuePage(props: QueuePageProps) {
         <>
             <PageHeader />
             <PageBody 
+                actions = {actions}
                 nextTicket = {ticket}                
                 queue = {queue} 
                 handleNextTicket = {handleNextTicket} 
@@ -75,6 +82,7 @@ function PageHeader() {
 }
 
 type TicketProps = {
+    actions?: Siren.Action[]
     nextTicket?: string
     queue?: string[]
     handleNextTicket?: () => void
@@ -86,7 +94,7 @@ function PageBody(props: TicketProps) {
             {props.queue ? 
                 <Container>
                     <CurrentTicketCard ticket={props.nextTicket}/>
-                    <Button disabled={!props.queue.length} onClick={() => 
+                    <Button disabled={!props.actions?.find(action => action.name === QueueModel.ANSWER_TICKET_ACTION) || !props.queue.length} onClick={() => 
                         { 
                             if(props.handleNextTicket) 
                                 props.handleNextTicket()                                  

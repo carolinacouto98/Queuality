@@ -11,12 +11,12 @@ const auth = require('../common/auth.js')
 const router = Router()
 module.exports=router
 
-router.get('/sections', (req, res, next) => {
+router.get('/sections', auth.optional(), (req, res, next) => {
     service.getSections()
         .then(sections => {
             const actions = []
             if (req.employee) {
-                sections = sections.filter(section => req.employee.includes(section._id))
+                sections = sections.filter(section => req.employee.sections.includes(section._id))
                 if (req.employee.roles.includes('Manage Sections'))
                     actions.push(sectionSiren.addSectionAction())
             }
@@ -127,8 +127,11 @@ router.get('/sections/:sectionId/queue', auth.optional(), (req, res, next) => {
     const nextTicket = req.query.next
     const desk = req.query.desk
     const subject = req.query.subject
+    const actions = []
+    if (req.employee?.roles.includes('Answer Tickets') && req.employee.sections.includes(_id))
+        actions.push(sectionSiren.answerTicketAction(_id))
     if(nextTicket && desk && subject) {
-        if (!req.employee?.roles.includes('Answer Ticket') || !req.employee?.sections.includes(_id))
+        if (!req.employee?.roles.includes('Answer Tickets') || !req.employee?.sections.includes(_id))
             return next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
         ticketService.getNextTicket(_id, subject, desk)
             .then(ticket => res.send(
@@ -147,7 +150,8 @@ router.get('/sections/:sectionId/queue', auth.optional(), (req, res, next) => {
                     'Get Tickets',
                     ['Tickets'],
                     sectionSiren.getQueueTicketsLinks(_id),
-                    tickets
+                    tickets,
+                    actions
                 )
             ))
             .catch(next)

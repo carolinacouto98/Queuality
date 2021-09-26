@@ -52,7 +52,7 @@ export function AddSubjectModal(props: AddSubjectModalProps) {
             open={open}
             onClose={() => setOpen(false)}
             onOpen={() => setOpen(true)}
-            trigger={<Button disabled={!!!props.actions?.find(action => action.name === SubjectModel.ADD_SUBJECT_ACTION)} icon='add' style={{marginBottom:'1%', marginLeft:'1088px'}}/>}
+            trigger={<Button disabled={!props.actions?.find(action => action.name === SubjectModel.ADD_SUBJECT_ACTION)} icon='add' style={{marginBottom:'1%', marginLeft:'1088px'}}/>}
         >
             <Modal.Header>Add New Subject</Modal.Header>
             <Modal.Content>
