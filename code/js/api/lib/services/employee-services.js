@@ -42,6 +42,7 @@ const updateEmployee = (employee) =>
             if(!employee.sections) employee.sections = employeeInfo.sections
             if(!employee.roles) employee.roles = employeeInfo.roles
             if(!employee.desk) employee.desk = employeeInfo.desk
+            if(!employee.picture) employee.desk = employeeInfo.picture
             return repo.updateEmployee(employee) 
         })
 
@@ -55,6 +56,7 @@ const removeEmployee = (id) =>
 
 module.exports = {
     getEmployees,
+    getEmployee,
     updateEmployee,
     addEmployee,
     removeEmployee

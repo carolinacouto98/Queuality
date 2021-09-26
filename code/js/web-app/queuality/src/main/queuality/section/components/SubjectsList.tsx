@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import { Card, Grid, Header, Icon, List, Transition } from 'semantic-ui-react'
-import { Subject } from '../../../common/model/SubjectModel'
+import * as SubjectModel from '../../../common/model/SubjectModel'
 import DeleteModal from './DeleteModal'
 import '../../sections/components/timeInput.css'
 import EditModal from './EditModal'
 
+import * as Siren from '../../../common/Siren'
+
 type SubjectsListProps = {
-    subjects: Subject[]
+    subjects: SubjectModel.Subject[]
     handleDeleteSubject(subjectId: string): void
-    handleEditSubject(subjectId: string, subject: Subject): void
+    handleEditSubject(subjectId: string, subject: SubjectModel.Subject): void
+    actions?: Siren.Action[]
 }
 
 export class VisibleDetails {
@@ -26,7 +29,6 @@ export function SubjectsList(props: SubjectsListProps) {
         else {
             setDetailsHidden({idx: id, visible: !detailsHidden?.visible, rotated: (detailsHidden.visible ? undefined : 'clockwise')})
         }
-       
     }
 
     function setVisible(id: string) {

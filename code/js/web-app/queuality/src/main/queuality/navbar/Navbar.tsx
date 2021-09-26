@@ -1,8 +1,9 @@
 import { useEffect } from "react"
 import { useRef, useState } from "react"
 import { Link, useHistory, useLocation } from "react-router-dom"
-import { Button, Container, Icon, Menu, Message, Modal, Image, Label } from "semantic-ui-react"
+import { Button, Container, Icon, Menu, Message, Modal, Image, Label, Dropdown } from "semantic-ui-react"
 import { EmployeesService } from "../../common/services/EmployeesService"
+import { LoginService } from "../../common/services/LoginService"
 import * as Siren from '../../common/Siren'
 import * as Model from '../../common/model/EmployeeModel'
 import * as API from '../../common/FetchUtils'
@@ -10,12 +11,13 @@ import * as API from '../../common/FetchUtils'
 type NavbarProps = {
     fixed?: boolean,
     noMargin?: boolean,
-    service: EmployeesService
+    service: EmployeesService,
+    loginService: LoginService
 }
 
 type EmployeeInfo = API.FetchInfo<Siren.Entity<Model.Employee, void>>
 
-export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
+export default function Navbar({ service, fixed, noMargin, loginService }: NavbarProps) {
     const location = useLocation()
     const [openModal, setOpenModal] = useState<boolean>(false)
     const [openModalTickets, setOpenModalTickets] = useState<boolean>(false)
@@ -116,12 +118,30 @@ export default function Navbar({ service, fixed, noMargin }: NavbarProps) {
                         employee.picture ?
                         <Image src={employee.picture} avatar /> : <Icon name='user circle' />
                     }
-                    <span>{employee.name}</span>
+                    <Dropdown text={employee.name} pointing link>
+                        <Dropdown.Menu>
+                            <Dropdown.Item 
+                                as={Button} 
+                                onClick={async () => {
+                                    await loginService.logout().send()
+                                    window.location.pathname = '/queuality'
+                                }}>
+                                    <Icon name='power'/>
+                                    Logout
+                            </Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
                 </Menu.Item> :
                 <Menu.Item
                     position='right'
-                    active={location.pathname === '/queuality/login'}
-                    as={ Link } to='/queuality/login'>
+                    active={location.pathname.includes('/queuality/login')}
+                    as={ Link } 
+                    to={
+                        `/queuality/login${
+                            location.pathname.includes('/queuality/login') ? 
+                            '' : `?nextURL=${window.location.origin+location.pathname}`
+                        }`
+                    }>
                         <Icon name='sign-in'/>
                         Login
                 </Menu.Item>

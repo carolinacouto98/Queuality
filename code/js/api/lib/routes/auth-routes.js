@@ -30,7 +30,7 @@ const transporter = nodemailer.createTransport({
     }
 })
 
-async function createStrategy(issuer) {
+async function createStrategy(issuer, signup) {
     if (strategies[issuer]) strategies[issuer]
     const nonce = generators.nonce();
     const iss = await Issuer.discover(process.env[`${issuer}_ISSUER_BASE_URL`]) // eslint-disable-line no-undef
@@ -50,7 +50,8 @@ async function createStrategy(issuer) {
     }, async (tokenset, userinfo, done) => {
         const employees = await service.getEmployees()
         const claims = tokenset.claims()
-        if (!employees.find(employee => employee._id === userinfo.email)) {
+        const employee = employees.find(employee => employee._id === userinfo.email)
+        if (!employee && signup) {
             const managers = employees.filter(employee => employee.roles.includes('Manage Employees'))
             managers.forEach(async employee =>
                 await transporter.sendMail({
@@ -61,7 +62,7 @@ async function createStrategy(issuer) {
                         <div>
                             <p>The employee with the email ${userinfo.email} is trying to signing to Queuality 
                                 to accept it press the button below, to deny it ignore this email</p>
-                            <form method="POST" action="../employees">
+                            <form method="POST" action="http://localhost:5000/queuality/api/employees">
                                 <input type="hidden" name="_id" value="${userinfo.email}">
                                 <input type="hidden" name="name" value="${claims.name}">
                                 <input type="hidden" name="picture" value="${userinfo.picture}">
@@ -72,8 +73,16 @@ async function createStrategy(issuer) {
                     `
                 })
             )
+            return done()
         }
-        return done(null, claims)
+        else {
+            if (employee.name !== claims.name || employee.picture !== claims.picture) {
+                employee.name = claims.name
+                employee.picture = claims.picture
+                await service.updateEmployee(employee)
+            }
+            return done(null, claims)
+        }
     })
     strategies[issuer] = strategy
     return strategy
@@ -97,6 +106,11 @@ router.get('/signup', (req, res, next) => {
             authSiren.signUpLinks(issuers)
         )
     )
+})
+
+router.post('/logout', (req, res, next) => {
+    req.logOut()
+    req.session.destroy(res.end)
 })
 
 issuers.forEach(issuer => {
@@ -125,22 +139,23 @@ issuers.forEach(issuer => {
             return next(error.CustomException('Error with transporter email, please try again later', error.SERVER_ERROR))
         }
         
-        const strategy = await createStrategy(issuer.toUpperCase())
+        const strategy = await createStrategy(issuer.toUpperCase(), true)
         nextURL = req.query.nextURL
-        passport.authenticate(strategy) (req, res, next)
+        passport.authenticate(strategy, {
+            successRedirect: nextURL ? nextURL : '/queuality/api',
+            failureRedirect: `/${issuer.toLowerCase()}/signup`
+        }) (req, res, next)
         
     })
 
     router.post(`/${issuer.toLowerCase()}/callback`, async (req, res, next) => {
-        console.log('start callback')
         const strategy = await createStrategy(issuer.toUpperCase())
         passport.authenticate(strategy, (err, user, info) => {
             if (err) return next(err)
             if (!user) return next(error.CustomException('No such user', error.SERVER_ERROR))
             req.logIn(user, err => {
                 if (err) return next(err)
-                // res.send('Successfully authenticated')
-                // res.send('Successfully authenticated')
+                req.session.user = user
                 res.redirect(nextURL ? nextURL : '/queuality/api')
             })
 
