@@ -15,8 +15,8 @@ router.get('/sections/:sectionId/appointments', (req, res, next) => {
     const section = req.params.sectionId
     const subject = req.query.subject
     const desk = req.query.desk
-    // if (!req.employee?.roles.includes('Manage Section\'s Appointments') || !req.employee.sections.includes(section))
-    //     next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
+    if (!req.employee?.roles.includes('Manage Section\'s Appointments') || !req.employee.sections.includes(section))
+        return next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     
     if(subject && desk) 
         service.getAppointments(section, subject, desk)

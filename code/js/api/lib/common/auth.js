@@ -3,11 +3,10 @@ const service = require('../services/employee-services.js')
 
 module.exports = {
     requested: () => async (req, res, next) => {
-        return next()
         try {
-            if (!req.isAuthenticated()) 
+            if (!req.session.user) 
                 throw error.CustomException('User should be logged in to access this resource.', error.FORBIDDEN)
-            const employee = await service.getEmploy(req.user.email)
+            const employee = await service.getEmployee(req.session.user.email)
             req.employee = employee
             next()
         } catch (error) { 
@@ -15,13 +14,12 @@ module.exports = {
         }
     },
     optional: () => async (req, res, next) => {
-        return next()
         try {
-            if (!req.isAuthenticated()) return next()
-            const employee = await service.getEmploy(req.user.email)
+            if (!req.session.user) return next()
+            const employee = await service.getEmployee(req.session.user.email)
             req.employee = employee
             next()
-        } catch (error) { 
+        } catch (error) {
             next(error) 
         }
     }

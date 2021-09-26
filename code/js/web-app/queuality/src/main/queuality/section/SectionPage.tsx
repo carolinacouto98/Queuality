@@ -144,11 +144,11 @@ export default function SectionPage(props: SectionPageProps) {
     return(
         <>
         {section ? 
-            <SectionHeader priority={checkPriority()} section={section} handleEditSection={handleEditSection} handleAddSubject={handleAddSubject}/> 
+            <SectionHeader actions={subjectsList?.result?.body?.actions} priority={checkPriority()} section={section} handleEditSection={handleEditSection} handleAddSubject={handleAddSubject}/> 
         : null }
         {subjects && subjects.length ?  
             <Container>
-                <SubjectsList subjects={subjects} handleDeleteSubject={handleDeleteSubject} handleEditSubject={handleEditSubject}/>
+                <SubjectsList actions={subjectsList?.result?.body?.actions} subjects={subjects} handleDeleteSubject={handleDeleteSubject} handleEditSubject={handleEditSubject}/>
             </Container>
             :
             <Header>There are no subjects yet</Header>

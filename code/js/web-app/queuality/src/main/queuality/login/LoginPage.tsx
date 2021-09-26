@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Button, Divider, Grid, Header, Segment } from 'semantic-ui-react'
-import { LoginService } from './LoginService'
+import { LoginService } from '../../common/services/LoginService'
 import * as API from '../../common/FetchUtils'
 import * as Siren from '../../common/Siren'
 import { API_BASE_URL } from '../../App'
@@ -18,28 +18,31 @@ function getLoginLinks(info? : LoginInfo) : String[] | undefined {
 
 export default function LoginPage({ service } : LoginProps) {
     const [loginList, setLoginList] = useState<LoginInfo>()
+    const [signupList, setSignupList] = useState<LoginInfo>()
     useEffect(() => {
-            async function sendRequests(request : LoginRequest) {
+            async function sendRequests(request : LoginRequest, setState: React.Dispatch<React.SetStateAction<LoginInfo | undefined>>) {
                 try {
-                    setLoginList({ status: API.FetchState.NOT_READY })
+                    setState({ status: API.FetchState.NOT_READY })
                     const result : API.Result<Siren.Entity<undefined, undefined>> = await request.send()
                     if (!result.header.ok) return
-                    setLoginList({ 
+                    setState({ 
                         status: result.header.ok && result.body ? API.FetchState.SUCCESS : API.FetchState.ERROR,
                         result
                     })
                 } catch (reason) {
                     if(reason.name !== 'AbortError')
-                    setLoginList({status: API.FetchState.ERROR})
+                    setState({status: API.FetchState.ERROR})
                 }
             }
-            sendRequests(service.getLogins())
+            sendRequests(service.getLogins(), setLoginList)
+            sendRequests(service.getSignups(), setSignupList)
         }, [service]
     )
 
     const loginLinks = getLoginLinks(loginList)
+    const signupLinks = getLoginLinks(signupList)
     loginLinks?.splice(0,1)
-    console.log(loginLinks)
+    signupLinks?.splice(0,1)
     return(
         <Grid columns='equal' style={{ height: '100vh' }}>
             <Grid.Column/>
@@ -50,12 +53,25 @@ export default function LoginPage({ service } : LoginProps) {
                             <Header content='Login' primary />
                             {
                                 loginLinks?.map(link => 
-                                    <Button as='a' href={link.concat(window.location.search || '?nextURL=http://localhost:3000/queuality')} content={link.split('/')[6]} style={{marginBottom: '2%'}} />
+                                    <Button 
+                                        as='a' 
+                                        href={link.concat(window.location.search || '?nextURL=http://localhost:3000/queuality')} 
+                                        content={link.split('/')[6]} style={{marginBottom: '2%'}} 
+                                    />
                                 )
                             }
                         </Grid.Column>
                         <Grid.Column verticalAlign='top'>
-                            <Button content='Sign up' icon='signup' size='big' />
+                        <Header content='Signup' primary />
+                            {
+                                signupLinks?.map(link => 
+                                    <Button 
+                                        as='a' 
+                                        href={link.concat(window.location.search || '?nextURL=http://localhost:3000/queuality')} 
+                                        content={link.split('/')[6]} style={{marginBottom: '2%'}} 
+                                    />
+                                )
+                            }
                         </Grid.Column>
                     </Grid>
                     <Divider vertical>Or</Divider>

@@ -35,10 +35,8 @@ router.post('/sections/:sectionId/subjects', auth.requested(), (req, res, next) 
     const name = req.body.name
     const priority = req.body.priority
     const description = req.body.description
-    /*if (!req.employee.roles?.includes('Manage Section') || !req.employee?.sections.includes(sectionId))
-        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
-    if(!name|| priority  == undefined || !description)
-        throw error.CustomException('Missing required parameters', error.BAD_REQUEST)*/
+    if (!req.employee.roles?.includes('Manage Section') || !req.employee?.sections.includes(sectionId))
+        return next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     const desks = req.body.desks
     model.subjectInputModel.validateAsync({ name, priority, description, desks })
         .then(subject => 
@@ -59,10 +57,8 @@ router.patch('/sections/:sectionId/subjects/:subjectName', auth.requested(), (re
     const priority = req.body.priority
     const description = req.body.description
     const desks = req.body.desks
-    /*if (!req.employee?.roles.includes('Manage Section') || !req.employee?.sections.includes(sectionId))
-        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
-    if(priority == undefined && !subject && !desks)
-        throw error.CustomException('Missing Parameters', error.BAD_REQUEST)*/
+    if (!req.employee?.roles.includes('Manage Section') || !req.employee?.sections.includes(sectionId))
+        return next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     model.subjectUpdateInputModel.validateAsync({name, priority, description, desks})
         .then(subject => 
             service.updateSubject(sectionId, subject)
@@ -79,8 +75,8 @@ router.patch('/sections/:sectionId/subjects/:subjectName', auth.requested(), (re
 router.delete('/sections/:sectionId/subjects/:subjectName', auth.requested(), (req, res, next) => {
     const sectionId = req.params.sectionId
     const name = req.params.subjectName
-    /*if (!req.employee?.roles.includes('Manage Section') || !req.employee?.sections.includes(sectionId))
-        next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))*/
+    if (!req.employee?.roles.includes('Manage Section') || !req.employee?.sections.includes(sectionId))
+        return next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     service.deleteSubject(sectionId, name)
         .then(() => res.send(
             new Entity(
@@ -95,7 +91,7 @@ router.put('/sections/:sectionId/subjects/:subjectName', (req, res, next) => {
     const sectionId = req.params.sectionId
     const name = req.params.subjectName
     const ticket = req.body.ticket
-    if(ticket[0] !== name) //??
+    if(ticket[0] !== name)
         throw error.CustomException('Ticket id and Subject Id dont match', error.BAD_REQUEST)
     ticketService.removeTicket(sectionId, name, ticket)
         .then(removedTicket => 
