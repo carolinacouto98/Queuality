@@ -6,8 +6,7 @@ import { API_BASE_URL } from '../../App'
 
 export interface EmployeesService {
     getEmployees: () => Fetch.Request<Siren.Entity<void, Model.Employee>>
-    getEmployee: (employeeId: string) => Fetch.Request<Siren.Entity<Model.Employee, void>>
-    //addSection: (section: Model.Employee) => Fetch.Request<Siren.Entity<Model.Employee, void>>
+    getEmployeeLoggedIn: () => Fetch.Request<Siren.Entity<Model.Employee, void>>
     updateEmployee: (employee: Model.Employee) => Fetch.Request<Siren.Entity<Model.Employee, void>>
     deleteEmployee: (employeeId: string) => Fetch.Request<Siren.Entity<void, void>>
 }
@@ -18,22 +17,26 @@ export function getEmployeesService() : EmployeesService {
     headers.append('Accept', 'application/json')
     return { 
         getEmployees: (): Fetch.Request<Siren.Entity<void, Model.Employee>> =>
-            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/employees`), {headers: headers})
+            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/employees`), {headers: headers,
+                credentials:'include'})
         ,
-        getEmployee: (employeeId: string): Fetch.Request<Siren.Entity<Model.Employee, void>> =>
-            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/employees/${employeeId}`))
+        getEmployeeLoggedIn: (): Fetch.Request<Siren.Entity<Model.Employee, void>> =>
+            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/employees/logged`), {headers: headers,
+                credentials:'include'})
         ,
         updateEmployee: (employee: Model.Employee): Fetch.Request<Siren.Entity<Model.Employee, void>> => 
             Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/employees/${employee._id}`), { 
                 method: 'PATCH',
                 headers: headers,
-                body: JSON.stringify(employee)
+                body: JSON.stringify(employee),
+                credentials:'include'
             })
         ,
         deleteEmployee: (employeeId: string): Fetch.Request<Siren.Entity<void, void>> => 
             Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/employees/${employeeId}`), { 
                 method: 'DELETE',
-                headers: headers
+                headers: headers,
+                credentials:'include'
             })
     }
 }

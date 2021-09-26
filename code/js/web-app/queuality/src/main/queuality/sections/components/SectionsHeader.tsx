@@ -1,8 +1,10 @@
 import { useState, useRef, ChangeEvent } from 'react'
 import { Header, Button, Modal, Message } from 'semantic-ui-react'
+import * as Siren from '../../../common/Siren'
 import * as Model from '../../../common/model/SectionModel'
 
 type SectionsHeaderProps = {
+    actions?: Siren.Action[]
     handleAddSection(section: Model.Section): void
 }
 
@@ -41,7 +43,7 @@ export default function SectionsHeader(props: SectionsHeaderProps) {
                     setErrorMessage(true)
                 }}
                 open={open}
-                trigger={<Button style={{backgroundColor: '#33BEFF', color: '#FFFFFF'}} floated='right'>Add Section</Button>}
+                trigger={<Button disabled={!props.actions?.find(action => action.name === Model.ADD_SECTION_ACTION)} style={{backgroundColor: '#33BEFF', color: '#FFFFFF'}} floated='right'>Add Section</Button>}
                 >
                 <Modal.Header>Add a section</Modal.Header>
                 <Modal.Content>
@@ -68,11 +70,11 @@ export default function SectionsHeader(props: SectionsHeaderProps) {
                 </Modal.Content>
                 <Modal.Actions>
                     <Button color='black' onClick={() => setOpen(false)}>
-                    Nope
+                    Cancel
                     </Button>
                     <Button
                     disabled = {false}
-                    color='instagram'
+                    style={{backgroundColor: '#33BEFF'}}
                     content="Submit"
                     labelPosition='right'
                     icon='checkmark'

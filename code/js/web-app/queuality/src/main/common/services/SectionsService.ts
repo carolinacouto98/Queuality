@@ -18,10 +18,12 @@ export function getSectionsService(): SectionsService {
     headers.append('Accept', 'application/json')
     return {
         getSections: (): Fetch.Request<Siren.Entity<void, Model.Section>> =>
-            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections`), {headers: headers})
+            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections`), {headers: headers,
+                credentials:'include'})
         ,
         getSection: (sectionId: string): Fetch.Request<Siren.Entity<Model.Section, void>> =>
-            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections/${sectionId}`), {headers: headers})
+            Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections/${sectionId}`), {headers: headers,
+                credentials:'include'})
         ,
         addSection: (section: Model.Section): Fetch.Request<Siren.Entity<Model.CreateSection, void>> => {            
             const body = {
@@ -35,7 +37,8 @@ export function getSectionsService(): SectionsService {
             return Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections`), { 
                 method: 'POST',
                 headers: headers,
-                body: JSON.stringify(body)
+                body: JSON.stringify(body),
+                credentials:'include'
             })
         },
         updateSection: (sectionId: string, workingHours: Model.WorkingHours): Fetch.Request<Siren.Entity<Model.Section, void>> => 
@@ -44,13 +47,15 @@ export function getSectionsService(): SectionsService {
                 headers: headers,
                 body: JSON.stringify({
                     workingHours
-                })
+                }),
+                credentials:'include'
             })
         ,
         deleteSection: (sectionId: string): Fetch.Request<Siren.Entity<void, void>> => 
             Fetch.cancelableRequest(new URL(`${API_BASE_URL}/api/sections/${sectionId}`), { 
                 method: 'DELETE',
-                headers: headers
+                headers: headers,
+                credentials:'include'
             })
     }
 }

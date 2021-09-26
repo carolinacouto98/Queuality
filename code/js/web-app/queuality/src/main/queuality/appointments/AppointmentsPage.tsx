@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { AppointmentsService } from '../../common/services/AppointmentsService'
 
-import FullCalendar, { EventClickArg, EventDropArg } from "@fullcalendar/react"
-import dayGridPlugin from "@fullcalendar/daygrid"
-import timeGridPlugin from "@fullcalendar/timegrid"
+import FullCalendar, { EventClickArg, EventDropArg } from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
 import listPlugin from '@fullcalendar/list'
-import interactionPlugin from '@fullcalendar/interaction';
+import interactionPlugin from '@fullcalendar/interaction'
 
 import { Button, Container, Modal } from 'semantic-ui-react'
 import * as API from '../../common/FetchUtils'
@@ -15,8 +15,6 @@ import * as Model from '../../common/model/AppointmentModel'
 
 type AppointmentsPageProps = {
     service: AppointmentsService
-    subject: string,
-    desk: string
 }
 
 
@@ -35,14 +33,12 @@ function getAppointmentsValue(appointment?: AppointmentsInfo) : Model.Appointmen
 export default function AppointmentsPage(props: AppointmentsPageProps) {
     const [desk, setDesk] = useState<string>()
     const [subject, setSubject] = useState<string>()
-    //const [events, setEvents] = useState<any>([])
     const { sectionId } = useParams<Param>()    
     const [eventClickedDetails, setEventClickedDetails] = useState({id: '', title: '', start: ''})
     const [open, setOpen] = useState(false)
-    //const [events, setEvents] = useState({id: '',})
 
     const [appointments, setAppointments] = useState<AppointmentsInfo>()
-    const [appointmentsUpdate, setAppoinmentsUpdate] = useState<AppointmentsUpdate>(props.service.getAppointments(sectionId, props.subject, props.desk))
+    const [appointmentsUpdate, setAppoinmentsUpdate] = useState<AppointmentsUpdate>(props.service.getAppointments(sectionId, subject!!, desk!!))
 
     const location = useLocation()
     useEffect(() => {
@@ -93,7 +89,7 @@ export default function AppointmentsPage(props: AppointmentsPageProps) {
                 .find(action => action.name === Model.DELETE_APPOINTMENT_ACTION)
             if(deleteAppointmentAction) {
                 const result = await props.service.deleteAppointment(appointmentId).send()
-                setAppoinmentsUpdate(props.service.getAppointments(sectionId, props.subject, props.desk))
+                setAppoinmentsUpdate(props.service.getAppointments(sectionId, subject!!, desk!!))
                 if(!result.header.ok) {
                     return
                 }
@@ -109,7 +105,7 @@ export default function AppointmentsPage(props: AppointmentsPageProps) {
                 .find(action => action.name === Model.UPDATE_APPOINTMENT_ACTION)
             if(updateAppointmentAction) {
                 const result = await props.service.updateAppointment(appointmentId, date).send()
-                setAppoinmentsUpdate(props.service.getAppointments(sectionId, props.subject, props.desk))
+                setAppoinmentsUpdate(props.service.getAppointments(sectionId, subject!!, desk!!))
                 if(!result.header.ok) {
                     return
                 }
@@ -151,7 +147,7 @@ export default function AppointmentsPage(props: AppointmentsPageProps) {
             onOpen={() => setOpen(true)}
             open={open}
         >
-        <Modal.Header>{eventClickedDetails.title} {eventClickedDetails.start}</Modal.Header>
+        <Modal.Header>{eventClickedDetails.title} {eventClickedDetails.start.replace('T', ' ')}</Modal.Header>
         <Modal.Actions>
             <Button onClick={() => setOpen(false)}>Cancel</Button>
             <Button negative onClick={() => {

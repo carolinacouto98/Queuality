@@ -103,7 +103,7 @@ const incrementCurrentTicket = (section, subject) => subjectRepo.getSubject(sect
         return subjectRepo.updateSubject(section, sub)
     })
 
-    const updateCallingDesk = (section, subject, desk) => subjectRepo.getSubject(section, subject)
+const updateCallingDesk = (section, subject, desk) => subjectRepo.getSubject(section, subject)
     .then(sub => {
         sub.callingDesk = desk
         return subjectRepo.updateSubject(section, sub)

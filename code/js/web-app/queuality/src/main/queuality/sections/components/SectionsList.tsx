@@ -1,6 +1,7 @@
 import { List } from 'semantic-ui-react'
 import { Section, SELF } from '../../../common/model/SectionModel'
 import * as Siren from '../../../common/Siren'
+import * as Model from '../../../common/model/SectionModel'
 import { Link } from 'react-router-dom'
 import DeleteModal from './DeleteModal'
 
@@ -17,12 +18,12 @@ function getSectionLink(entities: Siren.EmbeddedEntity<Section>[], id: string): 
 export default function SectionList(props: ListProps) {
     return(
         <List divided size='large' relaxed animated verticalAlign='middle'>       
-            { props.sections.map(section => {   
+            { props.sections.map((section, idx) => {   
               const link = getSectionLink(props.entities, section?._id!!)
               return (
                 <List.Item key={section?._id!!}>
                   <List.Content floated='right'>
-                    <DeleteModal sectionId={section?._id!!} handleDeleteSection={props.handleDeleteSection}/>
+                    <DeleteModal disabled={!props.entities!![idx].actions.find(action => action.name === Model.DELETE_SECTION_ACTION)}  sectionId={section?._id!!} handleDeleteSection={props.handleDeleteSection}/>
                   </List.Content>
                   <List.Content floated='left'as={Link} to={link}>{section?._id!!}</List.Content>
                 </List.Item>

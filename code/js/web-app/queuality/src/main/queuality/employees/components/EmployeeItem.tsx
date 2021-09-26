@@ -1,9 +1,8 @@
-import { useState } from "react"
-import { Card, Header, Popup, Image, Icon } from "semantic-ui-react"
-import DeleteModal from "../../../common/components/DeleteModal"
-import { Employee } from "../../../common/model/EmployeeModel"
-import DropDown from "./DropDown"
-import EmployeeCard from "./EmployeeCard"
+import { useState } from 'react'
+import { Card, Header, Popup, Image, Icon } from 'semantic-ui-react'
+import DeleteModal from '../../../common/components/DeleteModal'
+import { Employee } from '../../../common/model/EmployeeModel'
+import EmployeeCard from './EmployeeCard'
 
 type EmployeeItemProps = {
     employee: Employee,
@@ -13,18 +12,6 @@ type EmployeeItemProps = {
     handleUpdateEmployee: (e: Employee) => void,
     handleDeleteEmployee: (e: string) => void,
 }
-
-const roles = [
-    'Manage Sections',
-    'Manage Section',
-    'Manage Employees',
-    'Manage Section\'s Employees Roles',
-    'Manage Section\'s Appointments',
-    'Manage Employee\'s Appointments',
-    'Manage Desk\'s Subject',
-    'Answer Appointments',
-    'Answer Tickets'
-]
 
 export default function EmployeeItem(props: EmployeeItemProps) {
     const [openModal, setOpenModal] = useState<boolean>(false)
@@ -66,17 +53,6 @@ export default function EmployeeItem(props: EmployeeItemProps) {
                 />
             </Header>
             <Card.Header>{props.employee.name}</Card.Header>
-            <Card.Description hidden={!props.canChangeRoles}>
-                <DropDown 
-                    values={roles} 
-                    employee={props.employee} 
-                    onChange={roles => { 
-                        props.employee.roles = roles
-                        props.handleUpdateEmployee(props.employee)
-                    }} 
-                    property='roles'
-                />
-            </Card.Description>
         </Card.Content>
     </Card>
 }

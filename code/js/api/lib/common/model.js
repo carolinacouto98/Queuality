@@ -34,7 +34,7 @@ const subjectSchema = {
     totalTickets: Joi.number().required(),
     date: Joi.date(),//.format('DD/MM/YYYY HH:mm').required(),
     desks: Joi.array().items(Joi.string()).required(),
-    callingDesk: Joi.string().required()
+    callingDesk: Joi.string().default('')
 }
 const subject = Joi.object(subjectSchema)
 
@@ -79,7 +79,7 @@ const employee = Joi.object({
     name: Joi.string().required(),
     roles: Joi.array().items(Joi.valid(...roles)).required(),
     sections: Joi.array().items(Joi.string()).required(),
-    desk: Joi.string()
+    picture: Joi.string().default('')
 })
 /**
  * @typedef {Object} Appointment
@@ -119,7 +119,7 @@ const employeeInputModel = Joi.object({
     name: Joi.string().required(),
     roles: Joi.array().default([]),
     sections: Joi.array().default([]),
-    desk: Joi.string().default('')
+    picture: Joi.string().default('')
 })
 /**
  * @typedef {Object} EmployeeUpdateInputModel
@@ -134,7 +134,7 @@ const employeeUpdateInputModel = Joi.object({
     name: Joi.string(),
     roles: Joi.array().items(Joi.valid(...roles)),
     sections: Joi.array().items(Joi.string().allow('')),
-    desk: Joi.string().allow('')
+    picture: Joi.string().default('')
 })
 /**
  * @typedef {Object} SectionInputModel

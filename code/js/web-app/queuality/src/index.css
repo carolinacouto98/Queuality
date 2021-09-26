@@ -11,3 +11,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@font-face {
+  font-family: 'Beon';
+  src: local('Beon'),
+  url('./fonts/beon.medium.otf') format("truetype");
+  font-weight: normal;
+}

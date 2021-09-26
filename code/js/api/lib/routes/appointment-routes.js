@@ -3,6 +3,7 @@
 const service = require('../services/appointment-services.js')
 const model = require('../common/model.js')
 const { Entity } = require('../common/siren.js')
+const auth = require('../common/auth.js')
 const appointmentSiren = require('./siren/appointment-siren.js')
 
 const Router = require('express').Router
@@ -11,12 +12,12 @@ const router = Router()
 
 module.exports = router
 
-router.get('/sections/:sectionId/appointments', (req, res, next) => {
+router.get('/sections/:sectionId/appointments', auth.requested(), (req, res, next) => {
     const section = req.params.sectionId
     const subject = req.query.subject
     const desk = req.query.desk
-    // if (!req.employee?.roles.includes('Manage Section\'s Appointments') || !req.employee.sections.includes(section))
-    //     next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
+    if (!req.employee?.roles.includes('Manage Section\'s Appointments') && !req.employee?.roles.includes('Answer Appointments') || !req.employee.sections.includes(section))
+        return next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     
     if(subject && desk) 
         service.getAppointments(section, subject, desk)

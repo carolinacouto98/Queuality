@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Header, Icon, Container, Card, Divider } from 'semantic-ui-react'
+import { Header, Icon, Container, Card, Divider, Button } from 'semantic-ui-react'
 import { QueueService } from '../../common/services/QueueService'
 import { SubjectsService } from '../../common/services/SubjectsService'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { CurrentTicketCard } from './components/CurrentTicketCard'
-import { NextTicketButton } from './components/NextTicketButton'
 import { NextTicketsCard } from './components/NextTicketsCards'
+import * as Siren from '../../common/Siren'
+import * as QueueModel from '../../common/model/QueueModel'
 
 
 
@@ -23,27 +24,42 @@ export default function QueuePage(props: QueuePageProps) {
     const { sectionId }  = useParams<Param>()
     const [queue, setQueue] = useState<string[]>()
     const [ticket, setTicket] = useState<string>()
+    const [desk, setDesk] = useState<string>()
+    const [request, setRequest] = useState<boolean>(false)
+    const [actions, setActions] = useState<Siren.Action[]>()
 
-    const fetchQueue = () => {
-        props.queueService.getQueue(sectionId)
-            .then(res => setQueue(res.properties))
-    }
+    const location = useLocation()
+    useEffect(() => {
+        const query = new URLSearchParams(location.search)
+        setDesk(query.get('desk') as string)
+    }, [location.search])
 
     useEffect(() => {
-        fetchQueue()
-        if(fetchQueue.length) fetchQueue()
-    }, [fetchQueue])
+        props.queueService.getQueue(sectionId)
+            .then(res => {
+                setQueue(res.properties)
+                setActions(res.actions)
+            })
+    }, [request, props.queueService, sectionId])
 
-    async function handleNextTicket() { 
-        const res = await props.subjectsService.getSubjects(sectionId)
-        const subject = res.entities.find(subject => queue!![0].includes(subject.properties?.name!!))
-        props.queueService.getNextTicket(sectionId, subject?.properties?.name!!)
-            .then(res => setTicket(res.properties))
-    }  
+    useEffect(() => {
+        setTimeout(() => {setRequest(!request)}, 60000)
+    })
+   
+
+    async function handleNextTicket() {     
+        const res = await props.subjectsService.getSubjects(sectionId).send()
+        const subject = res.body!!.entities.find(subject => queue!![0].includes(subject.properties?.name!!))
+        props.queueService.getNextTicket(sectionId, subject?.properties?.name!!, desk!!)
+            .then(res => setTicket(res.properties))  
+            .then(() => setRequest(!request))         
+        }  
+
     return (
         <>
             <PageHeader />
             <PageBody 
+                actions = {actions}
                 nextTicket = {ticket}                
                 queue = {queue} 
                 handleNextTicket = {handleNextTicket} 
@@ -66,6 +82,7 @@ function PageHeader() {
 }
 
 type TicketProps = {
+    actions?: Siren.Action[]
     nextTicket?: string
     queue?: string[]
     handleNextTicket?: () => void
@@ -77,7 +94,12 @@ function PageBody(props: TicketProps) {
             {props.queue ? 
                 <Container>
                     <CurrentTicketCard ticket={props.nextTicket}/>
-                    <NextTicketButton hasNextTicket={!!props.queue.length} handleNextTicket={props.handleNextTicket}/>     
+                    <Button disabled={!props.actions?.find(action => action.name === QueueModel.ANSWER_TICKET_ACTION) || !props.queue.length} onClick={() => 
+                        { 
+                            if(props.handleNextTicket) 
+                                props.handleNextTicket()                                  
+                        }
+                    }>Next</Button>
                     <Divider hidden></Divider> 
                     <Card.Group itemsPerRow={5}>                   
                         {props.queue.slice(0,5).map((item, index) => 
@@ -87,7 +109,6 @@ function PageBody(props: TicketProps) {
                 </Container>
                 : null
             }
-           
         </>
     )
 }

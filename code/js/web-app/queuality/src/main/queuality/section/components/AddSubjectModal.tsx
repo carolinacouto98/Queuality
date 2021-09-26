@@ -1,12 +1,14 @@
 import { useEffect } from 'react'
 import { ChangeEvent, useState } from 'react'
 import { Button, Checkbox, CheckboxProps, Modal, Popup } from 'semantic-ui-react'
-import { Subject } from '../../../common/model/SubjectModel'
+import * as SubjectModel from '../../../common/model/SubjectModel'
 import AddDesksDropdown from './AddDesksDropdown'
+import * as Siren from '../../../common/Siren'
 
 type AddSubjectModalProps = {
     priority: boolean
-    handleAddSubject(subject: Subject): void
+    handleAddSubject(subject: SubjectModel.Subject): void
+    actions?: Siren.Action[]
 }
 
 export function AddSubjectModal(props: AddSubjectModalProps) {
@@ -29,7 +31,7 @@ export function AddSubjectModal(props: AddSubjectModalProps) {
     function addSubject() {
         if(name && description && props.handleAddSubject) {
             setDisabled(false)
-            props.handleAddSubject(new Subject(name, description, priority, undefined, undefined, undefined, desks))
+            props.handleAddSubject(new SubjectModel.Subject(name, description, priority, undefined, undefined, undefined, desks))
             setOpen(false)
         }
 
@@ -50,7 +52,7 @@ export function AddSubjectModal(props: AddSubjectModalProps) {
             open={open}
             onClose={() => setOpen(false)}
             onOpen={() => setOpen(true)}
-            trigger={<Button icon='add' style={{marginBottom:'1%', marginLeft:'1088px'}}/>}
+            trigger={<Button disabled={!props.actions?.find(action => action.name === SubjectModel.ADD_SUBJECT_ACTION)} icon='add' style={{marginBottom:'1%', marginLeft:'1088px'}}/>}
         >
             <Modal.Header>Add New Subject</Modal.Header>
             <Modal.Content>

@@ -45,15 +45,16 @@ function deleteEmployeeAction (id) {
     )
 } 
 
-function setSubEntities(employees){
+function setSubEntities(employees, actions){
     const subEntities = []
     employees.forEach(element => {
         subEntities.push(
             new siren.EmbeddedEntity( 
                 ['/rel/employee'],
-                [siren.selfLink(`${siren.BASENAME}/api/employes/${element._id}`)],
+                [siren.selfLink(`${siren.BASENAME}/employes/${element._id}`)],
                 element,
-                ['Employee']
+                ['Employee'],
+                actions(element)
             )        
         )
     })

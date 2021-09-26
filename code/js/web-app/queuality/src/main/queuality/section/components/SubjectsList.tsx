@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import { Card, Grid, Header, Icon, List, Transition } from 'semantic-ui-react'
-import { Subject } from '../../../common/model/SubjectModel'
+import * as SubjectModel from '../../../common/model/SubjectModel'
 import DeleteModal from './DeleteModal'
 import '../../sections/components/timeInput.css'
 import EditModal from './EditModal'
 
+import * as Siren from '../../../common/Siren'
+
 type SubjectsListProps = {
-    subjects: Subject[]
+    subjects: SubjectModel.Subject[]
     handleDeleteSubject(subjectId: string): void
-    handleEditSubject(subjectId: string, subject: Subject): void
+    handleEditSubject(subjectId: string, subject: SubjectModel.Subject): void
+    entities?: Siren.EmbeddedEntity<SubjectModel.Subject>[]
 }
 
 export class VisibleDetails {
@@ -26,7 +29,6 @@ export function SubjectsList(props: SubjectsListProps) {
         else {
             setDetailsHidden({idx: id, visible: !detailsHidden?.visible, rotated: (detailsHidden.visible ? undefined : 'clockwise')})
         }
-       
     }
 
     function setVisible(id: string) {
@@ -38,7 +40,7 @@ export function SubjectsList(props: SubjectsListProps) {
     }
     return(
         <Card.Group centered>
-            {props.subjects.map(subject => {
+            {props.subjects.map((subject, idx) => {
                 return(
                     <Card fluid key={subject.name}>
                         <Card.Content>
@@ -53,7 +55,7 @@ export function SubjectsList(props: SubjectsListProps) {
                                             </Header>  
                                     </Grid.Column>
                                     <Grid.Column width='2' textAlign='right'>
-                                        <DeleteModal subjectName={subject.name!!} handleDeleteSubject={props.handleDeleteSubject} />
+                                        <DeleteModal hidden={!props.entities!![idx].actions.find(action => action.name === SubjectModel.DELETE_SUBJECT_ACTION)} subjectName={subject.name!!} handleDeleteSubject={props.handleDeleteSubject} />
                                     </Grid.Column>
                                 </Grid.Row>
                                 <Transition visible={setVisible(subject.name!!)} animation='scale' duration={500}>
@@ -79,7 +81,7 @@ export function SubjectsList(props: SubjectsListProps) {
                                                 </List>
                                             </Grid.Column>
                                             <Grid.Column style={{marginLeft:'1000%'}}>
-                                                <EditModal priority={checkPriority()} subject={subject} handleEditSubject={props.handleEditSubject}></EditModal>
+                                                <EditModal disabled={!props.entities!![idx].actions.find(action => action.name === SubjectModel.EDIT_SUBJECT_ACTION)} priority={checkPriority()} subject={subject} handleEditSubject={props.handleEditSubject}></EditModal>
                                             </Grid.Column>
                                         </Grid.Row>
                                     </div>

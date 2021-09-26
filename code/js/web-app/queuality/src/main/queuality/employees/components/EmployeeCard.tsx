@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
-import { Card, Image, Icon, Button } from "semantic-ui-react";
-import { Employee } from "../../../common/model/EmployeeModel";
-import DropDown from "./DropDown";
+import { useState } from 'react'
+import { Card, Image, Icon, Button } from 'semantic-ui-react'
+import { Employee } from '../../../common/model/EmployeeModel'
+import DropDown from './DropDown'
 
 type EmployeeCardProps = {
     employee: Employee,
@@ -12,10 +12,23 @@ type EmployeeCardProps = {
     handleUpdateEmployee: (employee: Employee) => void,
     handleDeleteEmployee: (employeeId: string) => void,
 }
+
+
+const rolesArray = [
+    'Manage Sections',
+    'Manage Section',
+    'Manage Employees',
+    'Manage Section\'s Employees Roles',
+    'Manage Section\'s Appointments',
+    'Manage Employee\'s Appointments',
+    'Manage Desk\'s Subject',
+    'Answer Appointments',
+    'Answer Tickets'
+]
+
 export default function EmployeeCard (props: EmployeeCardProps) {
     const [update, setUpdate] = useState<boolean>(false)
     const [sections, setSections] = useState<string[]>(props.employee.sections)
-    const deskRef = useRef<HTMLInputElement>(null)
     const roles = props.employee.roles.toString()
     return (
         <Card>
@@ -40,15 +53,20 @@ export default function EmployeeCard (props: EmployeeCardProps) {
                             : props.employee.sections.toString()
                         }
                     </p>
-                    <p>
-                        Desk: {update 
-                            ? <div className='ui input'><input ref={deskRef} defaultValue={props.employee.desk}/></div> 
-                            : props.employee.desk
-                        }
-                    </p>
                 </Card.Meta>
                 <Card.Description>
-                    <p>Roles: {roles}</p>
+                    <p>Roles: {
+                        update 
+                        ? <DropDown 
+                            values={rolesArray} 
+                            employee={props.employee} 
+                            onChange={roles => { 
+                                props.employee.roles = roles
+                                props.handleUpdateEmployee(props.employee)
+                            }} 
+                            property='roles'
+                        /> : roles}
+                    </p>
                     <Icon name='mail'/>
                     <a href={`mailto:${props.employee._id}`}>{props.employee._id}</a>    
                 </Card.Description>
@@ -60,7 +78,6 @@ export default function EmployeeCard (props: EmployeeCardProps) {
                     onClick={() => {
                         if (update) {
                             props.employee.sections = sections
-                            props.employee.desk = deskRef.current?.value!!
                             props.handleUpdateEmployee(props.employee)
                         }
                         setUpdate(!update)

@@ -1,25 +1,84 @@
+import { useEffect } from "react"
 import { useRef, useState } from "react"
-import { Link, useLocation } from "react-router-dom"
-import { Button, Icon, Menu, Message, Modal } from "semantic-ui-react"
+import { Link, useHistory, useLocation } from "react-router-dom"
+import { Button, Container, Icon, Menu, Message, Modal, Image, Label, Dropdown } from "semantic-ui-react"
+import { EmployeesService } from "../../common/services/EmployeesService"
+import { LoginService } from "../../common/services/LoginService"
+import * as Siren from '../../common/Siren'
+import * as Model from '../../common/model/EmployeeModel'
+import * as API from '../../common/FetchUtils'
 
-export default function Navbar() {
+type NavbarProps = {
+    fixed?: boolean,
+    noMargin?: boolean,
+    service: EmployeesService,
+    loginService: LoginService
+}
+
+type EmployeeInfo = API.FetchInfo<Siren.Entity<Model.Employee, void>>
+
+export default function Navbar({ service, fixed, noMargin, loginService }: NavbarProps) {
     const location = useLocation()
     const [openModal, setOpenModal] = useState<boolean>(false)
+    const [openModalTickets, setOpenModalTickets] = useState<boolean>(false)
     const [deskMessage, setDeskMessage] = useState<boolean>(false)
+    const [deskMessageTickets, setDeskMessageTickets] = useState<boolean>(false)
     const [subjectMessage, setSubjectMessage] = useState<boolean>(false)
+    const [employeeInfo, setEmployee] = useState<EmployeeInfo>()
     const desk = useRef<HTMLInputElement>(null)
+    const deskTickets = useRef<HTMLInputElement>(null)
     const subject = useRef<HTMLInputElement>(null)
+    const history = useHistory()
 
+    useEffect(() => {
+        async function sendEmployeeRequest(request: API.Request<Siren.Entity<Model.Employee, void>>) {
+            try {
+                setEmployee({ status: API.FetchState.NOT_READY })
+                const result : API.Result<Siren.Entity<Model.Employee, void>> = await request.send()
+                if (!result.header.ok)
+                    return
+                setEmployee({
+                    status : result.header.ok && result.body ? API.FetchState.SUCCESS : API.FetchState.ERROR,
+                    result
+                })
+            } catch (reason) {
+                if(reason.name !== 'AbortError')
+                    setEmployee({status: API.FetchState.ERROR})
+            }
+        }
+        sendEmployeeRequest(service.getEmployeeLoggedIn())
+    }, [service])
+
+
+    const employee = employeeInfo?.result?.body?.properties
     return <>
-        <Menu style={{backgroundColor:'#33BEFF', fontColor:'#FFFFFF' }} borderless pointing secondary textAlign='left'>
-            <Menu.Item 
+        <Menu
+            fixed={fixed ? 'top' : undefined}
+            style={{
+                backgroundColor:'#33BEFF',
+                marginBottom: noMargin ? '0' : undefined
+            }}
+            borderless
+            pointing
+            secondary
+            textalign='left'
+        >
+            <Container>
+            <Menu.Item
                 active={location.pathname === '/queuality'}
-                as={ Link } to='/queuality'>
-                    <Icon name='home'/>
-                    Home
+                as={ Link } to='/queuality'
+                style={{
+                    fontFamily:'Beon',
+                    fontWeight: 'bold'
+                }}>
+                    Queuality
             </Menu.Item>
-            <Menu.Item 
-                active={location.pathname.includes('/queuality/sections') && !location.pathname.includes('/appointments')}
+            <Menu.Item
+                active={
+                    location.pathname.includes('/queuality/sections')
+                    && !location.pathname.includes('/appointments')
+                    && !location.pathname.includes('/tickets')
+                }
                 as={ Link } to='/queuality/sections'>
                     <Icon name='building'/>
                     Sections
@@ -31,17 +90,63 @@ export default function Navbar() {
                     Employees
             </Menu.Item>
             {
-                location.pathname.match('/queuality/sections/.') ?
-                <Menu.Item
-                    active={ location.pathname.includes('/appointments') }
-                    onClick={() => setOpenModal(true)}
-                    link
-                >
-                    <Icon name='calendar alternate'/>
-                    Appointments
-                </Menu.Item>
+                location.pathname.match('/queuality/sections/.*') ?
+                <>
+                    <Menu.Item
+                        active={ location.pathname.includes('/tickets') }
+                        onClick={() => setOpenModalTickets(true)}
+                        link
+                    >
+                        <Icon name='ticket'/>
+                        Tickets
+                    </Menu.Item>
+                    <Menu.Item
+                        active={ location.pathname.includes('/appointments') }
+                        onClick={() => setOpenModal(true)}
+                        link
+                    >
+                        <Icon name='calendar alternate'/>
+                        Appointments
+                    </Menu.Item>
+                </>
                 :<></>
             }
+            {
+                employee ?
+                <Menu.Item position='right'>
+                    {
+                        employee.picture ?
+                        <Image src={employee.picture} avatar /> : <Icon name='user circle' />
+                    }
+                    <Dropdown text={employee.name} pointing link>
+                        <Dropdown.Menu>
+                            <Dropdown.Item 
+                                as={Button} 
+                                onClick={async () => {
+                                    await loginService.logout().send()
+                                    window.location.pathname = '/queuality'
+                                }}>
+                                    <Icon name='power'/>
+                                    Logout
+                            </Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </Menu.Item> :
+                <Menu.Item
+                    position='right'
+                    active={location.pathname.includes('/queuality/login')}
+                    as={ Link } 
+                    to={
+                        `/queuality/login${
+                            location.pathname.includes('/queuality/login') ? 
+                            '' : `?nextURL=${window.location.origin+location.pathname}`
+                        }`
+                    }>
+                        <Icon name='sign-in'/>
+                        Login
+                </Menu.Item>
+            }
+            </Container>
         </Menu>
         <Modal
             open={openModal}
@@ -50,12 +155,12 @@ export default function Navbar() {
         >
             <Modal.Header>Appointments</Modal.Header>
             <Modal.Content>
-                <label>Subject Name:</label>
+                <label>Subject Description:</label>
                 <input style={{margin:'1%'}} ref={subject} type='text' placeholder='Subject Name'/>
-                <Message error hidden={!subjectMessage} icon='error'>Subject Name is required</Message>
+                <Message error hidden={!subjectMessage}>Subject Name is required</Message>
                 <label>Desk:</label>
                 <input style={{margin:'1%'}} ref={desk} type='text' placeholder='Desk'/>
-                <Message error hidden={!deskMessage} icon='error'>Desk is required</Message>
+                <Message error hidden={!deskMessage}>Desk is required</Message>
             </Modal.Content>
             <Modal.Actions>
                 <Button content='Cancel' onClick={() => setOpenModal(false)}/>
@@ -67,10 +172,34 @@ export default function Navbar() {
                     else setDeskMessage(false)
 
                     if (subject.current?.value && desk.current?.value) {
-                        const url = `${window.location.href.replace(/\/$/g, '')}/appointments?subject=${subject.current?.value}&desk=${desk.current?.value}`
-                        window.location.replace(url)
+                        setOpenModal(false)
+                        history.push(`${location.pathname.split('/').slice(0,4).join('/')}/appointments?subject=${subject.current?.value}&desk=${desk.current?.value}`)
                     }
-                }} 
+                }}
+                />
+            </Modal.Actions>
+        </Modal>
+        <Modal
+            open={openModalTickets}
+            onOpen={() => setOpenModalTickets(true)}
+            onClose={() => setOpenModalTickets(false)}
+        >
+            <Modal.Header>Tickets</Modal.Header>
+            <Modal.Content>
+                <Label>Desk:</Label>
+                <input style={{margin:'1%'}} ref={deskTickets} type='text' placeholder='Desk'/>
+                <Message error hidden={!deskMessageTickets}>Desk is required</Message>
+            </Modal.Content>
+            <Modal.Actions>
+                <Button content='Cancel' onClick={() => setOpenModalTickets(false)}/>
+                <Button content='Ok' onClick={() => {
+                    if (!deskTickets.current?.value) setDeskMessageTickets(true)
+                    else {
+                        setOpenModalTickets(false)
+                        setDeskMessageTickets(false)
+                        history.push(`${location.pathname.split('/').slice(0,4).join('/')}/tickets?desk=${deskTickets.current?.value}`)
+                    }
+                }}
                 />
             </Modal.Actions>
         </Modal>

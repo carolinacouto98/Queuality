@@ -14,16 +14,22 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "bson": "^4.3.0",
+    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^9.0.2",
     "express": "^4.17.1",
     "express-openid-connect": "^2.4.0",
+    "express-session": "^1.17.2",
     "fortune": "^5.5.17",
     "jest": "^26.6.3",
     "joi": "^17.4.0",
     "jwt-decode": "^3.1.2",
     "mongo-mock": "^4.0.0",
     "mongodb": "^3.6.6",
+    "nodemailer": "^6.6.3",
+    "openid-client": "^4.7.5",
+    "passport": "^0.4.1",
+    "passport-openid": "^0.4.0",
     "super-siren": "^2.0.2"
   },
   "devDependencies": {

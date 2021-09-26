@@ -10,9 +10,20 @@ const auth = require('../common/auth.js')
 const router = Router()
 module.exports = router
 
+router.get('/employees/logged', auth.optional(), (req, res, next) => {
+    res.send(
+        new Entity(
+            'Get Employee Logged in',
+            ['Employee'],
+            undefined,
+            req.employee,
+            []
+    ))
+})
+
 router.get('/employees', auth.requested(), (req, res, next) => {
-    //if (!req.employee?.roles.includes('Manage Employees'))
-    //    next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
+    if (!req.employee?.roles.includes('Manage Employees') && !req.employee?.roles.includes('Manage Section\'s Employees Roles'))
+        return next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     service.getEmployees()
         .then(employees => res.send(
             new Entity(
@@ -20,24 +31,29 @@ router.get('/employees', auth.requested(), (req, res, next) => {
                 ['Employees'],
                 employeeSiren.getEmployeesLinks,
                 undefined,
-                [employeeSiren.addEmployeeAction(),
-                employeeSiren.updateEmployeeAction(),
-                employeeSiren.deleteEmployeeAction()],
-                employeeSiren.setSubEntities(employees)
+                [employeeSiren.addEmployeeAction()],
+                employeeSiren.setSubEntities(
+                        employees.filter(employee => 
+                            {
+                                if (!req.employee?.roles.includes('Manage Employees'))
+                                    return employee.sections.some(section => 
+                                        req.employee.sections.includes(section))
+                                return true
+                            }),
+                        emp => 
+                            [employeeSiren.updateEmployeeAction(emp._id),
+                            employeeSiren.deleteEmployeeAction(emp._id)])
             )))
         .catch(next)
 })
 
 router.post('/employees', auth.requested(), (req, res, next) => {
-    //if (!req.employee?.roles.includes('Manage Employees'))
-    //    next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
+    if (!req.employee?.roles.includes('Manage Employees') && !req.employee?.roles.includes('Manage Section\'s Employees Roles'))
+        return next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     const name = req.body.name
     const _id = req.body._id
     if(!name || !_id)
         throw error.CustomException('Missing required parameters', error.BAD_REQUEST)
-    const roles = req.body.roles
-    const sections = req.body.sections
-    const desk = req.body.desk
     model.employeeInputModel.validateAsync({_id, name})
         .then(employee => service.addEmployee(employee)
             .then(employee => res.status(201).send(
@@ -51,16 +67,15 @@ router.post('/employees', auth.requested(), (req, res, next) => {
 })
 
 router.patch('/employees/:employeeId', auth.requested(), (req, res, next) => {
-    //if (!req.employee?.roles.includes('Manage Employees'))
-    //    next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
+    if (!req.employee?.roles.includes('Manage Employees') && !req.employee?.roles.includes('Manage Section\'s Employees Roles'))
+        return next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     const _id = req.params.employeeId
     const name = req.body.name
     const roles = req.body.roles
     const sections = req.body.sections
-    const desk = req.body.desk
-    if(!name && !roles && !sections && !desk)
+    if(!name && !roles && !sections)
         throw error.CustomException('Missing Parameters', error.BAD_REQUEST)
-    model.employeeUpdateInputModel.validateAsync({_id, name, roles, sections, desk})
+    model.employeeUpdateInputModel.validateAsync({_id, name, roles, sections})
         .then(employee =>
             service.updateEmployee(employee)
                 .then(employee => res.send(
@@ -75,8 +90,8 @@ router.patch('/employees/:employeeId', auth.requested(), (req, res, next) => {
 })
     
 router.delete('/employees/:employeeId', auth.requested(), (req, res, next) => {
-    //if (!req.employee?.roles.includes('Manage Employees'))
-    //    next(new error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
+    if (!req.employee?.roles.includes('Manage Employees') && !req.employee?.roles.includes('Manage Section\'s Employees Roles'))
+        return next(error.CustomException('You do not have permission to access this resource.', error.UNAUTHORIZED))
     const id = req.params.employeeId
     service.removeEmployee(id)
         .then(() => res.send(
