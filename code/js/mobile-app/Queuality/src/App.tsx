@@ -36,7 +36,7 @@ import AddAppointment from './pages/AddAppointment'
 import { AppointmentsService, getAppointmentService } from './services/AppointmentsService'
 import Appointment from './pages/Appointment'
 
-export const NGROK_PATH = 'https://3173-2001-8a0-6d15-6500-8cb3-685e-b800-7725.ngrok.io'
+export const NGROK_PATH = 'https://daea-2001-8a0-6d15-6500-4843-74fc-3cc-2083.ngrok.io'
 export const API_BASE_URL = '/queuality/api'
 
 export const AppContext = createContext({
