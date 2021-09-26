@@ -34,8 +34,12 @@ router.get('/employees', auth.requested(), (req, res, next) => {
                 [employeeSiren.addEmployeeAction()],
                 employeeSiren.setSubEntities(
                         employees.filter(employee => 
-                            employee.sections.some(section => 
-                                req.employee.sections.includes(section))), 
+                            {
+                                if (!req.employee?.roles.includes('Manage Employees'))
+                                    return employee.sections.some(section => 
+                                        req.employee.sections.includes(section))
+                                return true
+                            }),
                         emp => 
                             [employeeSiren.updateEmployeeAction(emp._id),
                             employeeSiren.deleteEmployeeAction(emp._id)])

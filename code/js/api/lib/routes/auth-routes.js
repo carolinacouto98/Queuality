@@ -30,7 +30,7 @@ const transporter = nodemailer.createTransport({
     }
 })
 
-async function createStrategy(issuer, signup) {
+async function createStrategy(issuer) {
     if (strategies[issuer]) strategies[issuer]
     const nonce = generators.nonce();
     const iss = await Issuer.discover(process.env[`${issuer}_ISSUER_BASE_URL`]) // eslint-disable-line no-undef
@@ -51,7 +51,7 @@ async function createStrategy(issuer, signup) {
         const employees = await service.getEmployees()
         const claims = tokenset.claims()
         const employee = employees.find(employee => employee._id === userinfo.email)
-        if (!employee && signup) {
+        if (!employee) {
             const managers = employees.filter(employee => employee.roles.includes('Manage Employees'))
             managers.forEach(async employee =>
                 await transporter.sendMail({
@@ -139,20 +139,19 @@ issuers.forEach(issuer => {
             return next(error.CustomException('Error with transporter email, please try again later', error.SERVER_ERROR))
         }
         
-        const strategy = await createStrategy(issuer.toUpperCase(), true)
+        const strategy = await createStrategy(issuer.toUpperCase())
         nextURL = req.query.nextURL
         passport.authenticate(strategy, {
             successRedirect: nextURL ? nextURL : '/queuality/api',
             failureRedirect: `/${issuer.toLowerCase()}/signup`
         }) (req, res, next)
-        
     })
 
     router.post(`/${issuer.toLowerCase()}/callback`, async (req, res, next) => {
         const strategy = await createStrategy(issuer.toUpperCase())
         passport.authenticate(strategy, (err, user, info) => {
             if (err) return next(err)
-            if (!user) return next(error.CustomException('No such user', error.SERVER_ERROR))
+            if (!user) return res.redirect(nextURL ? nextURL : '/queuality/api')
             req.logIn(user, err => {
                 if (err) return next(err)
                 req.session.user = user

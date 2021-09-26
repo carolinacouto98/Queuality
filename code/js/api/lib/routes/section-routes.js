@@ -16,7 +16,7 @@ router.get('/sections', auth.optional(), (req, res, next) => {
         .then(sections => {
             const actions = []
             if (req.employee) {
-                sections = sections.filter(section => req.employee.sections.includes(section._id))
+                //sections = sections.filter(section => req.employee.sections.includes(section._id))
                 if (req.employee.roles.includes('Manage Sections'))
                     actions.push(sectionSiren.addSectionAction())
             }

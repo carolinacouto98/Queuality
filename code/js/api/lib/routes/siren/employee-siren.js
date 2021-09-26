@@ -51,7 +51,7 @@ function setSubEntities(employees, actions){
         subEntities.push(
             new siren.EmbeddedEntity( 
                 ['/rel/employee'],
-                [siren.selfLink(`${siren.BASENAME}/api/employes/${element._id}`)],
+                [siren.selfLink(`${siren.BASENAME}/employes/${element._id}`)],
                 element,
                 ['Employee'],
                 actions(element)
