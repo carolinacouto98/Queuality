@@ -64,9 +64,15 @@ function removeTicketAction (sectionId, subjectId) {
     )
 } 
 
-function setSubEntities(sectionId, subjects){
+function setSubEntities(sectionId, subjects, action){
     const subEntities = []
+    
     subjects.forEach(element => {
+        const actions = action ? [
+            updateSubjectAction(sectionId, element.name),
+            deleteSubjectAction(sectionId, element.name),
+            removeTicketAction(sectionId, element.name)
+        ] : []
         subEntities.push(
             new siren.EmbeddedEntity(
                 ['/rel/subject'],
@@ -75,11 +81,7 @@ function setSubEntities(sectionId, subjects){
                 ],
                 element,
                 ['Subject'],
-                [
-                    updateSubjectAction(sectionId, element.name),
-                    deleteSubjectAction(sectionId, element.name),
-                    removeTicketAction(sectionId, element.name)
-                ],
+                actions,
                 'Get Subject'
             )        
         )

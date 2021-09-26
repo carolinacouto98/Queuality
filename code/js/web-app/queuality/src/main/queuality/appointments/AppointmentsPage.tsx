@@ -33,11 +33,9 @@ function getAppointmentsValue(appointment?: AppointmentsInfo) : Model.Appointmen
 export default function AppointmentsPage(props: AppointmentsPageProps) {
     const [desk, setDesk] = useState<string>()
     const [subject, setSubject] = useState<string>()
-    //const [events, setEvents] = useState<any>([])
     const { sectionId } = useParams<Param>()    
     const [eventClickedDetails, setEventClickedDetails] = useState({id: '', title: '', start: ''})
     const [open, setOpen] = useState(false)
-    //const [events, setEvents] = useState({id: '',})
 
     const [appointments, setAppointments] = useState<AppointmentsInfo>()
     const [appointmentsUpdate, setAppoinmentsUpdate] = useState<AppointmentsUpdate>(props.service.getAppointments(sectionId, subject!!, desk!!))
@@ -149,7 +147,7 @@ export default function AppointmentsPage(props: AppointmentsPageProps) {
             onOpen={() => setOpen(true)}
             open={open}
         >
-        <Modal.Header>{eventClickedDetails.title} {eventClickedDetails.start}</Modal.Header>
+        <Modal.Header>{eventClickedDetails.title} {eventClickedDetails.start.replace('T', ' ')}</Modal.Header>
         <Modal.Actions>
             <Button onClick={() => setOpen(false)}>Cancel</Button>
             <Button negative onClick={() => {

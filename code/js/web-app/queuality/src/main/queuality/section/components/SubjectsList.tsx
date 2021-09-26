@@ -11,7 +11,7 @@ type SubjectsListProps = {
     subjects: SubjectModel.Subject[]
     handleDeleteSubject(subjectId: string): void
     handleEditSubject(subjectId: string, subject: SubjectModel.Subject): void
-    actions?: Siren.Action[]
+    entities?: Siren.EmbeddedEntity<SubjectModel.Subject>[]
 }
 
 export class VisibleDetails {
@@ -40,7 +40,7 @@ export function SubjectsList(props: SubjectsListProps) {
     }
     return(
         <Card.Group centered>
-            {props.subjects.map(subject => {
+            {props.subjects.map((subject, idx) => {
                 return(
                     <Card fluid key={subject.name}>
                         <Card.Content>
@@ -55,7 +55,7 @@ export function SubjectsList(props: SubjectsListProps) {
                                             </Header>  
                                     </Grid.Column>
                                     <Grid.Column width='2' textAlign='right'>
-                                        <DeleteModal subjectName={subject.name!!} handleDeleteSubject={props.handleDeleteSubject} />
+                                        <DeleteModal hidden={!props.entities!![idx].actions.find(action => action.name === SubjectModel.DELETE_SUBJECT_ACTION)} subjectName={subject.name!!} handleDeleteSubject={props.handleDeleteSubject} />
                                     </Grid.Column>
                                 </Grid.Row>
                                 <Transition visible={setVisible(subject.name!!)} animation='scale' duration={500}>
@@ -81,7 +81,7 @@ export function SubjectsList(props: SubjectsListProps) {
                                                 </List>
                                             </Grid.Column>
                                             <Grid.Column style={{marginLeft:'1000%'}}>
-                                                <EditModal priority={checkPriority()} subject={subject} handleEditSubject={props.handleEditSubject}></EditModal>
+                                                <EditModal disabled={!props.entities!![idx].actions.find(action => action.name === SubjectModel.EDIT_SUBJECT_ACTION)} priority={checkPriority()} subject={subject} handleEditSubject={props.handleEditSubject}></EditModal>
                                             </Grid.Column>
                                         </Grid.Row>
                                     </div>

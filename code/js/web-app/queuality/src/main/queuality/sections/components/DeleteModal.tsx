@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button, Icon, Modal } from 'semantic-ui-react'
 
 type DeleteModalProps = {
+    disabled?: boolean,
     sectionId: string
     handleDeleteSection(sectionId: string): void
 }
@@ -15,7 +16,7 @@ export default function DeleteModal(props: DeleteModalProps) {
             open={open}
             onClose={() => setOpen(false)}
             onOpen={() => setOpen(true)}
-            trigger={<Icon name='trash alternate outline' link/>}
+            trigger={<Icon disabled={props.disabled} name='trash alternate outline' link/>}
         >
             <Modal.Header>Delete Section</Modal.Header>
             <Modal.Content>

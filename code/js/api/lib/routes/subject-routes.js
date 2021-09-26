@@ -14,8 +14,13 @@ const router = Router()
 
 module.exports = router
 
-router.get('/sections/:sectionId/subjects', (req, res, next) => {
+router.get('/sections/:sectionId/subjects', auth.optional(), (req, res, next) => {
     const sectionId = req.params.sectionId
+    const actions = []
+    if (req.employee?.roles.includes('Manage Section') && req.employee?.sections.includes(sectionId)) {
+        
+        actions.push(subjectSiren.addSubjectAction(sectionId))
+    }
     service.getSubjects(sectionId)
         .then(subjects => 
             res.send(
@@ -24,8 +29,8 @@ router.get('/sections/:sectionId/subjects', (req, res, next) => {
                     ['Subjects'], 
                     subjectSiren.getSubjectsLinks(sectionId),
                     sectionId,
-                    [subjectSiren.addSubjectAction(sectionId)], 
-                    subjectSiren.setSubEntities(sectionId, subjects)
+                    actions, 
+                    subjectSiren.setSubEntities(sectionId, subjects, actions.length)
                 )))
         .catch(next)
 })
