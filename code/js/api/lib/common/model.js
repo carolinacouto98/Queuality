@@ -170,7 +170,7 @@ const subjectInputModel = Joi.object({
     desks: Joi.array().items(Joi.string().required()).default([]),
     currentTicket: Joi.number().default(0),
     totalTickets: Joi.number().default(0),
-    date: Joi.date(),//.format('DD/MM/YYYY HH:mm').default(new Date())
+    date: Joi.date().default(new Date().toDateString()),
     callingDesk: Joi.string().default('')
 })
 /**

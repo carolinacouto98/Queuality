@@ -108,7 +108,7 @@ router.delete('/sections/:sectionId', auth.requested(), (req, res, next) => {
         .catch(next)
 })
 
-router.post('/sections/:sectionId/queue', auth.requested(), (req, res, next) => {
+router.post('/sections/:sectionId/queue', auth.optional(), (req, res, next) => {
     const _id = req.params.sectionId
     const subjectName = req.body.subject
     ticketService.addTicket(_id, subjectName)

@@ -3,7 +3,9 @@ const repo = require('../repo/ticket-repo.js')
 const { getSection } = require('./section-services.js')
 const { getSubject, updateSubject } = require('./subject-services.js')
 
-const getDate = () => new Date()
+const getDate = () => new Date().toDateString()
+
+
 
 /**
  * @param {String} sectionId

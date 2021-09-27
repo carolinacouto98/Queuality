@@ -24,10 +24,6 @@ export async function getTicket(ticket: string): Promise<TicketDetails> {
             .find((tick: TicketDetails)  => tick.ticket === ticket))
 }
 
-/*export async function removeTickets() {
-    store.clear()
-}*/
-
 export async function removeTicket(ticketId: string): Promise<void> {
     const oldTickets: TicketDetails[] = await store.get(KEY)
     const newTickets = oldTickets.filter(ticket => ticket.ticket!== ticketId)
